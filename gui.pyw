@@ -1,5 +1,7 @@
 from Tkinter import *
 from enum import Enum
+import platform
+import os
 # from threading import Thread
 
 class Mode(Enum):
@@ -82,9 +84,14 @@ class GUIClass:
 		#Create the GUI object
 		self.root = Tk()
 
+		dir_path = os.path.dirname(os.path.realpath(__file__))
 		#Load the images to use in the GUI
-		self.commandImage = PhotoImage(file = "assets/command.png")
-		self.textImage = PhotoImage(file = "assets/text.png")
+		if platform.system() == "Windows":
+			self.commandImage = PhotoImage(file = dir_path + "\\assets\\command.gif")
+			self.textImage = PhotoImage(file = dir_path + "\\assets\\text.gif")
+		else:
+			self.commandImage = PhotoImage(file = dir_path + "/assets/command.gif")
+			self.textImage = PhotoImage(file = dir_path + "/assets/text.gif")
 
 		#Set translucency
 		self.root.wait_visibility(self.root)
