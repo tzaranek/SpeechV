@@ -47,7 +47,20 @@ class VoiceController {
   }
 }
 
-console.log("VOICE CONTROLLER MODULE LOADED")
+console.log("VOICE CONTROLLER MODULE LOADED");
+// console.log(`window id = ${window.top}`);
+console.log(window)
+console.log(window.parent)
+console.log(window.top === window)
+
+setTimeout(() => {
+  console.log("Frames");
+  for (let i = 0; i < window.frames.length; i++) {
+    console.log(window.frames[i]);
+  }
+}, 1000);
+console.log("passed window log");
+// console.log(`window.top.get().windowID = ${browser.window.top.get().windowID}`)
 
 // use singleton pattern
 export let voiceController = new VoiceController();
