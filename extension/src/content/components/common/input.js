@@ -1,6 +1,6 @@
 import * as dom from 'shared/utils/dom';
 import * as keys from 'shared/utils/keys';
-import VoiceController from './voice-controller';
+import { voiceController } from './voice-controller';
 
 const ENABLE_KEYBOARD = true;
 
@@ -15,8 +15,8 @@ export default class InputComponent {
       target.addEventListener('keyup', this.onKeyUp.bind(this));
     }
 
-    // Connect SpeechV with vim vixen
-    new VoiceController(this)
+    // Connect SpeechV with Vim Vixen
+    voiceController.addInputComponent(this);
   }
 
   /*
