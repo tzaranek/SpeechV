@@ -1,1 +1,4 @@
 *.pyc
+voice.egg-info/*
+.vscode
+env/*
