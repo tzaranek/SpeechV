@@ -16,39 +16,40 @@ export default class InputComponent {
     }
 
     // listen for messages from the voice controller
-    browser.runtime.onMessage.addListener(this.broadcastVoiceCommand.bind(this));
+    browser.runtime.onMessage.addListener(this.broadcastVirtualKeystroke.bind(this));
   }
 
   /*
    * Broadcast a voice command to vim-vixen. Keystrokes are of the form:
    * {
-   *   key: modifierdKeyName(e.key),                                                  
-   *   repeat: e.repeat,                                                              
-   *   shiftKey: shift,                                                               
-   *   ctrlKey: e.ctrlKey,                                                            
-   *   altKey: e.altKey,                                                              
-   *   metaKey: e.metaKey,                                                            
+   *   key: char,
+   *   repeat: bool,
+   *   shiftKey: bool,
+   *   ctrlKey: bool,
+   *   altKey: bool,
+   *   metaKey: bool
    * }
    */
-  broadcastVoiceCommand(message, sender, sendResponse) {
-    if (message.type !== messages.SPEECHV_VIRTUAL_KEYSTROKES) {
+  broadcastVirtualKeystroke(message, sender, sendResponse) {
+    if (message.type !== messages.SPEECHV_VIRTUAL_KEYSTROKE) {
       return false; //FIXME: what should be returned?
     } else if (window !== window.top) {
-      // ensure voice commands are only counted once
+      // ensure keystrokes are counted only once
       return false; //FIXME: what should be returned?
     }
 
-    for (let keystroke of message.command) {
-      console.log("Broadcasting keystroke");
-      console.log(keystroke);
+    console.log("Broadcasting keystroke");
+    console.log(message.keystroke);
 
-      // Talk to listeners until one processes our keystroke
-      for (let listener of this.onKeyListeners) {
-        if (listener(keystroke)) {
-          break;
-        }
+    for (let listener of this.onKeyListeners) {
+      // stop if they tell us to
+      let stop = listener(message.keystroke);
+      if (stop) {
+        break;
       }
     }
+    sendResponse()
+    console.log("done broadcasting")
   }
 
   onKey(cb) {
@@ -88,7 +89,6 @@ export default class InputComponent {
     }
 
     let key = keys.fromKeyboardEvent(e);
-
     for (let listener of this.onKeyListeners) {
       let stop = listener(key);
       if (stop) {

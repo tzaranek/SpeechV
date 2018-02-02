@@ -42,7 +42,7 @@ export default {
   FOLLOW_ACTIVATE: 'follow.activate',
   FOLLOW_KEY_PRESS: 'follow.key.press',
 
-  SPEECHV_VIRTUAL_KEYSTROKES: 'speechv.virtual.keystrokes',
+  SPEECHV_VIRTUAL_KEYSTROKE: 'speechv.virtual.keystroke',
 
   FIND_NEXT: 'find.next',
   FIND_PREV: 'find.prev',

@@ -24,12 +24,15 @@ class VoiceController {
       ctrlKey: false,
       altKey: false,
       metaKey: false
+    },
+    {
+      key: 'b',
+      repeat: false,
+      shiftKey: false,
+      ctrlKey: false,
+      altKey: false,
+      metaKey: false
     }];
-
-    let message = {
-      type: messages.SPEECHV_VIRTUAL_KEYSTROKES,
-      command: command
-    }
 
     // send to the active tab in the focused window i.e. the focused tab
     browser.tabs.query({ currentWindow: true, active: true }).then((focusedTabs) => {
@@ -41,10 +44,38 @@ class VoiceController {
         return;
       }
       let focusedTab = focusedTabs[0];
-      browser.tabs.sendMessage(focusedTab.id, message).then((response) => {
-        console.log("Voice command response:");
-        console.log(response);
+
+      let keystroke_chain = new Promise((resolve, reject) => {
+        resolve();
       });
+
+      // send each keystroke separately to simulate how keystrokes are actually sent
+      for (let keystroke of command) {
+        let message = {
+          type: messages.SPEECHV_VIRTUAL_KEYSTROKE,
+          keystroke: keystroke
+        };
+        keystroke_chain = keystroke_chain.then(() => {
+          return new Promise((resolve, reject) => {
+            console.log("chain:")
+            console.log(keystroke)
+
+            browser.tabs.sendMessage(focusedTab.id, message).then((response) => {
+              console.log("Voice keystroke response:");
+              console.log(response);
+              resolve()
+            })
+          });
+        }).then(() => {
+          // rate limit keystrokes so that Vim Vixen can update all the
+          // state it needs before processing the next one
+          // in normal usage, rate limiting is unneeded but it's essential
+          // for testing because inputs are issued without delay
+          return new Promise((resolve, reject) => {
+            setTimeout(resolve, 100);
+          });
+        });
+      }
     });
   }
 }
