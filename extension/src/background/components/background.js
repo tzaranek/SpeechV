@@ -5,6 +5,11 @@ import * as settingActions from 'background/actions/setting';
 import * as tabActions from 'background/actions/tab';
 import * as commands from 'shared/commands';
 
+// must be imported to load the singleton
+import { voiceController } from 'background/components/voice-controller';
+
+console.log("BACKGROUND COMPONENT LOADED");
+
 export default class BackgroundComponent {
   constructor(store) {
     this.store = store;
@@ -24,30 +29,30 @@ export default class BackgroundComponent {
   onMessage(message, sender) {
     let settings = this.store.getState().setting;
     switch (message.type) {
-    case messages.BACKGROUND_OPERATION:
-      return this.store.dispatch(
-        operationActions.exec(message.operation, sender.tab),
-        sender);
-    case messages.OPEN_URL:
-      if (message.newTab) {
+      case messages.BACKGROUND_OPERATION:
         return this.store.dispatch(
-          tabActions.openNewTab(message.url), sender);
-      }
-      return this.store.dispatch(
-        tabActions.openToTab(message.url, sender.tab), sender);
-    case messages.CONSOLE_ENTER_COMMAND:
-      this.store.dispatch(
-        commandActions.exec(message.text, settings.value),
-        sender
-      );
-      return this.broadcastSettingsChanged();
-    case messages.SETTINGS_QUERY:
-      return Promise.resolve(this.store.getState().setting.value);
-    case messages.CONSOLE_QUERY_COMPLETIONS:
-      return commands.complete(message.text, settings.value);
-    case messages.SETTINGS_RELOAD:
-      this.store.dispatch(settingActions.load());
-      return this.broadcastSettingsChanged();
+          operationActions.exec(message.operation, sender.tab),
+          sender);
+      case messages.OPEN_URL:
+        if (message.newTab) {
+          return this.store.dispatch(
+            tabActions.openNewTab(message.url), sender);
+        }
+        return this.store.dispatch(
+          tabActions.openToTab(message.url, sender.tab), sender);
+      case messages.CONSOLE_ENTER_COMMAND:
+        this.store.dispatch(
+          commandActions.exec(message.text, settings.value),
+          sender
+        );
+        return this.broadcastSettingsChanged();
+      case messages.SETTINGS_QUERY:
+        return Promise.resolve(this.store.getState().setting.value);
+      case messages.CONSOLE_QUERY_COMPLETIONS:
+        return commands.complete(message.text, settings.value);
+      case messages.SETTINGS_RELOAD:
+        this.store.dispatch(settingActions.load());
+        return this.broadcastSettingsChanged();
     }
   }
 

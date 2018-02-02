@@ -1,6 +1,6 @@
 import * as dom from 'shared/utils/dom';
 import * as keys from 'shared/utils/keys';
-import { voiceController } from './voice-controller';
+import * as messages from 'shared/messages';
 
 const ENABLE_KEYBOARD = true;
 
@@ -15,14 +15,12 @@ export default class InputComponent {
       target.addEventListener('keyup', this.onKeyUp.bind(this));
     }
 
-    // Connect SpeechV with Vim Vixen
-    voiceController.addInputComponent(this);
+    // listen for messages from the voice controller
+    browser.runtime.onMessage.addListener(this.broadcastVoiceCommand.bind(this));
   }
 
   /*
-   * Broadcast a keystroke to vim-vixen. Returns true if a
-   * listener processes the keystroke. Keystrokes are of the form: 
-   * 
+   * Broadcast a voice command to vim-vixen. Keystrokes are of the form:
    * {
    *   key: modifierdKeyName(e.key),                                                  
    *   repeat: e.repeat,                                                              
@@ -31,22 +29,27 @@ export default class InputComponent {
    *   altKey: e.altKey,                                                              
    *   metaKey: e.metaKey,                                                            
    * }
-   * 
-   * See src/shared/utils/keys.js for more info
    */
-  broadcast(keystroke) {
-    console.log("Broadcasting keystroke")
-    console.log(keystroke)
+  broadcastVoiceCommand(message, sender, sendResponse) {
+    if (message.type !== messages.SPEECHV_VIRTUAL_KEYSTROKES) {
+      return false; //FIXME: what should be returned?
+    } else if (window !== window.top) {
+      // ensure voice commands are only counted once
+      return false; //FIXME: what should be returned?
+    }
 
-    // Talk to listeners until one processes our keystroke
-    for (let listener of this.onKeyListeners) {
-      if (listener(keystroke)) {
-        return true;
+    for (let keystroke of message.command) {
+      console.log("Broadcasting keystroke");
+      console.log(keystroke);
+
+      // Talk to listeners until one processes our keystroke
+      for (let listener of this.onKeyListeners) {
+        if (listener(keystroke)) {
+          break;
+        }
       }
     }
-    return false;
   }
-
 
   onKey(cb) {
     this.onKeyListeners.push(cb);
