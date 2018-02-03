@@ -1,38 +1,26 @@
 // TODO: receive commands from an external application
-// TODO: force execution of commands in sequential order
 // TODO: allow commands to be cancelled
 
 import * as messages from 'shared/messages';
 
 class VoiceController {
   constructor() {
-    console.log("This should only print once")
-    setTimeout(this.onVoiceCommand.bind(this), 3000);
-
-    // TODO: listen to native application. bind to onVoiceCommand
+    let port = browser.runtime.connectNative("forwarder.py")
+    port.onDisconnect.addListener((p) => {
+      if (p.error) {
+        console.log("disconnected. error:")
+        console.log(p.error.message)
+      } else {
+        console.log("disconnected");
+      }
+    })
+    port.onMessage.addListener(this.exeVoiceCommand.bind(this));
   }
 
-  onVoiceCommand(command) {
-    // TODO: communicate with native application
-    // TODO: add failure callbacks for promise chains
-
-    // proof of concept
-    command = [{
-      key: 'f',
-      repeat: false,
-      shiftKey: false,
-      ctrlKey: false,
-      altKey: false,
-      metaKey: false
-    },
-    {
-      key: 'b',
-      repeat: false,
-      shiftKey: false,
-      ctrlKey: false,
-      altKey: false,
-      metaKey: false
-    }];
+  // TODO: add failure callbacks for promise chains
+  exeVoiceCommand(command) {
+    console.log("Received command:")
+    console.log(command)
 
     // send to the active tab in the focused window i.e. the focused tab
     browser.tabs.query({ currentWindow: true, active: true }).then((focusedTabs) => {

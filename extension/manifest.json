@@ -15,8 +15,12 @@
   "content_scripts": [
     {
       "all_frames": true,
-      "matches": [ "<all_urls>" ],
-      "js": [ "build/content.js" ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "build/content.js"
+      ],
       "run_at": "document_end",
       "match_about_blank": true
     }
@@ -31,7 +35,8 @@
     "sessions",
     "storage",
     "tabs",
-    "clipboardRead"
+    "clipboardRead",
+    "nativeMessaging"
   ],
   "web_accessible_resources": [
     "build/console.html",

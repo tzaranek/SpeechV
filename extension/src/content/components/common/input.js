@@ -90,6 +90,7 @@ export default class InputComponent {
 
     let key = keys.fromKeyboardEvent(e);
     for (let listener of this.onKeyListeners) {
+
       let stop = listener(key);
       if (stop) {
         e.preventDefault();
