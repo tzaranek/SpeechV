@@ -1,5 +1,6 @@
-// TODO: receive commands from an external application
 // TODO: allow commands to be cancelled
+// TODO: add configuration options for letters used in hints
+// TODO: comprehensively error handle
 
 import * as messages from 'shared/messages';
 
