@@ -1,0 +1,9 @@
+{
+    "name": "forwarder.py",
+    "description": "Forwards SpeechV commands as keystrokes",
+    "path": "C:\\Users\\taz53\\Documents\\W18\\SpeechV\\forwarder.bat",
+    "type": "stdio",
+    "allowed_extensions": [
+        "vim-vixen@i-beam.org"
+    ]
+}
