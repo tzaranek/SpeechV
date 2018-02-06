@@ -10,14 +10,16 @@ from time import sleep
 def runTests(gui):
     sleep(1)
     gui.textMode()
-    sleep(1)
-    gui.commandMode()
-    sleep(1)
-    gui.recording()
-    sleep(1)
-    gui.ready()
-    sleep(1)
-    gui.showError()
+    # sleep(1)
+    # gui.commandMode()
+    # sleep(1)
+    # gui.recording()
+    # sleep(1)
+    # gui.ready()
+    # sleep(1)
+    # gui.showError()
+    sleep(3)
+    gui.commandRecognized()
     
 #The GUI library does NOT like it if you run the GUI from anything
 #other than the main thread, so hopefully we can 

@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 from enum import Enum
 import platform
 import os
@@ -15,8 +15,9 @@ class Mode(Enum):
 
 #Color codings for different modes
 RECORDING = "#EC7063"	#Red
-READY = "#52BE80"		#Green
+RECOGNIZED = "#52BE80"		#Green
 HELP = "#E5E7E9"		#Off-white
+READY = "#3972CE"          #Blue
 
 class GUIClass:
 	#These positions were hard-coded for CAEN windows 10
@@ -47,6 +48,14 @@ class GUIClass:
 	#Update the GUI to "Ready"
 	def ready(self):
 		self.label.config(bg=READY)
+
+	#Call when there is a recognized command
+	def commandRecognized(self):
+			mode = self.getMode()
+			self.setText("Success")
+			self.label.config(bg=READY)
+			t = Thread(target=self.restoreMode, args=[mode])
+			t.start()
 
 	#set the GUI to the given mode
 	def setMode(self, m):
