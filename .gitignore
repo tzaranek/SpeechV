@@ -1,4 +1,6 @@
-*.pyc
-voice.egg-info/*
 .vscode
-env/*
+env/
+*.pyc
+.DS_Store
+__pycache__/
+*.egg-info/

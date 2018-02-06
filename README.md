@@ -1,5 +1,5 @@
 # SpeechV
-## Set up Voice
+## Set up
 ### Install dependencies (for Unix systems)
 1. Use Homebrew to install portaudio and swig (required for dependencies)
 ```bash
