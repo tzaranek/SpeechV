@@ -4,8 +4,10 @@ import json
 import struct
 import sys
 import win32gui, win32con, win32api
+
 from keyboard import KeyboardEvent
 from window_properties import currentApp
+import error
 
 class EncoderOverload(json.JSONEncoder):
     """
@@ -124,7 +126,7 @@ class state:
         if tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            print("Parsing ALT command failed. Could not recognize: {}".format(tokens[0]))
+            error.Logger.log(error.ParseError.ALT, tokens[0])
 
         self.recursiveParse(tokens[1:])
 
@@ -145,7 +147,7 @@ class state:
             if KeyboardEvent.keyDown(token):
                 self.held.add(token)
             else:
-                print("Parsing HOLD command failed. Could not recognize: {}".format(token))
+                error.Logger.log(error.ParseError.HOLD, token)
                 clearHeld()
                 self.recursiveParse(tokens[tokens.index(token)+1:])
                 return
@@ -163,7 +165,7 @@ class state:
         elif tokens[0] == 'FULL':
             pass
         else:
-            print("Parsing RESIZE command failed. Could not recognize: {}".format(tokens[0]))
+            error.Logger.log(error.ParseError.RESIZE, tokens[0])
 
         self.recursiveParse(tokens[1:])
 
