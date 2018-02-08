@@ -34,23 +34,44 @@ class KeyboardMessage():
         return self.message
 
 browserKeywords = {
-    "UP": KeyboardMessage('j'),
-    "DOWN": KeyboardMessage('k'),
-    "LEFT": KeyboardMessage('h'),
-    "RIGHT": KeyboardMessage('l'),
-    "CONTROL UP": KeyboardMessage('u', ctrlKey=True),
-    "CONTROL DOWN": KeyboardMessage('d', ctrlKey=True),
-    "CONTROL UPPER": KeyboardMessage('b', ctrlKey=True),
-    "CONTROL DOWNER": KeyboardMessage('f', ctrlKey=True),
+    'UP'             : KeyboardMessage('j'),
+    'DOWN'           : KeyboardMessage('k'),
+    'LEFT'           : KeyboardMessage('h'),
+    'RIGHT'          : KeyboardMessage('l'),
+    'CONTROL UP'     : KeyboardMessage('u', ctrlKey=True),
+    'CONTROL DOWN'   : KeyboardMessage('d', ctrlKey=True),
+    'CONTROL UPPER'  : KeyboardMessage('b', ctrlKey=True),
+    'CONTROL DOWNER' : KeyboardMessage('f', ctrlKey=True),
 
-    "0": KeyboardMessage('0'),
-    "ZERO": KeyboardMessage('0'),
-    "DOLLAR": KeyboardMessage('$'), # TODO: does this recognize dollar?
+    '0'              : KeyboardMessage('0'),
+    'ZERO'           : KeyboardMessage('0'),
+    'DOLLAR'         : KeyboardMessage('$'),
 
-    "TOP": KeyboardMessage('gg'),
-    "BOTTOM": KeyboardMessage('G')
+    'TOP'            : KeyboardMessage('gg'),
+    'BOTTOM'         : KeyboardMessage('G'),
 
-    # TODO: rest of messages
+    'DELETE'         : KeyboardMessage('d'),
+    'UNDO'           : KeyboardMessage('u'),
+    'PREVIOUS'       : KeyboardMessage('K'),
+    'NEXT'           : KeyboardMessage('J'),
+    'REFRESH'        : KeyboardMessage('r'),
+    'DUPLICATE'      : KeyboardMessage('zd'),
+
+    'FOLLOW'         : KeyboardMessage('f'),
+    'OPEN'           : KeyboardMessage('F'),
+    'BACK'           : KeyboardMessage('H'),
+    'FORWARD'        : KeyboardMessage('L'),
+
+    'ZOOM IN'        : KeyboardMessage('zi'),
+    'ZOOM OUT'       : KeyboardMessage('zo'),
+    'ZOOM DEFAULT'   : KeyboardMessage('zd'),
+
+    'FIND'           : KeyboardMessage('f', ctrlKey=True),
+    'ADDRESS'        : KeyboardMessage('l', ctrlKey=True),
+    'NEW TAB'        : KeyboardMessage('t', ctrlKey=True),
+    'NEW WINDOW'     : KeyboardMessage('n', ctrlKey=True),
+    'PRINT'          : KeyboardMessage('p', ctrlKey=True),
+    'SAVE'           : KeyboardMessage('s', ctrlKey=True),
 }
 
 # source: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging
