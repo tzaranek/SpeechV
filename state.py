@@ -102,7 +102,8 @@ class state:
         # Define bits for modes we can be in
         self.NORMAL     = 2**0
         self.HOLDING    = 2**1
-        self.INSERT     = 2**2
+        self.FOLLOW     = 2**2  # Hacky meta-method to accept letters
+        self.INSERT     = 2**3
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
@@ -128,7 +129,7 @@ class state:
         else:
             error.Logger.log(error.ParseError.ALT, tokens[0])
 
-        self.recursiveParse(tokens[1:])
+        self.parseImpl(tokens[1:])
 
 
     def parseHold(self, tokens):
@@ -141,7 +142,7 @@ class state:
         for token in tokens:
             if token == 'ESCAPE':
                 clearHeld()
-                self.recursiveParse(tokens[tokens.index(token)+1:])
+                self.parseImpl(tokens[tokens.index(token)+1:])
                 return
 
             if KeyboardEvent.keyDown(token):
@@ -149,7 +150,7 @@ class state:
             else:
                 error.Logger.log(error.ParseError.HOLD, token)
                 clearHeld()
-                self.recursiveParse(tokens[tokens.index(token)+1:])
+                self.parseImpl(tokens[tokens.index(token)+1:])
                 return
 
 
@@ -177,26 +178,51 @@ class state:
         else:
             error.Logger.log(error.ParseError.RESIZE, tokens[0])
 
-        self.recursiveParse(tokens[1:])
+        self.parseImpl(tokens[1:])
 
 
     def parseEscape(self, tokens):
         self.switchMode()
-        self.recursiveParse(tokens)
+        self.parseImpl(tokens)
 
 
     def forwardBrowser(self, tokens):
         tokenStr = ' '.join(tokens)
         if tokenStr in browserKeywords:
+            # Hacky interception of next few chars to send with follow
+            if tokenStr == 'FOLLOW':
+                self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
+        else:
+            error.Logger.log(error.ParseError.BROWSER, tokenStr)
 
 
-    def recursiveParse(self, tokens, levelDict = None):
+    def parseImpl(self, tokens, levelDict = None):
         if not tokens:
             return
 
         if self.mode & self.HOLDING:
             self.parseHold(tokens)
+            return
+
+        # TODO: better method of accepting letters to follow
+        #   currently just takes all tokens as individual letters and sends
+        #   them on assuming that there's no point in issuing commands
+        #   before the link is followed. Also, there should not be more than 3
+        if self.mode & self.FOLLOW:
+            self.mode &= ~self.FOLLOW
+
+            if len(tokens) > 3:
+                print("OOPS")
+                return
+            for token in tokens:
+                if len(token) != 1:
+                    print("OOPS")
+                    return
+
+            for token in tokens:
+                send_message(encode_message(KeyboardMessage(token)))
+
             return
 
         if levelDict == None:
@@ -205,12 +231,11 @@ class state:
         w, rest = tokens[0], tokens[1:]
         if w in levelDict:
             if isinstance(levelDict[w], dict):
-                self.recursiveParse(rest, levelDict[w])
+                self.parseImpl(rest, levelDict[w])
             else:
                 levelDict[w](rest)
         else:
-            # TODO: change this for testing w/ firefox
-            if currentApp() == 'Google Chrome':
+            if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             else:
                 print("Command not found")
@@ -222,20 +247,31 @@ class state:
             text = re.findall(r"[a-zA-Z]+", command)
             print("Tokens parsed: {}".format(text))
 
-            self.recursiveParse(text)
+            self.parseImpl(text)
         else:
             if command == "caps lock":
                 self.switchMode(command)
             else:
                 print("Sending: \"{}\" to top application".format(command))
 
+        # sleep after parsing to allow commands to send appropriately
+        time.sleep(0.25)
+
 v = state()
-v.parse("alt tab")
 v.parse("hold alt")
-time.sleep(1)
 v.parse("tab")
-time.sleep(1)
 v.parse("tab")
-time.sleep(1)
 v.parse("escape")
-v.parse("control up")
+v.parse("zoom in")
+v.parse("follow")
+v.parse("a a")
+v.parse("address")
+v.parse("resize left")
+time.sleep(0.75)
+v.parse("resize right")
+time.sleep(0.75)
+v.parse("resize up")
+time.sleep(0.75)
+v.parse("resize down")
+time.sleep(0.75)
+v.parse("resize full")
