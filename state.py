@@ -154,16 +154,26 @@ class state:
 
 
     def parseResize(self, tokens):
+        screen_width = win32api.GetSystemMetrics(0)
+        screen_height = win32api.GetSystemMetrics(1)
+
+        half_width = screen_width // 2
+        half_height = screen_height // 2
+
+        fg_hwnd = win32gui.GetForegroundWindow()
+        def resize(x, y, w, h):
+            win32gui.MoveWindow(fg_hwnd, x, y, w, h, True)
+
         if tokens[0] == 'LEFT':
-            pass
+            resize(0, 0, half_width, screen_height)
         elif tokens[0] == 'RIGHT':
-            pass
+            resize(half_width + 1, 0, half_width, screen_height)
         elif tokens[0] == 'UP':
-            pass
+            resize(0, 0, screen_width, half_height)
         elif tokens[0] == 'DOWN':
-            pass
+            resize(0, half_height + 1, screen_width, half_height)
         elif tokens[0] == 'FULL':
-            pass
+            resize(0, 0, screen_width, screen_height)
         else:
             error.Logger.log(error.ParseError.RESIZE, tokens[0])
 
