@@ -1,0 +1,42 @@
+hold alt
+hold control
+hold shift
+tab
+escape
+meta
+up
+down
+left
+right
+control up
+control down
+control upper
+control downer
+zero
+dollar
+top
+bottom
+delete
+undo
+previous
+next
+refresh
+duplicate
+follow
+open
+back
+forward
+zoom in
+zoom out
+zoom default
+find
+address
+new tab
+new window
+print
+save
+resize left
+resize right
+resize up
+resize down
+resize file
