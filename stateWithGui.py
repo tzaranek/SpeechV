@@ -98,7 +98,7 @@ def send_message(encoded_message):
 
 
 class state:
-    def __init__(self):
+    def __init__(self, g):
         # Define bits for modes we can be in
         self.NORMAL     = 2**0
         self.HOLDING    = 2**1
@@ -107,7 +107,7 @@ class state:
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
-
+        self.gui = g
         self.held = set()
 
         self.commands = {
@@ -137,6 +137,7 @@ class state:
             self.mode &= ~self.HOLDING
             for key in self.held:
                 KeyboardEvent.keyUp(key)
+                self.gui.removeHold(key)
 
         self.mode |= self.HOLDING
         for token in tokens:
@@ -147,6 +148,7 @@ class state:
 
             if KeyboardEvent.keyDown(token):
                 self.held.add(token)
+                self.gui.addHold(token)
             else:
                 error.Logger.log(error.ParseError.HOLD, token)
                 clearHeld()
@@ -240,6 +242,7 @@ class state:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             else:
+                self.gui.showError()
                 print("Command not found")
 
 
