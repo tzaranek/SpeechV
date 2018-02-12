@@ -41,4 +41,5 @@ resize up
 resize down
 resize file
 help
-close help
+help browser
+help close

@@ -1,0 +1,37 @@
+==========================
+Browser-specific commands
+==========================
+
+SpeechV supports navigating web pages by finding and labelling all links/input fields on the page. You can then select an input field or follow a link using the label. Commands for viewing web pages, opening tabs and other browser functions are supported.
+
+Navigating web pages
+---------------------
+"Follow": Find and label links and input fields
+"Open <label>": Open link in new tab
+"Back": Go back in history
+"Forward": Go forward in history
+
+Viewing pages
+--------------
+"Up/down": Scroll vertically
+"Left/right": Scroll horizontally
+"Control up/down": Scroll vertically by half of a screen
+"Control upper/downer": Scroll pages by a screen
+"Top/bottom": Scroll to top/bottom of page
+"Zero/dollar": Scroll a page to leftmost/rightmost
+"Zoom in/out": Zoom in/out
+"Zoom default": Set default zoom level
+
+Browser commands
+-----------------
+"Delete": Close current tab
+"Undo": Reopen closed tab
+"Previous/next": Select previous/next tab
+"Refresh": Reload current tab
+"Duplicate": Duplicate current tab
+"Find": Search for text on a page
+"Address": Select address box
+"New tab": Open a new tab
+"New window": Open a new window
+"Print": Print current page
+"Save": Save current page
