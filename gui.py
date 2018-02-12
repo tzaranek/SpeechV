@@ -132,14 +132,22 @@ class GUI:
 	#Display the help menu
 	def helpMode(self):
 		self.setText("Help\nMenu!")
+		with open("help_text.txt", 'r') as text_file:
+			help_text = text_file.read()
 		#Implement Help menu
-		pass
+		self.window = Toplevel()
+		canvas = Canvas(master=self.window, height=800, width=1000, scrollregion=(0,0,1000,2000))
+		canvas.grid()
+		scrollY = Scrollbar(self.window, orient=VERTICAL,command=canvas.yview)
+		scrollY.grid(row=0, column=1, sticky=N+S)
+		canvas['yscrollcommand']=scrollY.set
+		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
+
 
 	#Called upon closing the help menu?
 	def closeHelpMenu(self):
 		self.setMode(Mode.COMMAND)
-		#Close menu
-		pass
+		self.window.destroy()
 
 	#Updates the GUI to reflect command mode
 	def commandMode(self):

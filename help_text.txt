@@ -1,0 +1,64 @@
+=============
+SpeechV Help
+=============
+
+This help document lists the commands available in SpeechV and instructions on how to troubleshoot common problems.
+
+General commands
+-----------------
+
+SpeechV supports some common commands required for basic operation such as resizing windows. SpeechV also recognizes keyboard shortcuts input via voice commands.
+
+Entering keyboard shortcuts:
+    To hold a key, "hold" followed by the key to be held (alt, control, shift). Any number of keys can be concurrently held. To release all held keys, "escape"
+    Examples:
+    - To switch between applications: "hold alt tab" "tab" ... "escape"
+    - To launch security screen: "hold control hold alt delete escape"
+
+Resizing windows:
+    "Resize left/right": Move current app into the left/right half of the screen
+    "Resize up/down": Move current app into top/bottom half of the screen
+    "Resize file": Make current app fullscreen
+
+Browser-specific commands
+--------------------------
+
+SpeechV supports navigating web pages by finding and labelling all links/input fields on the page. You can then select an input field or follow a link using the label. Commands for viewing web pages, opening tabs and other browser functions are supported.
+
+Navigating web pages:
+    "Follow": Find and label links and input fields
+    "Open <label>": Open link in new tab
+    "Back": Go back in history
+    "Forward": Go forward in history
+
+Viewing pages:
+    "Up/down": Scroll vertically
+    "Left/right": Scroll horizontally
+    "Control up/down": Scroll vertically by half of a screen
+    "Control upper/downer": Scroll pages by a screen
+    "Top/bottom": Scroll to top/bottom of page
+    "Zero/dollar": Scroll a page to leftmost/rightmost
+    "Zoom in/out": Zoom in/out
+    "Zoom default": Set default zoom level
+
+Browser commands:
+    "Delete": Close current tab
+    "Undo": Reopen closed tab
+    "Previous/next": Select previous/next tab
+    "Refresh": Reload current tab
+    "Duplicate": Duplicate current tab
+    "Find": Search for text on a page
+    "Address": Select address box
+    "New tab": Open a new tab
+    "New window": Open a new window
+    "Print": Print current page
+    "Save": Save current page
+
+Troubleshooting
+----------------
+
+SpeechV cuts you off while you're still speaking:
+    In Settings, increase the audio timeout. This is the amount of silence that marks the end of a command. Higher audio timeout allows for longer pauses in the middle of a command, but slows down overall performance.
+
+SpeechV can't hear you or processes commands when you're not speaking:
+    In Settings, recalibrate the microphone. SpeechV will listen to your surroundings and adjust appropriately to distinguish background noise from voice input. 

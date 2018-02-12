@@ -1,76 +1,44 @@
-Top-level
-=========
-Between applications: alt-tab
-Between modes: escape
-
-Holding a key
-    - Sometimes it's necessary to continously 'hold' a key down
-        - e.g. alt-tab while holding alt will show the available apps and pan
-          through them on successive 'tab's
-    - represent through hold/release combination
-        - 'hold alt tab' ... 'tab' .... 'tab tab' .... 'escape'
-    - hold must be followed by a 'meta' key like alt, control, shift
-    - any number of these will be concurrently 'held'
-    - to hold a meta, must prefix command with 'hold' keyword
-    - 'release' releases all meta keys being held
-
-Text entry
-----------
-Meta enter a word: meta <word>
-    - the first word after meta is recognized
-    - e.g.:
-        - 'meta meta modes' will put 'meta modes' in text field
-
-
-Browser related
-===============
-Since vixen (and normal shortcuts) automatically puts the cursor into 'insert'
-when a text field is selected, modes will be changed after those commands are
-issued. (e.g. follow -> <select text field>, control l)
-
-Scrolling
----------
-up, down: scroll vertically (j,k)
-left, right: scroll horizontally (h, l)
-control up, control down: scroll pages by half of screen (Ctrl+U, Ctrl+D)
-control upper, control downer: scroll pages by a screen (Ctrl+B, Ctrl+F)
-0(or zero), dollar: scroll a page to leftmost/rightmost (0, $)
-top, bottom: scroll to top/bottom (translated to gg, G)
-
-Tabs
-----
-delete: delete current tab (d)
-undo: reopen close tab (u)
-previous, next: select prev or next tab (K, J)
-refresh: reload current tab (r)
-duplicate: duplicate current tab (zd)
-
-Navigation
-----------
-follow: start following links in the page (f)
-        (Note: vixen also finds input fields here)
-open: open link in new tab (F)
-back: go back in history (H)
-forward: go forward in history (L)
-
-Misc
-----
-zoom in, zoom out: zoom-in/zoom-out (zi, zo)
-zoom default: Set default zoom level (zz)
-
-Non-Vixen
----------
-find: search for text on page
-address: move cursor to address box
-new tab: new tab
-new window: new browser window
-print: print current page
-save: save current page
-
-
-Window resizing
-===============
-resize left, right: move currently focused app into left/right half of screen
-resize up, down: move currently focused app into top/bottom half of screen
-resize file: fullscreen the page
-
+hold alt
+hold control
+hold shift
+tab
+escape
+meta
+up
+down
+left
+right
+control up
+control down
+control upper
+control downer
+zero
+dollar
+top
+bottom
+delete
+undo
+previous
+next
+refresh
+duplicate
+follow
+open
+back
+forward
+zoom in
+zoom out
+zoom default
+find
+address
+new tab
+new window
+print
+save
+resize left
+resize right
+resize up
+resize down
+resize file
+help
+close help
