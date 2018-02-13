@@ -8,17 +8,7 @@ import win32gui, win32con, win32api
 from keyboard import KeyboardEvent
 from window_properties import currentApp
 import error
-
-class EncoderOverload(json.JSONEncoder):
-    """
-    JSONEncoder subclass that leverages an object's `__json__()` method,
-    if available, to obtain its default JSON representation. 
-
-    """
-    def default(self, obj):
-        if hasattr(obj, '__json__'):
-            return obj.__json__()
-        return json.JSONEncoder.default(self, obj)
+from forwarder import encode_message, send_message
 
 
 class KeyboardMessage():
@@ -75,26 +65,6 @@ browserKeywords = {
     'PRINT'          : KeyboardMessage('p', ctrlKey=True),
     'SAVE'           : KeyboardMessage('s', ctrlKey=True),
 }
-
-# source: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging
-def encode_message(message_content):
-    encoded_content = json.dumps(message_content, cls=EncoderOverload)
-    encoded_length = struct.pack('@I', len(encoded_content))
-    return {'length': encoded_length, 'content': encoded_content}
-
-
-# source: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging
-def send_message(encoded_message):
-    try:
-        # python 2.7 compatible - supported because firefox insists on using v2
-        sys.stdout.write(encoded_message['length'])
-        sys.stdout.write(encoded_message['content'].encode())
-        sys.stdout.flush()
-    except TypeError:
-        # python 3 compatible
-        sys.stdout.buffer.write(encoded_message['length'])
-        sys.stdout.buffer.write(encoded_message['content'].encode())
-        sys.stdout.flush()
 
 
 class state:
@@ -231,8 +201,8 @@ class state:
             levelDict = self.commands
 
         w, rest = tokens[0], tokens[1:]
-        print(w)
-        print(levelDict)
+        # print(w)
+        # print(levelDict)
         if w in levelDict:
             if isinstance(levelDict[w], dict):
                 self.parseImpl(rest, levelDict[w])

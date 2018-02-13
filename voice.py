@@ -11,18 +11,19 @@ import stateWithGui
 k = 0
 
 def recognize(audio_data, command_set):
-    global k
-    if k == 0:
-        k += 1
-        return "HOLD ALT"
-    elif k == 1:
-        k += 1
-        return "TAB"
-    elif k == 2:
-        k += 1
-        return "ESCAPE"
-    else:
-        return "Done"
+    return "Follow J"
+    # global k
+    # if k == 0:
+    #     k += 1
+    #     return "HOLD ALT"
+    # elif k == 1:
+    #     k += 1
+    #     return "TAB"
+    # elif k == 2:
+    #     k += 1
+    #     return "ESCAPE"
+    # else:
+    #     return "Done"
     client = speech.SpeechClient()
 
     flac_data = audio_data.get_flac_data(
