@@ -130,7 +130,7 @@ class GUI:
 		t.start()
 
 	#Display the help menu
-	def helpMode(self, type):
+	def helpMode(self, type="DEFAULT"):
 		if hasattr(self, 'window'):
 		    self.window.destroy()
 

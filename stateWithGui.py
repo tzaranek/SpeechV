@@ -159,11 +159,11 @@ class state:
         self.parseImpl(tokens)
 
     def parseHelp(self,tokens):
-        if tokens[0] is None:
+        if len(tokens) == 0:
             self.gui.helpMode()
-        elif tokens[1] == 'BROWSER':
+        elif tokens[0] == 'BROWSER':
             self.gui.helpMode('browser')
-        elif tokens[2] == 'CLOSE':
+        elif tokens[0] == 'CLOSE':
             self.gui.closeHelpMenu()
         else:
             error.Logger.log(error.ParseError.HELP, tokens[0])

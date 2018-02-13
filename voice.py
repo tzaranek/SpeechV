@@ -11,17 +11,20 @@ import stateWithGui
 k = 0
 
 def recognize(audio_data, command_set):
-    return "Follow J"
     # global k
+    # return "FOLLOW"
     # if k == 0:
     #     k += 1
-    #     return "HOLD ALT"
+    #     return "HELP"
     # elif k == 1:
     #     k += 1
-    #     return "TAB"
+    #     return "HELP CLOSE"
     # elif k == 2:
     #     k += 1
-    #     return "ESCAPE"
+    #     return "HELP BROWSER"
+    # elif k == 3:
+    #     k += 1
+    #     return "HELP CLOSE"
     # else:
     #     return "Done"
     client = speech.SpeechClient()

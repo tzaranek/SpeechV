@@ -6,7 +6,7 @@ import * as messages from 'shared/messages';
 
 class VoiceController {
   constructor() {
-    let port = browser.runtime.connectNative("forwarder.py")
+    let port = browser.runtime.connectNative("speechV.py")
     port.onDisconnect.addListener((p) => {
       if (p.error) {
         console.log("disconnected. error:")
