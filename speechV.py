@@ -1,5 +1,5 @@
 import gui
-import stateWithGui
+import state
 import voice
 from threading import Thread
 import log

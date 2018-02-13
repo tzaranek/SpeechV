@@ -8,17 +8,7 @@ import win32gui, win32con, win32api
 from keyboard import KeyboardEvent
 from window_properties import currentApp
 import log
-
-class EncoderOverload(json.JSONEncoder):
-    """
-    JSONEncoder subclass that leverages an object's `__json__()` method,
-    if available, to obtain its default JSON representation. 
-
-    """
-    def default(self, obj):
-        if hasattr(obj, '__json__'):
-            return obj.__json__()
-        return json.JSONEncoder.default(self, obj)
+from forwarder import encode_message, send_message
 
 
 class KeyboardMessage():
@@ -36,69 +26,49 @@ class KeyboardMessage():
         return self.message
 
 browserKeywords = {
-    'UP'             : KeyboardMessage('j'),
-    'DOWN'           : KeyboardMessage('k'),
-    'LEFT'           : KeyboardMessage('h'),
-    'RIGHT'          : KeyboardMessage('l'),
-    'CONTROL UP'     : KeyboardMessage('u', ctrlKey=True),
-    'CONTROL DOWN'   : KeyboardMessage('d', ctrlKey=True),
-    'CONTROL UPPER'  : KeyboardMessage('b', ctrlKey=True),
-    'CONTROL DOWNER' : KeyboardMessage('f', ctrlKey=True),
+    'UP'             : [KeyboardMessage('j')],
+    'DOWN'           : [KeyboardMessage('k')],
+    'LEFT'           : [KeyboardMessage('h')],
+    'RIGHT'          : [KeyboardMessage('l')],
+    'CONTROL UP'     : [KeyboardMessage('u', ctrlKey=True)],
+    'CONTROL DOWN'   : [KeyboardMessage('d', ctrlKey=True)],
+    'CONTROL UPPER'  : [KeyboardMessage('b', ctrlKey=True)],
+    'CONTROL DOWNER' : [KeyboardMessage('f', ctrlKey=True)],
 
-    '0'              : KeyboardMessage('0'),
-    'ZERO'           : KeyboardMessage('0'),
-    'DOLLAR'         : KeyboardMessage('$'),
+    '0'              : [KeyboardMessage('0')],
+    'ZERO'           : [KeyboardMessage('0')],
+    'DOLLAR'         : [KeyboardMessage('$')],
 
-    'TOP'            : KeyboardMessage('gg'),
-    'BOTTOM'         : KeyboardMessage('G'),
+    'TOP'            : [KeyboardMessage('g'), KeyboardMessage('g')],
+    'BOTTOM'         : [KeyboardMessage('G')],
 
-    'DELETE'         : KeyboardMessage('d'),
-    'UNDO'           : KeyboardMessage('u'),
-    'PREVIOUS'       : KeyboardMessage('K'),
-    'NEXT'           : KeyboardMessage('J'),
-    'REFRESH'        : KeyboardMessage('r'),
-    'DUPLICATE'      : KeyboardMessage('zd'),
+    'DELETE'         : [KeyboardMessage('d')],
+    'UNDO'           : [KeyboardMessage('u')],
+    'PREVIOUS'       : [KeyboardMessage('K')],
+    'NEXT'           : [KeyboardMessage('J')],
+    'REFRESH'        : [KeyboardMessage('r')],
+    'DUPLICATE'      : [KeyboardMessage('z'), KeyboardMessage('d')],
 
-    'FOLLOW'         : KeyboardMessage('f'),
-    'OPEN'           : KeyboardMessage('F'),
-    'BACK'           : KeyboardMessage('H'),
-    'FORWARD'        : KeyboardMessage('L'),
+    'FOLLOW'         : [KeyboardMessage('f')],
+    'OPEN'           : [KeyboardMessage('F')],
+    'BACK'           : [KeyboardMessage('H')],
+    'FORWARD'        : [KeyboardMessage('L')],
 
-    'ZOOM IN'        : KeyboardMessage('zi'),
-    'ZOOM OUT'       : KeyboardMessage('zo'),
-    'ZOOM DEFAULT'   : KeyboardMessage('zd'),
+    'ZOOM IN'        : [KeyboardMessage('z'), KeyboardMessage('i')],
+    'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
+    'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('d')],
 
-    'FIND'           : KeyboardMessage('f', ctrlKey=True),
-    'ADDRESS'        : KeyboardMessage('l', ctrlKey=True),
-    'NEW TAB'        : KeyboardMessage('t', ctrlKey=True),
-    'NEW WINDOW'     : KeyboardMessage('n', ctrlKey=True),
-    'PRINT'          : KeyboardMessage('p', ctrlKey=True),
-    'SAVE'           : KeyboardMessage('s', ctrlKey=True),
+    'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
+    'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
+    'NEW TAB'        : [KeyboardMessage('t', ctrlKey=True)],
+    'NEW WINDOW'     : [KeyboardMessage('n', ctrlKey=True)],
+    'PRINT'          : [KeyboardMessage('p', ctrlKey=True)],
+    'SAVE'           : [KeyboardMessage('s', ctrlKey=True)],
 }
-
-# source: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging
-def encode_message(message_content):
-    encoded_content = json.dumps(message_content, cls=EncoderOverload)
-    encoded_length = struct.pack('@I', len(encoded_content))
-    return {'length': encoded_length, 'content': encoded_content}
-
-
-# source: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging
-def send_message(encoded_message):
-    try:
-        # python 2.7 compatible - supported because firefox insists on using v2
-        sys.stdout.write(encoded_message['length'])
-        sys.stdout.write(encoded_message['content'].encode())
-        sys.stdout.flush()
-    except TypeError:
-        # python 3 compatible
-        sys.stdout.buffer.write(encoded_message['length'])
-        sys.stdout.buffer.write(encoded_message['content'].encode())
-        sys.stdout.flush()
 
 
 class state:
-    def __init__(self):
+    def __init__(self, g):
         # Define bits for modes we can be in
         self.NORMAL     = 2**0
         self.HOLDING    = 2**1
@@ -107,14 +77,15 @@ class state:
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
-
+        self.gui = g
         self.held = set()
 
         self.commands = {
             "ALT": self.parseAlt,
             "HOLD": self.parseHold,
             "RESIZE": self.parseResize,
-            "ESCAPE": self.parseEscape
+            "ESCAPE": self.parseEscape,
+            "HELP": self.parseHelp
         }
 
 
@@ -127,7 +98,7 @@ class state:
         if tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            log.Logger.warn(log.ParseError.ALT, tokens[0])
+            log.Logger.log(log.ParseError.ALT, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -137,6 +108,7 @@ class state:
             self.mode &= ~self.HOLDING
             for key in self.held:
                 KeyboardEvent.keyUp(key)
+                self.gui.removeHold(key)
 
         self.mode |= self.HOLDING
         for token in tokens:
@@ -147,8 +119,9 @@ class state:
 
             if KeyboardEvent.keyDown(token):
                 self.held.add(token)
+                self.gui.addHold(token)
             else:
-                log.Logger.warn(log.ParseError.HOLD, token)
+                log.Logger.log(log.ParseError.HOLD, token)
                 clearHeld()
                 self.parseImpl(tokens[tokens.index(token)+1:])
                 return
@@ -176,7 +149,7 @@ class state:
         elif tokens[0] == 'FULL':
             resize(0, 0, screen_width, screen_height)
         else:
-            log.Logger.warn(log.ParseError.RESIZE, tokens[0])
+            log.Logger.log(log.ParseError.RESIZE, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -184,6 +157,16 @@ class state:
     def parseEscape(self, tokens):
         self.switchMode()
         self.parseImpl(tokens)
+
+    def parseHelp(self,tokens):
+        if len(tokens) == 0:
+            self.gui.helpMode()
+        elif tokens[0] == 'BROWSER':
+            self.gui.helpMode('browser')
+        elif tokens[0] == 'CLOSE':
+            self.gui.closeHelpMenu()
+        else:
+            log.Logger.log(log.ParseError.HELP, tokens[0])
 
 
     def forwardBrowser(self, tokens):
@@ -194,7 +177,7 @@ class state:
                 self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
-            log.Logger.warn(log.ParseError.BROWSER, tokenStr)
+            log.Logger.log(log.ParseError.BROWSER, tokenStr)
 
 
     def parseImpl(self, tokens, levelDict = None):
@@ -213,15 +196,15 @@ class state:
             self.mode &= ~self.FOLLOW
 
             if len(tokens) > 3:
-                debug("OOPS")
+                log.debug("OOPS")
                 return
             for token in tokens:
                 if len(token) != 1:
-                    debug("OOPS")
+                    log.debug("OOPS")
                     return
 
-            for token in tokens:
-                send_message(encode_message(KeyboardMessage(token)))
+            enumerated_keys = [KeyboardMessage(tok) for tok in tokens]
+            send_message(encode_message(enumerated_keys))
 
             return
 
@@ -229,6 +212,8 @@ class state:
             levelDict = self.commands
 
         w, rest = tokens[0], tokens[1:]
+        # debug(w)
+        # debug(levelDict)
         if w in levelDict:
             if isinstance(levelDict[w], dict):
                 self.parseImpl(rest, levelDict[w])
@@ -238,6 +223,7 @@ class state:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             else:
+                self.gui.showError()
                 log.warn("Command not found")
 
 
@@ -245,22 +231,28 @@ class state:
         command = command.strip().upper()
         if self.mode & self.NORMAL:
             text = re.findall(r"[a-zA-Z]+", command)
-            debug("Tokens parsed: {}".format(text))
+            log.info("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
         else:
-            if command == "caps lock":
+            # Only switch back to normal mode if the *entire* command is
+            # 'ESCAPE'
+            if command == 'ESCAPE':
                 self.switchMode(command)
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
+                keys = [KeyboardMessage(ch) for ch in command]
+                send_message(encode_message(keys))
+
 
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.25)
 
 # v = state()
 # v.parse("hold alt")
+# time.sleep(2)
 # v.parse("tab")
-# v.parse("tab")
+# # v.parse("tab")
 # v.parse("escape")
 # v.parse("zoom in")
 # v.parse("follow")

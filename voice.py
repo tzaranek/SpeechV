@@ -8,7 +8,7 @@ from google.cloud.speech import types
 
 import log
 
-import stateWithGui
+import state
 
 k = 0
 
@@ -62,7 +62,7 @@ def voiceLoop(g):
     command_set = str_command_set.split('\n')
 
     r = sr.Recognizer()
-    s = stateWithGui.state(g)
+    s = state.state(g)
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
         r.pause_threshold = AUDIO_TIMEOUT
