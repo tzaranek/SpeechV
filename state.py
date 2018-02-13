@@ -7,7 +7,7 @@ import win32gui, win32con, win32api
 
 from keyboard import KeyboardEvent
 from window_properties import currentApp
-import error
+import log
 
 class EncoderOverload(json.JSONEncoder):
     """
@@ -119,7 +119,7 @@ class state:
 
 
     def switchMode(self):
-        print("Switching modes")
+        log.info("Switching modes")
         self.mode = self.INSERT if self.mode & self.NORMAL else self.NORMAL
 
 
@@ -127,7 +127,7 @@ class state:
         if tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            error.Logger.log(error.ParseError.ALT, tokens[0])
+            log.Logger.warn(log.ParseError.ALT, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -148,7 +148,7 @@ class state:
             if KeyboardEvent.keyDown(token):
                 self.held.add(token)
             else:
-                error.Logger.log(error.ParseError.HOLD, token)
+                log.Logger.warn(log.ParseError.HOLD, token)
                 clearHeld()
                 self.parseImpl(tokens[tokens.index(token)+1:])
                 return
@@ -176,7 +176,7 @@ class state:
         elif tokens[0] == 'FULL':
             resize(0, 0, screen_width, screen_height)
         else:
-            error.Logger.log(error.ParseError.RESIZE, tokens[0])
+            log.Logger.warn(log.ParseError.RESIZE, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -194,7 +194,7 @@ class state:
                 self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
-            error.Logger.log(error.ParseError.BROWSER, tokenStr)
+            log.Logger.warn(log.ParseError.BROWSER, tokenStr)
 
 
     def parseImpl(self, tokens, levelDict = None):
@@ -213,11 +213,11 @@ class state:
             self.mode &= ~self.FOLLOW
 
             if len(tokens) > 3:
-                print("OOPS")
+                debug("OOPS")
                 return
             for token in tokens:
                 if len(token) != 1:
-                    print("OOPS")
+                    debug("OOPS")
                     return
 
             for token in tokens:
@@ -238,21 +238,21 @@ class state:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             else:
-                print("Command not found")
+                log.warn("Command not found")
 
 
     def parse(self, command):
         command = command.strip().upper()
         if self.mode & self.NORMAL:
             text = re.findall(r"[a-zA-Z]+", command)
-            print("Tokens parsed: {}".format(text))
+            debug("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
         else:
             if command == "caps lock":
                 self.switchMode(command)
             else:
-                print("Sending: \"{}\" to top application".format(command))
+                log.info("Sending: \"{}\" to top application".format(command))
 
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.25)

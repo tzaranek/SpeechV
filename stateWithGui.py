@@ -7,7 +7,7 @@ import win32gui, win32con, win32api
 
 from keyboard import KeyboardEvent
 from window_properties import currentApp
-import error
+import log
 from forwarder import encode_message, send_message
 
 
@@ -90,7 +90,7 @@ class state:
 
 
     def switchMode(self):
-        print("Switching modes")
+        log.info("Switching modes")
         self.mode = self.INSERT if self.mode & self.NORMAL else self.NORMAL
 
 
@@ -98,7 +98,7 @@ class state:
         if tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            error.Logger.log(error.ParseError.ALT, tokens[0])
+            log.Logger.log(log.ParseError.ALT, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -121,7 +121,7 @@ class state:
                 self.held.add(token)
                 self.gui.addHold(token)
             else:
-                error.Logger.log(error.ParseError.HOLD, token)
+                log.Logger.log(log.ParseError.HOLD, token)
                 clearHeld()
                 self.parseImpl(tokens[tokens.index(token)+1:])
                 return
@@ -149,7 +149,7 @@ class state:
         elif tokens[0] == 'FULL':
             resize(0, 0, screen_width, screen_height)
         else:
-            error.Logger.log(error.ParseError.RESIZE, tokens[0])
+            log.Logger.log(log.ParseError.RESIZE, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -166,7 +166,7 @@ class state:
         elif tokens[0] == 'CLOSE':
             self.gui.closeHelpMenu()
         else:
-            error.Logger.log(error.ParseError.HELP, tokens[0])
+            log.Logger.log(log.ParseError.HELP, tokens[0])
 
 
     def forwardBrowser(self, tokens):
@@ -177,7 +177,7 @@ class state:
                 self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
-            error.Logger.log(error.ParseError.BROWSER, tokenStr)
+            log.Logger.log(log.ParseError.BROWSER, tokenStr)
 
 
     def parseImpl(self, tokens, levelDict = None):
@@ -196,11 +196,11 @@ class state:
             self.mode &= ~self.FOLLOW
 
             if len(tokens) > 3:
-                print("OOPS")
+                log.debug("OOPS")
                 return
             for token in tokens:
                 if len(token) != 1:
-                    print("OOPS")
+                    log.debug("OOPS")
                     return
 
             for token in tokens:
@@ -212,8 +212,8 @@ class state:
             levelDict = self.commands
 
         w, rest = tokens[0], tokens[1:]
-        # print(w)
-        # print(levelDict)
+        # debug(w)
+        # debug(levelDict)
         if w in levelDict:
             if isinstance(levelDict[w], dict):
                 self.parseImpl(rest, levelDict[w])
@@ -224,21 +224,21 @@ class state:
                 self.forwardBrowser(tokens)
             else:
                 self.gui.showError()
-                print("Command not found")
+                log.warn("Command not found")
 
 
     def parse(self, command):
         command = command.strip().upper()
         if self.mode & self.NORMAL:
             text = re.findall(r"[a-zA-Z]+", command)
-            print("Tokens parsed: {}".format(text))
+            log.info("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
         else:
             if command == "caps lock":
                 self.switchMode(command)
             else:
-                print("Sending: \"{}\" to top application".format(command))
+                log.info("Sending: \"{}\" to top application".format(command))
 
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.25)
