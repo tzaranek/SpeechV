@@ -1,0 +1,37 @@
+=============
+SpeechV Help
+=============
+
+This help document lists the general commands available in SpeechV and instructions on how to troubleshoot common problems.
+Close this window with "help close".
+
+Close this window and use "help browser" for specific help with web browsers.
+
+General commands
+-----------------
+
+SpeechV recognizes keyboard shortcuts input via voice commands.
+SpeechV also supports some common commands for basic operation.
+
+Entering keyboard shortcuts:
+    To hold a key, "hold" followed by the key to be held (alt, control, shift). Any number of keys can be concurrently held.
+    To release all held keys, "escape".
+
+    Examples:
+    - To switch between applications: "hold alt tab" "tab" ... "escape"
+    - To launch security screen: "hold control hold alt delete escape"
+
+Resizing windows:
+    "Resize left/right": Move current app into the left/right half of the screen
+    "Resize up/down": Move current app into top/bottom half of the screen
+    "Resize file": Make current app fullscreen
+
+Troubleshooting
+----------------
+
+SpeechV cuts you off while you're still speaking:
+    In Settings, increase the audio timeout. This is the amount of silence that marks the end of a command.
+    Higher audio timeout allows for longer pauses in the middle of a command, but slows down overall performance.
+
+SpeechV can't hear you or processes commands when you're not speaking:
+    In Settings, recalibrate the microphone. SpeechV will listen to your surroundings and adjust appropriately to distinguish background noise from voice input.

@@ -5,6 +5,7 @@ class ParseError(Enum):
     HOLD = "HOLD"
     RESIZE = "RESIZE"
     BROWSER = "BROWSER"
+    HELP = "HELP"
 
 
 class Logger:

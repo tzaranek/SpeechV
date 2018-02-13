@@ -130,16 +130,28 @@ class GUI:
 		t.start()
 
 	#Display the help menu
-	def helpMode(self):
-		self.setText("Help\nMenu!")
-		#Implement Help menu
-		pass
+	def helpMode(self, type):
+		if hasattr(self, 'window'):
+		    self.window.destroy()
 
-	#Called upon closing the help menu?
+		self.setText("Help\nMenu!")
+		if type=='browser':
+			file_in = "browser_help.txt"
+		else:
+			file_in = "help_text.txt"
+		with open(file_in, 'r') as text_file:
+			help_text = text_file.read()
+
+		self.window = Toplevel()
+		canvas = Canvas(master=self.window, height=800, width=1000)
+		canvas.grid()
+		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
+
+
+	#Called upon closing the help menu
 	def closeHelpMenu(self):
 		self.setMode(Mode.COMMAND)
-		#Close menu
-		pass
+		self.window.destroy()
 
 	#Updates the GUI to reflect command mode
 	def commandMode(self):

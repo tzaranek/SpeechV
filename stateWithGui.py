@@ -84,7 +84,8 @@ class state:
             "ALT": self.parseAlt,
             "HOLD": self.parseHold,
             "RESIZE": self.parseResize,
-            "ESCAPE": self.parseEscape
+            "ESCAPE": self.parseEscape,
+            "HELP": self.parseHelp
         }
 
 
@@ -156,6 +157,16 @@ class state:
     def parseEscape(self, tokens):
         self.switchMode()
         self.parseImpl(tokens)
+
+    def parseHelp(self,tokens):
+        if tokens[0] is None:
+            self.gui.helpMode()
+        elif tokens[1] == 'BROWSER':
+            self.gui.helpMode('browser')
+        elif tokens[2] == 'CLOSE':
+            self.gui.closeHelpMenu()
+        else:
+            error.Logger.log(error.ParseError.HELP, tokens[0])
 
 
     def forwardBrowser(self, tokens):

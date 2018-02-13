@@ -9,22 +9,20 @@ from time import sleep
 #You can hit enter to start an interactive session
 def runTests(gui):
     sleep(1)
-    gui.textMode()
+    gui.helpMode("general")
+    sleep(2)
+    gui.closeHelpMenu()
     sleep(1)
-    gui.commandMode()
+    gui.helpMode("general")
     sleep(1)
-    gui.recording()
-    sleep(1)
-    gui.ready()
-    sleep(1)
-    gui.showError()
-    sleep(3)
-    gui.commandRecognized()
+    gui.helpMode("browser")
+    sleep(10)
+    gui.closeHelpMenu()
     
 #The GUI library does NOT like it if you run the GUI from anything
 #other than the main thread, so hopefully we can 
 if __name__ == "__main__":
-    gui = GUIClass()
+    gui = GUI()
     thread = Thread(target = runTests, args = [gui])
     thread.start()
     gui.start()
