@@ -203,8 +203,8 @@ class state:
                     log.debug("OOPS")
                     return
 
-            for token in tokens:
-                send_message(encode_message(KeyboardMessage(token)))
+            enumerated_keys = [KeyboardMessage(tok) for tok in tokens]
+            send_message(encode_message(enumerated_keys))
 
             return
 
@@ -235,10 +235,15 @@ class state:
 
             self.parseImpl(text)
         else:
-            if command == "caps lock":
+            # Only switch back to normal mode if the *entire* command is
+            # 'ESCAPE'
+            if command == 'ESCAPE':
                 self.switchMode(command)
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
+                keys = [KeyboardMessage(ch) for ch in command]
+                send_message(encode_message(keys))
+
 
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.25)
