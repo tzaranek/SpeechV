@@ -1,3 +1,5 @@
+#!/usr/bin/python -u
+
 import gui
 import state
 import voice

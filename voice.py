@@ -9,26 +9,34 @@ from google.cloud.speech import types
 import log
 
 import state
-
+import time
 k = 0
 
 def recognize(audio_data, command_set):
-    # global k
-    return "FOLLOW"
-    # if k == 0:
-    #     k += 1
-    #     return "HELP"
-    # elif k == 1:
-    #     k += 1
-    #     return "HELP CLOSE"
-    # elif k == 2:
-    #     k += 1
-    #     return "HELP BROWSER"
-    # elif k == 3:
-    #     k += 1
-    #     return "HELP CLOSE"
-    # else:
-    #     return "Done"
+    global k
+    if k == 0:
+        k += 1
+        return "FOLLOW"
+    elif k == 1:
+        k += 1
+        return "c"
+    elif k == 2:
+        k += 1
+        return "ESCAPE"
+    elif k == 3:
+        k += 1
+        return "THE GREAT ESCAPE"
+    elif k == 4:
+        k += 1
+        return "ESCAPE"
+    elif k == 5:
+        k += 1
+        return "FOLLOW"
+    elif k == 6:
+        k += 1
+        return "d"
+    else:
+        return "Done"
     client = speech.SpeechClient()
 
     flac_data = audio_data.get_flac_data(
@@ -63,21 +71,26 @@ def voiceLoop(g):
 
     r = sr.Recognizer()
     s = state.state(g)
+    time.sleep(20)
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
         r.pause_threshold = AUDIO_TIMEOUT
 
         while True:
-            #print("Say something!") # TODO: change to GUI alert
-            g.ready()
-            log.debug("Before listen")
-            audio = r.listen(source) # can be configured for user's speech patterns - possible added functionality?
+            try:
+                #print("Say something!") # TODO: change to GUI alert
+                g.ready()
+                log.debug("Before listen")
+                audio = r.listen(source) # can be configured for user's speech patterns - possible added functionality?
 
-            # recognize speech using Google Cloud Speech API            
-            log.debug("Pre recognize")
-            response = recognize(audio, command_set)
-            s.parse(response)
-            log.debug(response)
+                # recognize speech using Google Cloud Speech API            
+                log.debug("Pre recognize")
+                response = recognize(audio, command_set)
+                s.parse(response)
+                log.debug(response)
+                g.updateCommands(response)
+            except Exception as e:
+                log.error(str(e))
 
             # TODO: check that speech consists of valid commands
             # TODO: forward speech to parser

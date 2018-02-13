@@ -4,13 +4,14 @@ import json
 import struct
 import sys
 import win32gui, win32con, win32api
+import platform
 
-import keyboard
-from keyboardEvent import KeyboardEvent
 from window_properties import currentApp
 import log
-from forwarder import encode_message, send_message
+from keyboard2 import KeyboardEvent
+import keyboard
 
+from forwarder import encode_message, send_message
 
 class KeyboardMessage():
     def __init__(self, key, repeat=False, shiftKey=False, ctrlKey=False, altKey=False, metaKey=False):
@@ -92,7 +93,7 @@ class state:
 
     def switchMode(self):
         log.info("Switching modes")
-        self.mode = self.INSERT if self.mode & self.NORMAL else self.NORMAL
+        self.mode = self.INSERT if self.mode == self.NORMAL else self.NORMAL
 
 
     def parseAlt(self, tokens):
@@ -106,12 +107,12 @@ class state:
 
     def parseHold(self, tokens):
         def clearHeld():
-            self.mode &= ~self.HOLDING
+            self.mode = self.NORMAL
             for key in self.held:
                 KeyboardEvent.keyUp(key)
                 self.gui.removeHold(key)
 
-        self.mode |= self.HOLDING
+        self.mode = self.HOLDING
         for token in tokens:
             if token == 'ESCAPE':
                 clearHeld()
@@ -175,7 +176,7 @@ class state:
         if tokenStr in browserKeywords:
             # Hacky interception of next few chars to send with follow
             if tokenStr == 'FOLLOW':
-                self.mode |= self.FOLLOW
+                self.mode = self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
             log.Logger.log(log.ParseError.BROWSER, tokenStr)
@@ -185,7 +186,7 @@ class state:
         if not tokens:
             return
 
-        if self.mode & self.HOLDING:
+        if self.mode == self.HOLDING:
             self.parseHold(tokens)
             return
 
@@ -193,8 +194,8 @@ class state:
         #   currently just takes all tokens as individual letters and sends
         #   them on assuming that there's no point in issuing commands
         #   before the link is followed. Also, there should not be more than 3
-        if self.mode & self.FOLLOW:
-            self.mode &= ~self.FOLLOW
+        if self.mode == self.FOLLOW:
+            self.mode = self.NORMAL
 
             if len(tokens) > 3:
                 log.debug("OOPS")
@@ -204,8 +205,10 @@ class state:
                     log.debug("OOPS")
                     return
 
-            enumerated_keys = [KeyboardMessage(tok) for tok in tokens]
-            send_message(encode_message(enumerated_keys))
+            for token in tokens:
+                token = token.lower()
+                log.debug("Sending token?")
+                send_message(encode_message([KeyboardMessage(token)]))
 
             return
 
@@ -230,24 +233,21 @@ class state:
 
     def parse(self, command):
         command = command.strip().upper()
-        if len(command) == 1:
-            command = command.lower()
-        if self.mode & self.NORMAL:
+        if command == "ESCAPE":
+            self.switchMode()
+            time.sleep(0.25)
+            return
+        if self.mode == self.NORMAL or self.mode == self.FOLLOW or self.mode == self.HOLDING:
             text = re.findall(r"[a-zA-Z]+", command)
             log.info("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
-        else:
-            # Only switch back to normal mode if the *entire* command is
-            # 'ESCAPE'
-            if command == 'ESCAPE':
-                self.switchMode()
+        elif self.mode == self.INSERT:
+            if command == "caps lock":
+                self.switchMode(command)
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
                 keyboard.write(command)
-                #keys = [KeyboardMessage(ch) for ch in command]
-                #send_message(encode_message(keys))
-
 
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.25)

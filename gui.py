@@ -87,6 +87,13 @@ class GUI:
 	def addHold(self, key):
 		self.heldKeys.add(key)
 		self.updateText()
+
+	def updateCommands(self, cmd):
+		self.recent[2] = self.recent[1]
+		self.recent[1] = self.recent[0]
+		self.recent[0] = cmd
+		self.updateText()
+
 		
 	#Remove a key from the list
 	def removeHold(self, key):
@@ -102,12 +109,20 @@ class GUI:
 
 	#Update the text in the GUI
 	def updateText(self):
-		s = ("Status: " + statusStr(self.status) + "\nMode: " + modeStr(self.mode) + "\nHeld Keys: ")
+		s = ("Status: " + statusStr(self.status) + \
+			  "\nMode: " + modeStr(self.mode) + \
+			  "\nHeld Keys: ")
+
 		if len(self.heldKeys) > 0:
 			for k in self.heldKeys:
 				s += k
 				s += ", "
 			s = s[:-2]
+		
+		s += "\nRecent Commands: "
+		for cmd in self.recent:
+			s += "\n"
+			s += cmd
 		self.setText(s)
 
 	#Updates the GUI to reflect text mode
@@ -118,13 +133,13 @@ class GUI:
 	#Restores the last mode before the unrecognized command
 	def restoreMode(self, m):
 		sleep(2)
-		self.label.config(font=("Courier", 12))
+		self.label.config(font=("Courier", 8))
 		self.setMode(m)
 
 	#Displays an error and spawns a thread to restore the old mode later
 	def showError(self):
 		mode = self.getMode()
-		self.label.config(font=("Courier", 12))
+		self.label.config(font=("Courier", 8))
 		self.setText("Unrecognized\nCommand")
 		t = Thread(target=self.restoreMode, args=[mode])
 		t.start()
@@ -206,6 +221,7 @@ class GUI:
 
 		#Create an empty set to show the held keys
 		self.heldKeys = set()
+		self.recent = ["None", "None", "None"]
 
 		#Set up the frame and label properties
 		back = Frame(master=self.root,bg='black')
@@ -218,8 +234,8 @@ class GUI:
 
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
-		self.label.config(width=20, height=10)
-		self.label.config(font=("Courier", 12))
+		self.label.config(width=30, height=10)
+		self.label.config(font=("Courier", 8))
 
 		#Initialize the status and mode
 		self.status = Status.READY
