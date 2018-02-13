@@ -6,13 +6,15 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
+import log
+
 import stateWithGui
 
 k = 0
 
 def recognize(audio_data, command_set):
     # global k
-    # return "FOLLOW"
+    return "FOLLOW"
     # if k == 0:
     #     k += 1
     #     return "HELP"
@@ -66,16 +68,16 @@ def voiceLoop(g):
         r.pause_threshold = AUDIO_TIMEOUT
 
         while True:
-            print("Say something!") # TODO: change to GUI alert
+            #print("Say something!") # TODO: change to GUI alert
             g.ready()
+            log.debug("Before listen")
             audio = r.listen(source) # can be configured for user's speech patterns - possible added functionality?
-            #g.recording()
-            print("Decoding audio (own implementation)...") # TODO: change to GUI alert
 
             # recognize speech using Google Cloud Speech API            
+            log.debug("Pre recognize")
             response = recognize(audio, command_set)
             s.parse(response)
-            print(response)
+            log.debug(response)
 
             # TODO: check that speech consists of valid commands
             # TODO: forward speech to parser

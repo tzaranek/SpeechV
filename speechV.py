@@ -2,6 +2,7 @@ import gui
 import stateWithGui
 import voice
 from threading import Thread
+import log
 
 if __name__ == "__main__":
     #Create the gui

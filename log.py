@@ -1,25 +1,30 @@
 from enum import Enum
+import os
 
 SPEECHV_LOG_PATH = os.path.join(
-        os.path.realpath(os.path.dirname(__path__)), 'log.txt')
+        os.path.realpath(os.path.dirname(__file__)), 'log.txt')
 LOGFILE = open(SPEECHV_LOG_PATH, 'w')
 
 # Use these functions like you would print
 def error(*args, **kwargs):
-    print('error: ', end='')
+    print('error: ',file=LOGFILE, end='')
     print(*args, file=LOGFILE, **kwargs)
+    LOGFILE.flush()
 
 def warn(*args, **kwargs):
-    print('warn: ', end='')
+    print('warn: ', file=LOGFILE, end='')
     print(*args, file=LOGFILE, **kwargs)
+    LOGFILE.flush()
 
 def info(*args, **kwargs):
-    print('info: ', end='')
+    print('info: ', file=LOGFILE, end='')
     print(*args, file=LOGFILE, **kwargs)
+    LOGFILE.flush()
 
 def debug(*args, **kwargs):
-    print('debug: ', end='')
+    print('debug: ', file=LOGFILE, end='')
     print(*args, file=LOGFILE, **kwargs)
+    LOGFILE.flush()
 
 
 class ParseError(Enum):
