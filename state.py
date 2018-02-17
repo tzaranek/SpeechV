@@ -105,7 +105,7 @@ class state:
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
             msg = "No parameter" if len(tokens) == 0 else tokens[0]
-            log.Logger.log(log.ParseError.ALT, msg)
+            log.parse_error(log.ParseError.ALT, msg)
 
         self.parseImpl(tokens[1:])
 
@@ -128,7 +128,7 @@ class state:
                 self.held.add(token)
                 self.gui.addHold(token)
             else:
-                log.Logger.log(log.ParseError.HOLD, token)
+                log.parse_error(log.ParseError.HOLD, token)
                 clearHeld()
                 return
 
@@ -145,7 +145,7 @@ class state:
             win32gui.MoveWindow(fg_hwnd, x, y, w, h, True)
 
         if len(tokens) == 0:
-            log.Logger.log(log.ParseError.RESIZE, "No parameter")
+            log.parse_error(log.ParseError.RESIZE, "No parameter")
         elif tokens[0] == 'LEFT':
             resize(0, 0, half_width, screen_height)
         elif tokens[0] == 'RIGHT':
@@ -157,7 +157,7 @@ class state:
         elif tokens[0] == 'FULL':
             resize(0, 0, screen_width, screen_height)
         else:
-            log.Logger.log(log.ParseError.RESIZE, tokens[0])
+            log.parse_error(log.ParseError.RESIZE, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -174,7 +174,7 @@ class state:
         elif tokens[0] == 'CLOSE':
             self.gui.closeHelpMenu()
         else:
-            log.Logger.log(log.ParseError.HELP, tokens[0])
+            log.parse_error(log.ParseError.HELP, tokens[0])
 
 
     def forwardBrowser(self, tokens):
@@ -185,7 +185,7 @@ class state:
                 self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
-            log.Logger.log(log.ParseError.BROWSER, tokenStr)
+            log.parse_error(log.ParseError.BROWSER, tokenStr)
 
 
     def parseImpl(self, tokens, levelDict = None):
