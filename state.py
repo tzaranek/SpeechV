@@ -94,10 +94,10 @@ class state:
         log.info("Switching modes")
         if self.mode & self.NORMAL:
             self.mode = self.INSERT
-            self.gui.textMode()
+            self.gui.setMode(gui.Mode.TEXT)
         else:
             self.mode = self.NORMAL
-            self.gui.commandMode()
+            self.gui.setMode(gui.Mode.COMMAND)
 
 
     def parseAlt(self, tokens):
