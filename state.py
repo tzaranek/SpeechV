@@ -101,10 +101,11 @@ class state:
 
 
     def parseAlt(self, tokens):
-        if tokens[0] == 'TAB':
+        if len(tokens) > 1 and tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            log.Logger.log(log.ParseError.ALT, tokens[0])
+            msg = "No parameter" if len(tokens) == 0 else tokens[0]
+            log.Logger.log(log.ParseError.ALT, msg)
 
         self.parseImpl(tokens[1:])
 
@@ -129,7 +130,6 @@ class state:
             else:
                 log.Logger.log(log.ParseError.HOLD, token)
                 clearHeld()
-                self.parseImpl(tokens[tokens.index(token)+1:])
                 return
 
 
@@ -144,7 +144,9 @@ class state:
         def resize(x, y, w, h):
             win32gui.MoveWindow(fg_hwnd, x, y, w, h, True)
 
-        if tokens[0] == 'LEFT':
+        if len(tokens) == 0:
+            log.Logger.log(log.ParseError.RESIZE, "No parameter")
+        elif tokens[0] == 'LEFT':
             resize(0, 0, half_width, screen_height)
         elif tokens[0] == 'RIGHT':
             resize(half_width + 1, 0, half_width, screen_height)
