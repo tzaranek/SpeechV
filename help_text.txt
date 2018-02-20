@@ -2,36 +2,39 @@
 SpeechV Help
 =============
 
-This help document lists the general commands available in SpeechV and instructions on how to troubleshoot common problems.
-Close this window with "help close".
-
-Close this window and use "help browser" for specific help with web browsers.
+SpeechV is a means to computer navigation through voice alone. SpeechV enables navigation through commands in the form of short phrases. These short phrases must exactly match a predefined set of phrases which enable switching between applications, clickling on links, and so on. This document outlines the most fundamental commands, while the browser help window elaborates on firefox navigation. 
 
 General commands
 -----------------
+"Help close": Close any help window that's open, including this one
+"Help browser": Display help for navigating with Firefox. This help window must first be closed
+"Switch <application>": Switch focus onto application with name <application> [TODO: beta]
+"Launch <application>": Start up application with name <application> [TODO: beta]
 
-SpeechV recognizes keyboard shortcuts input via voice commands.
-SpeechV also supports some common commands for basic operation.
+Resizing windows
+-----------------
+"Resize left/right": Move current app into the left/right half of the screen
+"Resize up/down": Move current app into top/bottom half of the screen
+"Resize file": Make current app fullscreen
 
-Entering keyboard shortcuts:
-    To hold a key, "hold" followed by the key to be held (alt, control, shift). Any number of keys can be concurrently held.
-    To release all held keys, "escape".
+Holding Keys
+-------------
+"Hold <modifier key>": Simulates holding down a modifier key (i.e. "alt", "control", "shift", etc.). Any number of keys can be simultaneously held
+"Escape": Releases all held keys
 
     Examples:
     - To switch between applications: "hold alt tab" "tab" ... "escape"
     - To launch security screen: "hold control hold alt delete escape"
 
-Resizing windows:
-    "Resize left/right": Move current app into the left/right half of the screen
-    "Resize up/down": Move current app into top/bottom half of the screen
-    "Resize file": Make current app fullscreen
 
 Troubleshooting
 ----------------
+Q: Why is SpeechV cutting me off while I'm in the middle of speaking?
+A: SpeechV appears to be overly sensitive of the pauses in your speech. You'll need to adust this in the settings
+   by increasing the audio timeout. A higher audio timeout will tell SpeechV to wait longer before
+   recognizing a pause in speech. Note that increasing the audio timeout will slow down overall 
+   performance, since it will wait longer before execution
 
-SpeechV cuts you off while you're still speaking:
-    In Settings, increase the audio timeout. This is the amount of silence that marks the end of a command.
-    Higher audio timeout allows for longer pauses in the middle of a command, but slows down overall performance.
-
-SpeechV can't hear you or processes commands when you're not speaking:
-    In Settings, recalibrate the microphone. SpeechV will listen to your surroundings and adjust appropriately to distinguish background noise from voice input.
+Q: Why can't SpeechV hear me? Why is SpeechV hearing unspoken commands?
+A: These are both symptoms of a miscalibrated microphone. You'll need to recalibrate the microphone 
+   in the Windows settings such that it can appropriately distinguish background noise from voice input. 
