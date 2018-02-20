@@ -92,14 +92,20 @@ class state:
 
     def switchMode(self):
         log.info("Switching modes")
-        self.mode = self.INSERT if self.mode & self.NORMAL else self.NORMAL
+        if self.mode & self.NORMAL:
+            self.mode = self.INSERT
+            self.gui.setMode(gui.Mode.TEXT)
+        else:
+            self.mode = self.NORMAL
+            self.gui.setMode(gui.Mode.COMMAND)
 
 
     def parseAlt(self, tokens):
-        if tokens[0] == 'TAB':
+        if len(tokens) > 1 and tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
-            log.Logger.log(log.ParseError.ALT, tokens[0])
+            msg = "No parameter" if len(tokens) == 0 else tokens[0]
+            log.parse_error(log.ParseError.ALT, msg)
 
         self.parseImpl(tokens[1:])
 
@@ -122,9 +128,8 @@ class state:
                 self.held.add(token)
                 self.gui.addHold(token)
             else:
-                log.Logger.log(log.ParseError.HOLD, token)
+                log.parse_error(log.ParseError.HOLD, token)
                 clearHeld()
-                self.parseImpl(tokens[tokens.index(token)+1:])
                 return
 
 
@@ -139,7 +144,9 @@ class state:
         def resize(x, y, w, h):
             win32gui.MoveWindow(fg_hwnd, x, y, w, h, True)
 
-        if tokens[0] == 'LEFT':
+        if len(tokens) == 0:
+            log.parse_error(log.ParseError.RESIZE, "No parameter")
+        elif tokens[0] == 'LEFT':
             resize(0, 0, half_width, screen_height)
         elif tokens[0] == 'RIGHT':
             resize(half_width + 1, 0, half_width, screen_height)
@@ -150,7 +157,7 @@ class state:
         elif tokens[0] == 'FULL':
             resize(0, 0, screen_width, screen_height)
         else:
-            log.Logger.log(log.ParseError.RESIZE, tokens[0])
+            log.parse_error(log.ParseError.RESIZE, tokens[0])
 
         self.parseImpl(tokens[1:])
 
@@ -167,7 +174,7 @@ class state:
         elif tokens[0] == 'CLOSE':
             self.gui.closeHelpMenu()
         else:
-            log.Logger.log(log.ParseError.HELP, tokens[0])
+            log.parse_error(log.ParseError.HELP, tokens[0])
 
 
     def forwardBrowser(self, tokens):
@@ -178,7 +185,7 @@ class state:
                 self.mode |= self.FOLLOW
             send_message(encode_message(browserKeywords[tokenStr]))
         else:
-            log.Logger.log(log.ParseError.BROWSER, tokenStr)
+            log.parse_error(log.ParseError.BROWSER, tokenStr)
 
 
     def parseImpl(self, tokens, levelDict = None):
