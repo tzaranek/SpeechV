@@ -101,7 +101,7 @@ class state:
 
 
     def parseAlt(self, tokens):
-        if len(tokens) > 1 and tokens[0] == 'TAB':
+        if len(tokens) > 0 and tokens[0] == 'TAB':
             KeyboardEvent.pressSequence(['ALT', 'TAB'])
         else:
             msg = "No parameter" if len(tokens) == 0 else tokens[0]
