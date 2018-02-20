@@ -9,7 +9,7 @@ const types = {
 
 // describe default values of a property
 const defaults = {
-  hintchars: 'abcdefghijklmnopqrstuvwxyz',
+  hintchars: 'abcdefghijkmopqrstuvxyz',
   smoothscroll: false,
 };
 
