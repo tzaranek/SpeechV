@@ -116,6 +116,7 @@ class state:
             for key in self.held:
                 KeyboardEvent.keyUp(key)
                 self.gui.removeHold(key)
+            self.held = set()
 
         self.mode |= self.HOLDING
         for token in tokens:
