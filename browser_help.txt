@@ -6,8 +6,8 @@ SpeechV supports navigating web pages by finding and labelling all links/input f
 
 Navigating web pages
 ---------------------
-"Follow": Find and label links and input fields
-"Open <label>": Open link in new tab
+"Follow <label>": Label links and input fields, then open matching link in current tab
+"Open <label>": Like "Follow", but opens link in new tab
 "Back": Go back in history
 "Forward": Go forward in history
 
