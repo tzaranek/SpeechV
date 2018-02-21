@@ -43,3 +43,26 @@ resize file
 help
 help browser
 help close
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+m
+o
+p
+q
+r
+s
+t
+u
+v
+x
+y
+z
