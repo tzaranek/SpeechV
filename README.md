@@ -60,14 +60,9 @@ web pages by finding and labelling all links/input fields on the page. You can t
 
 #### Navigating web pages
 
-**Follow**: Label links and input fields
-
-For labelled links,   
+**Follow**: Label links and input fields     
+    - **<label>**: Open link in current tab, enter text into input field, or click button   
     - **Open <label>**: Open link in new tab   
-    - **Follow <label>**: Open link in current tab   
-
-For labelled input fields and buttons,   
-    - **<label>**: To enter text into an input field, or click a button
 
 **Back**: Go back in history   
 **Forward**: Go forward in history
