@@ -11,6 +11,8 @@ from window_properties import currentApp
 import log
 from forwarder import encode_message, send_message
 
+from voice import recalibrate
+
 
 class KeyboardMessage():
     def __init__(self, key, repeat=False, shiftKey=False, ctrlKey=False, altKey=False, metaKey=False):
@@ -59,12 +61,14 @@ browserKeywords = {
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
     'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('d')],
 
+    'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
     'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
     'NEW TAB'        : [KeyboardMessage('t', ctrlKey=True)],
     'NEW WINDOW'     : [KeyboardMessage('n', ctrlKey=True)],
     'PRINT'          : [KeyboardMessage('p', ctrlKey=True)],
     'SAVE'           : [KeyboardMessage('s', ctrlKey=True)],
+
 }
 
 
@@ -75,6 +79,7 @@ class state:
         self.HOLDING    = 2**1
         self.FOLLOW     = 2**2  # Hacky meta-method to accept letters
         self.INSERT     = 2**3
+        self.SETTINGS   = 2**4
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
@@ -86,7 +91,12 @@ class state:
             "HOLD": self.parseHold,
             "RESIZE": self.parseResize,
             "ESCAPE": self.parseEscape,
-            "HELP": self.parseHelp
+            "HELP": self.parseHelp,
+            "SETTINGS": self.parseSettings,
+            "LAUNCH": self.parseLaunch,
+            "SWITCH": self.parseSwitch,
+            "FOCUS": self.parseFocus,
+            "RECORD": self.parseRecord
         }
 
 
@@ -94,10 +104,10 @@ class state:
         log.info("Switching modes")
         if self.mode & self.NORMAL:
             self.mode = self.INSERT
-            self.gui.setMode(gui.Mode.TEXT)
+            self.gui.setMode(self.mode)
         else:
             self.mode = self.NORMAL
-            self.gui.setMode(gui.Mode.COMMAND)
+            self.gui.setMode(self.mode)
 
 
     def parseAlt(self, tokens):
@@ -176,6 +186,69 @@ class state:
         else:
             log.parse_error(log.ParseError.HELP, tokens[0])
 
+    def parseSettings(self,tokens):
+        if len(tokens) == 0:
+            self.gui.settingsMode()
+        elif tokens[0] == 'CALIBRATE':
+            recalibrate()
+        elif tokens[0] == 'MACRO':
+            self.gui.settingsMode("MACRO")
+        elif tokens[0] == 'ALIAS':
+            self.gui.settingsMode("ALIAS")
+        elif tokens[0] == 'CLOSE':
+            self.gui.closeSettings()
+        else:
+            log.Logger.log(log.ParseError.HELP, tokens[0])
+
+    def parseLaunch(self, tokens):
+        """TODO:
+            Launch applications via Windows functionality.
+            Either Win -> Application name or using run?
+            Token will likely be the name of the application
+        """
+        self.gui.showError("Not yet\nimplemented")
+    
+    def parseSwitch(self, tokens):
+        """TODO:
+            Create a macro to perform one alt tab
+            This can be accomplished with keyboard.press('alt+tab')
+        """
+        self.gui.showError("Not yet\nimplemented")
+
+    def parseFocus(self, tokens):
+        """TODO:
+            Create a macro to perform one or more alt tabs
+            Token should be the name of the application we want to switch to
+            Then, this function can alt tab up to active applications - 1 times
+            and compare currentApp() with the target application and stop
+        """
+        self.gui.showError("Not yet\nimplemented")
+    
+    def parseRecord(self, tokens):
+        """TODO:
+            Add ability to record macros.
+            Tokens could be "Start" or "End" with the macro commands
+            Sandwiched between "Record start" and "record end"
+        """
+        self.gui.showError("Not yet\nimplemented")
+
+    def executeSearch(self, tokens):
+        """TODO:
+            Add ability to search in one command.
+            Tokens should be the search term.
+            This effectively accomplishes:
+                ctrl+k (go to search bar),
+                entering tokens as text,
+                alt+enter (open in new tab),
+        """
+        keyboard.press_and_release('ctrl+k')
+        time.sleep(1)
+        keyboard.write(' '.join(tokens).capitalize())
+        time.sleep(0.25)
+
+        time.sleep(1)
+        keyboard.press_and_release('alt+enter')
+
 
     def forwardBrowser(self, tokens):
         tokenStr = ' '.join(tokens)
@@ -183,7 +256,10 @@ class state:
             # Hacky interception of next few chars to send with follow
             if tokenStr == 'FOLLOW':
                 self.mode |= self.FOLLOW
-            send_message(encode_message(browserKeywords[tokenStr]))
+                send_message(encode_message(browserKeywords[tokenStr]))
+
+        elif tokens[0] == 'SEARCH':
+                self.executeSearch(tokens[1:])
         else:
             log.parse_error(log.ParseError.BROWSER, tokenStr)
 
@@ -226,38 +302,62 @@ class state:
             if isinstance(levelDict[w], dict):
                 self.parseImpl(rest, levelDict[w])
             else:
+                #Calls the function at levelDict[w] with args([rest])
                 levelDict[w](rest)
         else:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             else:
-                self.gui.showError()
+                self.gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
 
 
     def parse(self, command):
+        self.ready = False
         command = command.strip().upper()
         if len(command) == 1:
             command = command.lower()
         if self.mode & self.NORMAL:
+            command = re.sub('[!@#$\']', '', command)
             text = re.findall(r"[a-zA-Z]+", command)
             log.info("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
-        else:
-            # Only switch back to normal mode if the *entire* command is
-            # 'ESCAPE'
+        elif self.mode & self.INSERT:
+            #
+            # Only use these meta-commands if they're by themselves.
+            # 'ESCAPE' = Exit insert mode
             if command == 'ESCAPE':
                 self.switchMode()
+            
+            # 'ENTER' = Send the Enter key
+            # Might want to consider having this implicitly exit insert mode?
+            elif command == 'ENTER':
+                keyboard.press_and_release('enter')
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
                 keyboard.write(command)
                 #keys = [KeyboardMessage(ch) for ch in command]
                 #send_message(encode_message(keys))
 
+        else:
+            raise ValueError('Unknown mode in parser!')
+
 
         # sleep after parsing to allow commands to send appropriately
-        time.sleep(0.25)
+        time.sleep(0.5)
+
+    #Returns a list of options available to the user, using the given text file
+    def parseMenu(filename):
+        with open(filename) as f:
+            lines = f.readlines()
+        
+        commandList = []
+        for line in f:
+            if isnumber(line[0]) and line[1] == '.':
+                commandList.append(line)
+        
+        return commandList
 
 # v = state()
 # v.parse("hold alt")

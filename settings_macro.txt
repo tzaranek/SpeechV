@@ -1,0 +1,8 @@
+======================
+SpeechV Macro Settings
+======================
+
+1. Record a macro
+2. Rename a macro
+3. Edit a macro
+4. Delete a macro

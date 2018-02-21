@@ -7,15 +7,29 @@ import sys
 from time import sleep
 from threading import Thread
 
+# def modeStr(m):
+# 	if m == Mode.COMMAND:
+# 		return "Command"
+# 	elif m == Mode.TEXT:
+# 		return "Text"
+# 	elif m == Mode.HELP:
+# 		return "Text"
+# 	else:
+# 		raise
+
 def modeStr(m):
-	if m == Mode.COMMAND:
-		return "Command"
-	elif m == Mode.TEXT:
-		return "Text"
-	elif m == Mode.HELP:
-		return "Text"
+	if m & 2**3:
+		return "Insert"
+	elif m & 2**2:
+		return "Follow"
+	elif m & 2**1:
+		return "Holding"
+	elif m == 0:
+		return "Normal"
+	elif m == "":
+		return ""
 	else:
-		raise
+		return "Normal"
 
 def statusStr(s):
 	if s == Status.READY:
@@ -24,6 +38,8 @@ def statusStr(s):
 		return "Processing"
 	elif s == Status.RECORDING:
 		return "Recording"
+	elif s == Status.SETTINGS:
+		return "Settings"
 	else:
 		raise
 
@@ -37,6 +53,7 @@ class Status(Enum):
 	READY = 1
 	PROCESSING = 2
 	RECORDING = 3
+	SETTINGS = 4
 
 
 #Color codings for different modes
@@ -68,12 +85,32 @@ class GUI:
 	#Function to update the GUI to show that it is recording
 	#We should probably find a better way to do this
 	#So that we don't have to manually call this every time
-	def recording(self):
+	def startRecording(self):
+		self.status = Status.RECORDING
 		self.label.config(bg=RECORDING)
+
+	def endRecording(self):
+		if (self.status != Status.RECORDING):
+			raise AttributeError("We weren't recording!")
+
+		self.label.config(font=("Courier", 8))
+		self.setText("Name the macro\nand say done\nName: ")
+
+	def macroNameEntered(self, name):
+		if (self.status != Status.RECORDING):
+			raise AttributeError("We weren't recording!")
+
+		self.setText(self.getText() + name)
+		
+	def macroNameConfirmed(self, name):
+		self.status = Status.READY
+		self.updateText()
 
 	#Update the GUI to "Ready"
 	def ready(self):
+		self.status = Status.READY
 		self.label.config(bg=READY)
+		self.updateText()
 
 	#Call when there is a recognized command
 	def commandRecognized(self):
@@ -88,16 +125,16 @@ class GUI:
 		self.heldKeys.add(key)
 		self.updateText()
 
+	#Remove a key from the list
+	def removeHold(self, key):
+		self.heldKeys.remove(key)
+		self.updateText()
+
+	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
 		self.recent[2] = self.recent[1]
 		self.recent[1] = self.recent[0]
 		self.recent[0] = cmd
-		self.updateText()
-
-		
-	#Remove a key from the list
-	def removeHold(self, key):
-		self.heldKeys.remove(key)
 		self.updateText()
 
 	#set the GUI to the given mode
@@ -137,12 +174,49 @@ class GUI:
 		self.setMode(m)
 
 	#Displays an error and spawns a thread to restore the old mode later
-	def showError(self):
+	def showError(self, error):
 		mode = self.getMode()
 		self.label.config(font=("Courier", 8))
-		self.setText("Unrecognized\nCommand")
+		self.setText(error)
 		t = Thread(target=self.restoreMode, args=[mode])
 		t.start()
+	
+	def crashNotify(self):
+		self.setText("Voice module\nhas crashed :(")
+
+
+	#Display the help menu
+	def settingsMode(self, type="DEFAULT"):
+		if self.status != Status.READY:
+			raise AttributeError("Tried to open settings while busy")
+		if hasattr(self, 'window'):
+			self.window.destroy()
+
+		self.setText("Settings\nMenu!")
+		if type=='DEFAULT':
+			file_in = "settings_root.txt"
+		elif type=='MACRO':
+			file_in = "settings_macro.txt"
+		elif type=='ALIAS':
+			file_in = "settings_alias.txt"
+		with open(file_in, 'r') as text_file:
+			help_text = text_file.read()
+
+		self.status = Status.SETTINGS
+		self.window = Toplevel()
+		canvas = Canvas(master=self.window, height=600, width=1000)
+		canvas.grid()
+		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
+		self.window.geometry(self.LEFT + self.TOP)
+	
+	def closeSettings(self):
+		if self.status != self.SETTINGS:
+			raise AttributeError("Tried to close settings that doesn't exist!")
+
+	#Called upon closing the help menu
+	def closeHelpMenu(self):
+		self.setMode(0)
+		self.window.destroy()
 
 	#Display the help menu
 	def helpMode(self, type="DEFAULT"):
@@ -157,15 +231,16 @@ class GUI:
 		with open(file_in, 'r') as text_file:
 			help_text = text_file.read()
 
+		self.status = Status.HELP
 		self.window = Toplevel()
-		canvas = Canvas(master=self.window, height=800, width=1000)
+		canvas = Canvas(master=self.window, height=600, width=1000)
 		canvas.grid()
 		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
-
+		self.window.geometry(self.LEFT + self.TOP)
 
 	#Called upon closing the help menu
 	def closeHelpMenu(self):
-		self.setMode(Mode.COMMAND)
+		self.setMode(0)
 		self.window.destroy()
 
 	#Updates the GUI to reflect command mode
@@ -218,7 +293,9 @@ class GUI:
 	def __init__(self):
 		#Create the GUI object
 		self.root = Tk()
-
+		
+		self.root.attributes("-topmost", True)
+		self.mode = 0
 		#Create an empty set to show the held keys
 		self.heldKeys = set()
 		self.recent = ["None", "None", "None"]
@@ -239,7 +316,6 @@ class GUI:
 
 		#Initialize the status and mode
 		self.status = Status.READY
-		self.setMode(Mode.COMMAND)
 
 		self.ready()
 

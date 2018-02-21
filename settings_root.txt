@@ -1,0 +1,10 @@
+================
+SpeechV Settings
+================
+
+Say the command in capital letters
+
+SETTINGS CALIBRATE: Recalibrate microphone
+SETTINGS MACRO: Modify your macros
+SETTINGS ALIAS: Assign aliases to commands
+SETTINGS CLOSE: Close this menu
