@@ -59,7 +59,7 @@ browserKeywords = {
 
     'ZOOM IN'        : [KeyboardMessage('z'), KeyboardMessage('i')],
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
-    'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('d')],
+    'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('z')],
 
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
