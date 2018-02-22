@@ -2,36 +2,33 @@
 
 SpeechV serves as an interface between the user and existing computer applications. Specifically, SpeechV enables users to do research online and compose documents using only their voice. It is designed to work with Mozilla Firefox and Microsoft Word in a Windows environment.
 
+## Prerequisites
+
+Install Firefox, Python3, npm, and portaudio (http://portaudio.com/docs/v19-doxydocs/tutorial_start.html)
+
 ## Installation
 
-### Set up voice recognition
+1. Open Administrator command prompt
 
-1. Install portaudio (http://portaudio.com/docs/v19-doxydocs/tutorial_start.html)
+2. Goto SpeechV directory
 
-2. Set environment variable GOOGLE_APPLICATION_CREDENTIALS. Replace [PATH] with path to credentials.json
-```
-set GOOGLE_APPLICATION_CREDENTIALS=[PATH]
-```
+3. Run `python config.py`
 
-### Set up vim vixen extension for Windows
+4. Restart command prompt
 
-1. Run setupReg.py to modify the included forwarder.reg
+5. Goto SpeechV/extension directory
 
-2. Run forwarder.reg to install the registry key
+6. Run `npm install`
 
-3. Run web extension
-```bash
-cd extension
-npm run start
-```
+7. Run `npm start`
 
-4. Open a new command prompt to load the extension
-```
-cd extension
-web-ext run
-```
+## How to start SpeechV
 
-(See extension/CONTRIBUTING.md for more info)
+1. Open a command prompt to load the extension
+
+2. Goto SpeechV/extension directory
+
+3. Run `web-ext run`
 
 ## How to use SpeechV
 
