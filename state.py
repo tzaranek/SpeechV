@@ -29,8 +29,8 @@ class KeyboardMessage():
         return self.message
 
 browserKeywords = {
-    'UP'             : [KeyboardMessage('j')],
-    'DOWN'           : [KeyboardMessage('k')],
+    'UP'             : [KeyboardMessage('k')],
+    'DOWN'           : [KeyboardMessage('j')],
     'LEFT'           : [KeyboardMessage('h')],
     'RIGHT'          : [KeyboardMessage('l')],
     'CONTROL UP'     : [KeyboardMessage('u', ctrlKey=True)],
