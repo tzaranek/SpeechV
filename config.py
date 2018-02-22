@@ -5,48 +5,48 @@ import subprocess
 
 curPath = os.getcwd()
 
-#Change path in manifest.json
-with open("manifest.json", "r") as f:
-    s = f.read()
-
-js = json.loads(s)
-js['path'] = curPath + "\\speechV.bat"
+#Generate manifest.json
+manifest_template = {
+    "name": "speechV.py",
+    "description": "Forwards SpeechV commands as keystrokes",
+    "path": "C:\\Users\\Lawrence Wu\\Documents\\SpeechV\\speechV.bat",
+    "type": "stdio",
+    "allowed_extensions": [
+        "vim-vixen@i-beam.org"
+    ]
+}                                                                                                                                                                  
+manifest_template['path'] = curPath + "\\speechV.bat"
 
 with open("manifest.json", "w") as f:
-    json.dump(js, f)
+    json.dump(manifest_template, f)
 
 
-#Change path in forwarder.bat
-with open("speechV.bat", "r") as f:
-    lines = f.readlines()
-
-lines[2] = "call python \"" + curPath + "\\speechV.py\""
-
+#Generate speechV.bat
 with open("speechV.bat", "w") as w:
-    w.writelines(lines)
+    lines = [
+        "@echo off",
+        "",
+        "call python \"" + curPath + "\\speechV.py\""
+        ]
+    w.write("\n".join(lines))
 
 
-#Change path in forwarder.reg
-with open("speechV.reg", "r", encoding="utf-16") as infile:
-    lines = infile.readlines()
+#Generate speechV.reg
+with open("speechV.reg", "w", encoding="utf-16") as w:
+    lines = [
+        "Windows Registry Editor Version 5.00",
+        "",
+        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\speechV.py]",
+        "@=\"" + curPath + "\\manifest.json" + "\""
+        ]
+    w.write("\n".join(lines))
 
-lines[3] = '@="' + curPath + "\\manifest.json" + '"'
-k = lines[3]
-s = ""
-for l in k:
-    if l == '\\':
-        s += '\\'
-    s += l
-lines[3] = s
-lines.append('\n')
-
-fw = open("speechV.reg", "w", encoding="utf-16")
-fw.writelines(lines)
-fw.close()
 
 # Run registery install
-subprocess.check_call(["C:\\Windows\\System32\\reg.exe", "IMPORT", "speechV.reg"], shell=True)
+subprocess.check_call(["C:\\Windows\\System32\\reg.exe", "IMPORT", "speechV.reg"])
 
+
+# install python dependencies
 try: 
     python_path = sys.executable
     pip_path = os.path.join(os.path.dirname(python_path), "Scripts\\pip.exe")
@@ -55,4 +55,12 @@ try:
 except:
     print("Could not find pip. Please install pip and then run `pip install -r requirements.txt`.")
 
+
+
+# set google application credentials
+with open("credentials.bat", "w") as w:
+    credential_path = "\"" + curPath + "\\credentials.json" + "\""
+    w.write("setx GOOGLE_APPLICATION_CREDENTIALS {}".format(credential_path))
+
+subprocess.check_call(["credentials.bat"], shell=True)
 
