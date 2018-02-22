@@ -64,7 +64,7 @@ browserKeywords = {
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
     'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
-    'NEW TAB'        : [KeyboardMessage('t', ctrlKey=True)],
+    'NEW TAB'        : [KeyboardMessage('z'), KeyboardMessage('d')],
     'NEW WINDOW'     : [KeyboardMessage('n', ctrlKey=True)],
     'PRINT'          : [KeyboardMessage('p', ctrlKey=True)],
     'SAVE'           : [KeyboardMessage('s', ctrlKey=True)],
