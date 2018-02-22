@@ -29,8 +29,8 @@ class KeyboardMessage():
         return self.message
 
 browserKeywords = {
-    'UP'             : [KeyboardMessage('j')],
-    'DOWN'           : [KeyboardMessage('k')],
+    'UP'             : [KeyboardMessage('k')],
+    'DOWN'           : [KeyboardMessage('j')],
     'LEFT'           : [KeyboardMessage('h')],
     'RIGHT'          : [KeyboardMessage('l')],
     'CONTROL UP'     : [KeyboardMessage('u', ctrlKey=True)],
@@ -59,12 +59,12 @@ browserKeywords = {
 
     'ZOOM IN'        : [KeyboardMessage('z'), KeyboardMessage('i')],
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
-    'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('d')],
+    'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('z')],
 
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
     'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
-    'NEW TAB'        : [KeyboardMessage('t', ctrlKey=True)],
+    'NEW TAB'        : [KeyboardMessage('z'), KeyboardMessage('d')],
     'NEW WINDOW'     : [KeyboardMessage('n', ctrlKey=True)],
     'PRINT'          : [KeyboardMessage('p', ctrlKey=True)],
     'SAVE'           : [KeyboardMessage('s', ctrlKey=True)],
@@ -260,6 +260,8 @@ class state:
 
         elif tokens[0] == 'SEARCH':
                 self.executeSearch(tokens[1:])
+        elif len(tokens) > 1 and tokens[0] == "NEW" and tokens[1] == "TAB":
+            keyboard.press_and_release("ctrl+t")
         else:
             log.parse_error(log.ParseError.BROWSER, tokenStr)
 

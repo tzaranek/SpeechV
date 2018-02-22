@@ -39,6 +39,7 @@ with open("speechV.reg", "w", encoding="utf-16") as w:
         "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Mozilla\\NativeMessagingHosts\\speechV.py]",
         "@=\"" + curPath + "\\manifest.json" + "\""
         ]
+    lines[-1] = lines[-1].replace("\\", "\\\\")
     w.write("\n".join(lines))
 
 
