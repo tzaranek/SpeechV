@@ -260,6 +260,8 @@ class state:
 
         elif tokens[0] == 'SEARCH':
                 self.executeSearch(tokens[1:])
+        elif len(tokens) > 1 and tokens[0] == "NEW" and tokens[1] == "TAB":
+            keyboard.press_and_release("ctrl+t")
         else:
             log.parse_error(log.ParseError.BROWSER, tokenStr)
 
