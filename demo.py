@@ -18,8 +18,7 @@ class Demos:
 
         self.__sfn = ["SEARCH Hitchhiker's Guide to the Galaxy", "FOLLOW", "P",\
         "FOLLOW", "P", "CONTROL DOWN", "MOVE", "OPEN", "F", "CONTROL DOWNER",\
-        "CONTROL DOWNER", "Focus Microsoft Word",\
-        "Douglas Adams wrote Hitchhiker's Guide to the Galaxy."]
+        "CONTROL DOWNER"]
 
     #Open the search bar, google Hitchhikers Guide, fix the query
     #Open the wikipedia result, scroll down, move the GUI out of the way,
