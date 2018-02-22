@@ -6,37 +6,45 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
+from demo import Demos
+
 import log
 
 import state
 import time
+import traceback
 k = 0
+d = Demos()
 
-def recognize(audio_data, command_set):
+
+def recalibrate():
+    sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
+
+def recognize(command_set):
+    #Set up a counter and instance of demos
     global k
+    global d
+    cmd = None
+    #Start with testThenWrite, and then progress to other demos
     if k == 0:
-        k += 1
-        return "FOLLOW"
-    elif k == 1:
-        k += 1
-        return "c"
-    elif k == 2:
-        k += 1
-        return "ESCAPE"
-    elif k == 3:
-        k += 1
-        return "THE GREAT ESCAPE"
-    elif k == 4:
-        k += 1
-        return "ESCAPE"
-    elif k == 5:
-        k += 1
-        return "FOLLOW"
-    elif k == 6:
-        k += 1
-        return "d"
-    else:
-        return "Done"
+        cmd = d.searchFromNavbar()
+    # elif k == 1:
+    #     cmd = d.testThenWrite()
+    # elif k == 2:
+    #     cmd = d.writeMultipleSentences()
+    # elif k == 3:
+    #     cmd = d.openNewLink()
+    # elif k == 4:
+    #     cmd = d. displayHelpMenus()
+
+    #We're in a demo
+    if cmd != None:
+        #The current demo is over
+        if cmd == "":
+            #Go to next demo and reset the internal demo counter
+            k += 1
+            d.resetCounter()
+    return cmd
     client = speech.SpeechClient()
 
     flac_data = audio_data.get_flac_data(
@@ -62,6 +70,7 @@ def recognize(audio_data, command_set):
     return transcript
 
 def voiceLoop(g):
+    global restartLoop
     AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
 
     with open('command_set.txt', 'r') as myfile:
@@ -71,26 +80,34 @@ def voiceLoop(g):
 
     r = sr.Recognizer()
     s = state.state(g)
-    time.sleep(20)
+    time.sleep(5)
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
         r.pause_threshold = AUDIO_TIMEOUT
 
         while True:
+            #Worth it to change this to a cv later?
+            # while not s.ready:
+            #     time.sleep(0.25)
+                
             try:
                 #print("Say something!") # TODO: change to GUI alert
                 g.ready()
                 log.debug("Before listen")
-                audio = r.listen(source) # can be configured for user's speech patterns - possible added functionality?
+                time.sleep(2)
 
                 # recognize speech using Google Cloud Speech API            
                 log.debug("Pre recognize")
-                response = recognize(audio, command_set)
+                response = recognize(command_set)
                 s.parse(response)
                 log.debug(response)
                 g.updateCommands(response)
             except Exception as e:
                 log.error(str(e))
+                log.error(traceback.format_exc())
+                raise e
+            
+            g.setMode(s.mode)
 
             # TODO: check that speech consists of valid commands
             # TODO: forward speech to parser
