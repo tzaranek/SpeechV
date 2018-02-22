@@ -20,7 +20,9 @@ Install Firefox, Python3, npm, and portaudio (http://portaudio.com/docs/v19-doxy
 
 6. Run `npm install`
 
-7. Run `npm start`
+7. Run `npm install -g web-ext`
+
+8. Run `npm start`
 
 ## How to start SpeechV
 
