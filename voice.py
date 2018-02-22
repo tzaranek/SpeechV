@@ -6,45 +6,18 @@ from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
-from demo import Demos
-
 import log
 
 import state
 import time
 import traceback
-k = 0
-d = Demos()
+
 
 
 def recalibrate():
     sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
 
 def recognize(command_set):
-    #Set up a counter and instance of demos
-    global k
-    global d
-    cmd = None
-    #Start with testThenWrite, and then progress to other demos
-    if k == 0:
-        cmd = d.searchFromNavbar()
-    # elif k == 1:
-    #     cmd = d.testThenWrite()
-    # elif k == 2:
-    #     cmd = d.writeMultipleSentences()
-    # elif k == 3:
-    #     cmd = d.openNewLink()
-    # elif k == 4:
-    #     cmd = d. displayHelpMenus()
-
-    #We're in a demo
-    if cmd != None:
-        #The current demo is over
-        if cmd == "":
-            #Go to next demo and reset the internal demo counter
-            k += 1
-            d.resetCounter()
-    return cmd
     client = speech.SpeechClient()
 
     flac_data = audio_data.get_flac_data(
@@ -80,16 +53,11 @@ def voiceLoop(g):
 
     r = sr.Recognizer()
     s = state.state(g)
-    time.sleep(5)
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
         r.pause_threshold = AUDIO_TIMEOUT
 
-        while True:
-            #Worth it to change this to a cv later?
-            # while not s.ready:
-            #     time.sleep(0.25)
-                
+        while True:                
             try:
                 #print("Say something!") # TODO: change to GUI alert
                 g.ready()
