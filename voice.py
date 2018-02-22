@@ -67,13 +67,14 @@ def voiceLoop(g):
                 # recognize speech using Google Cloud Speech API            
                 log.debug("Pre recognize")
                 response = recognize(audio, command_set)
+                g.processing()
                 s.parse(response)
                 log.debug(response)
                 g.updateCommands(response)
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())
-                raise e
+                g.showError("Error parsing\nTry again.")
             
             g.setMode(s.mode)
 

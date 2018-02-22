@@ -40,6 +40,8 @@ def statusStr(s):
 		return "Recording"
 	elif s == Status.SETTINGS:
 		return "Settings"
+	elif s == Status.INITIALIZING:
+		return "Initializing"
 	else:
 		raise
 
@@ -54,6 +56,7 @@ class Status(Enum):
 	PROCESSING = 2
 	RECORDING = 3
 	SETTINGS = 4
+	INITIALIZING = 5
 
 
 #Color codings for different modes
@@ -109,6 +112,11 @@ class GUI:
 	#Update the GUI to "Ready"
 	def ready(self):
 		self.status = Status.READY
+		self.label.config(bg=READY)
+		self.updateText()
+
+	def processing(self):
+		self.status = Status.PROCESSING
 		self.label.config(bg=READY)
 		self.updateText()
 
@@ -315,9 +323,9 @@ class GUI:
 		self.label.config(font=("Courier", 8))
 
 		#Initialize the status and mode
-		self.status = Status.READY
-
-		self.ready()
+		self.status = Status.INITIALIZING
+		self.label.config(bg=READY)
+		self.updateText()
 
 		#Calculate screen size and get positions to move the window
 		self.getPositions()

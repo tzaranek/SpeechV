@@ -43,19 +43,19 @@ browserKeywords = {
     'DOLLAR'         : [KeyboardMessage('$')],
 
     'TOP'            : [KeyboardMessage('g'), KeyboardMessage('g')],
-    'BOTTOM'         : [KeyboardMessage('G')],
+    'BOTTOM'         : [KeyboardMessage('G', shiftKey=True)],
 
     'DELETE'         : [KeyboardMessage('d')],
     'UNDO'           : [KeyboardMessage('u')],
-    'PREVIOUS'       : [KeyboardMessage('K')],
-    'NEXT'           : [KeyboardMessage('J')],
+    'PREVIOUS'       : [KeyboardMessage('K', shiftKey=True)],
+    'NEXT'           : [KeyboardMessage('J', shiftKey=True)],
     'REFRESH'        : [KeyboardMessage('r')],
     'DUPLICATE'      : [KeyboardMessage('z'), KeyboardMessage('d')],
 
     'FOLLOW'         : [KeyboardMessage('f')],
     'OPEN'           : [KeyboardMessage('F', shiftKey=True)],
-    'BACK'           : [KeyboardMessage('H')],
-    'FORWARD'        : [KeyboardMessage('L')],
+    'BACK'           : [KeyboardMessage('H', shiftKey=True)],
+    'FORWARD'        : [KeyboardMessage('L', shiftKey=True)],
 
     'ZOOM IN'        : [KeyboardMessage('z'), KeyboardMessage('i')],
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
