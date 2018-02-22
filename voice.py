@@ -17,7 +17,7 @@ import traceback
 def recalibrate():
     sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
 
-def recognize(command_set):
+def recognize(audio_data, command_set):
     client = speech.SpeechClient()
 
     flac_data = audio_data.get_flac_data(
@@ -62,11 +62,11 @@ def voiceLoop(g):
                 #print("Say something!") # TODO: change to GUI alert
                 g.ready()
                 log.debug("Before listen")
-                time.sleep(2)
+                audio = r.listen(source)
 
                 # recognize speech using Google Cloud Speech API            
                 log.debug("Pre recognize")
-                response = recognize(command_set)
+                response = recognize(audio, command_set)
                 s.parse(response)
                 log.debug(response)
                 g.updateCommands(response)
