@@ -53,7 +53,7 @@ browserKeywords = {
     'DUPLICATE'      : [KeyboardMessage('z'), KeyboardMessage('d')],
 
     'FOLLOW'         : [KeyboardMessage('f')],
-    'OPEN'           : [KeyboardMessage('F')],
+    'OPEN'           : [KeyboardMessage('F', shiftKey=True)],
     'BACK'           : [KeyboardMessage('H')],
     'FORWARD'        : [KeyboardMessage('L')],
 
@@ -96,6 +96,7 @@ class state:
             "LAUNCH": self.parseLaunch,
             "SWITCH": self.parseSwitch,
             "FOCUS": self.parseFocus,
+            "MOVE": self.gui.enter, #Moves the GUI out of the way
             "RECORD": self.parseRecord
         }
 
@@ -209,11 +210,8 @@ class state:
         self.gui.showError("Not yet\nimplemented")
     
     def parseSwitch(self, tokens):
-        """TODO:
-            Create a macro to perform one alt tab
-            This can be accomplished with keyboard.press('alt+tab')
-        """
-        self.gui.showError("Not yet\nimplemented")
+        assert(self.mode == self.NORMAL)
+        keyboard.press_and_release("alt+tab")
 
     def parseFocus(self, tokens):
         """TODO:
@@ -222,7 +220,9 @@ class state:
             Then, this function can alt tab up to active applications - 1 times
             and compare currentApp() with the target application and stop
         """
-        self.gui.showError("Not yet\nimplemented")
+        while currentApp() != "Microsoft Word":
+            self.parseSwitch("Test")
+        self.gui.showError("Not yet\nimplemented\nDemo Hardcode")
     
     def parseRecord(self, tokens):
         """TODO:
@@ -254,9 +254,9 @@ class state:
         tokenStr = ' '.join(tokens)
         if tokenStr in browserKeywords:
             # Hacky interception of next few chars to send with follow
-            if tokenStr == 'FOLLOW':
+            if tokenStr == 'FOLLOW' or tokenStr == 'OPEN':
                 self.mode |= self.FOLLOW
-                send_message(encode_message(browserKeywords[tokenStr]))
+            send_message(encode_message(browserKeywords[tokenStr]))
 
         elif tokens[0] == 'SEARCH':
                 self.executeSearch(tokens[1:])
