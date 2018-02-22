@@ -57,9 +57,10 @@ web pages by finding and labelling all links/input fields on the page. You can t
 
 #### Navigating web pages
 
-**Follow**: Label links and input fields     
-    - **<label>**: Open link in current tab, enter text into input field, or click button   
-    - **Open <label>**: Open link in new tab   
+**Follow**: Label links and input fields    
+    - **<label>**: Open link in current tab, enter text into input field, or click button.   
+**Open**: Label links and input fields   
+    - **<label>**: Open link in new tab. Invalid entry if input field is selected.
 
 **Back**: Go back in history   
 **Forward**: Go forward in history
