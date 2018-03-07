@@ -140,16 +140,17 @@ class state:
 
         self.commands = {
             "ALT": self.parseAlt,
-            "HOLD": self.parseHold,
-            "RESIZE": self.parseResize,
             "ESCAPE": self.parseEscape,
-            "HELP": self.parseHelp,
-            "SETTINGS": self.parseSettings,
-            "LAUNCH": self.parseLaunch,
-            "SWITCH": self.parseSwitch,
             "FOCUS": self.parseFocus,
+            "HELP": self.parseHelp,
+            "HOLD": self.parseHold,
+            "INSERT": self.parseInsert,
+            "LAUNCH": self.parseLaunch,
             "MOVE": self.gui.enter, #Moves the GUI out of the way
-            "RECORD": self.parseRecord
+            "RECORD": self.parseRecord,
+            "RESIZE": self.parseResize,
+            "SETTINGS": self.parseSettings,
+            "SWITCH": self.parseSwitch
         }
 
 
@@ -171,6 +172,17 @@ class state:
             log.parse_error(log.ParseError.ALT, msg)
 
         self.parseImpl(tokens[1:])
+
+
+    def parseEscape(self, tokens):
+        """Press escape for top-level application as well as clearing state"""
+        keyboard.press_and_release("ESC")
+        self.parseImpl(tokens)
+
+
+    def parseInsert(self, tokens):
+        self.switchMode()
+        self.parse(" ".join(tokens))
 
 
     def parseHold(self, tokens):
@@ -224,10 +236,6 @@ class state:
 
         self.parseImpl(tokens[1:])
 
-
-    def parseEscape(self, tokens):
-        self.switchMode()
-        self.parseImpl(tokens)
 
     def parseHelp(self,tokens):
         if len(tokens) == 0:
@@ -352,7 +360,7 @@ class state:
             log.parse_error(log.ParseError.BROWSER, tokenStr)
 
 
-    def parseImpl(self, tokens, levelDict = None):
+    def parseImpl(self, tokens):
         if not tokens:
             return
 
@@ -380,18 +388,11 @@ class state:
 
             return
 
-        if levelDict == None:
-            levelDict = self.commands
-
         w, rest = tokens[0], tokens[1:]
         # debug(w)
-        # debug(levelDict)
-        if w in levelDict:
-            if isinstance(levelDict[w], dict):
-                self.parseImpl(rest, levelDict[w])
-            else:
-                #Calls the function at levelDict[w] with args([rest])
-                levelDict[w](rest)
+        if w in self.commands:
+            #Calls the function at self.commands[w] with args([rest])
+            self.commands[w](rest)
         else:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
