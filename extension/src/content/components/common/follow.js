@@ -156,7 +156,12 @@ export default class Follow {
       if (dom.isContentEditable(element)) {
         return element.focus();
       } else if (element.hasAttribute('tabindex')) {
-        // manually create down/up events
+        // try clicking first
+        element.click();
+
+        // then try to manually create down/up events
+        // TODO: is it safe to assume element will still exist after
+        // 'click'ing on it?
         let down = new MouseEvent('mousedown');
         let up = new MouseEvent('mouseup');
 
