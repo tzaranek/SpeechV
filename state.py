@@ -99,7 +99,9 @@ wordKeywords = {
         'CENTER ALIGN': keyboard.press_and_release('ctrl+e'),
         'RIGHT ALIGN': keyboard.press_and_release('ctrl+r'),
         'UNDO': keyboard.press_and_release('ctrl+z'),
-        'RE DO': keyboard.press_and_release('ctrl+y')
+        'RE DO': keyboard.press_and_release('ctrl+y'),
+        'INDENT': keyboard.press_and_release('tab'),
+        'REMOVE INDENT': keyboard.press_and_release('shift+tab'),
     },
 
     highlight = {
@@ -114,6 +116,7 @@ wordKeywords = {
         'ALL': keyboard.press_and_release('ctrl+a'),
         'INCREASE SIZE': keyboard.press_and_relase('ctrl+]'),
         'DECREASE SIZE': keyboard.press_and_release('ctrl+['),
+        'CAPS': keyboard.press_and_release('shift+F3'), # rotates between 'this', 'This' and 'THIS'
     }
 }
 
