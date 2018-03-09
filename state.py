@@ -12,6 +12,7 @@ import log
 from forwarder import encode_message, send_message
 
 from voice import recalibrate
+from wordToNumber import text2int
 
 
 class KeyboardMessage():
@@ -72,51 +73,51 @@ browserKeywords = {
 }
 
 wordKeywords = {
-    navigate = {
-        'UP'    : keyboard.press_and_release('up'),
-        'DOWN'  : keyboard.press_and_release('down'),
-        'PARAGRAPH UP': keyboard.press_and_release('ctrl+up'),
-        'PARAGRAPH DOWN': keyboard.press_and_release('ctrl+down'),
-        'PAGE UP': keyboard.press_and_release('ctrl+page up'),
-        'PAGE DOWN': keyboard.press_and_release('ctrl+page down'),
-        'LEFT'  : keyboard.press_and_release('ctrl+left'),
-        'RIGHT' : keyboard.press_and_release('ctrl+right'),
-        'PERIOD': keyboard.press_and_release('.'),
-        'COMMA': keyboard.press_and_release(','),
-        'EXCLAMATION': keyboard.press_and_release('!'),
-        'QUESTION': keyboard.press_and_release('?'),
-        'SLASH': keyboard.press_and_release('/'),
-        'COLON': keyboard.press_and_release(':'),
-        'SEMICOLON': keyboard.press_and_release(';'),
-        'APOSTROPHE': keyboard.press_and_release('\''),
-        'QUOTE': keyboard.press_and_release('\"'),
-        'OPEN PARENTHESIS': keyboard.press_and_release('('),
-        'CLOSE PARENTHESIS': keyboard.press_and_release(')'),
-        'AMPERSAND': keyboard.press_and_release('&'),
-        'DOLLAR': keyboard.press_and_release('$'),
-        'STAR': keyboard.press_and_release('*'),
-        'LEFT ALIGN': keyboard.press_and_release('ctrl+l'),
-        'CENTER ALIGN': keyboard.press_and_release('ctrl+e'),
-        'RIGHT ALIGN': keyboard.press_and_release('ctrl+r'),
-        'UNDO': keyboard.press_and_release('ctrl+z'),
-        'RE DO': keyboard.press_and_release('ctrl+y'),
-        'INDENT': keyboard.press_and_release('tab'),
-        'REMOVE INDENT': keyboard.press_and_release('shift+tab'),
+    "NAVIGATE" : {
+        'UP'    : 'up',
+        'DOWN'  : 'down',
+        'PARAGRAPH UP': 'ctrl+up',
+        'PARAGRAPH DOWN': 'ctrl+down',
+        'PAGE UP': 'ctrl+page up',
+        'PAGE DOWN': 'ctrl+page down',
+        'LEFT'  : 'ctrl+left',
+        'RIGHT' : 'ctrl+right',
+        'PERIOD': '.',
+        'COMMA': ',',
+        'EXCLAMATION': '!',
+        'QUESTION': '?',
+        'SLASH': '/',
+        'COLON': ':',
+        'SEMICOLON': ';',
+        'APOSTROPHE': '\'',
+        'QUOTE': '\"',
+        'OPEN PARENTHESIS': '(',
+        'CLOSE PARENTHESIS': ')',
+        'AMPERSAND': '&',
+        'DOLLAR': '$',
+        'STAR': '*',
+        'LEFT ALIGN': 'ctrl+l',
+        'CENTER ALIGN': 'ctrl+e',
+        'RIGHT ALIGN': 'ctrl+r',
+        'UNDO': 'ctrl+z',
+        'RE DO': 'ctrl+y',
+        'INDENT': 'tab',
+        'REMOVE INDENT': 'shift+tab',
     },
 
-    highlight = {
-        'DOWN': keyboard.press_and_release('ctrl+shift+down'),
-        'UP': keyboard.press_and_release('ctrl+shift+up'),
-        'RIGHT': keyboard.press_and_release('ctrl+shift+right'),
-        'LEFT': keyboard.press_and_release('ctrl+shift+left'),
-        'BOLD': keyboard.press_and_release('ctrl+b'),
-        'ITALICS': keyboard.press_and_release('ctrl+i'),
-        'UNDERLINE': keyboard.press_and_release('ctrl+u'),
-        'DELETE': keyboard.press_and_release('backspace'),
-        'ALL': keyboard.press_and_release('ctrl+a'),
-        'INCREASE SIZE': keyboard.press_and_relase('ctrl+]'),
-        'DECREASE SIZE': keyboard.press_and_release('ctrl+['),
-        'CAPS': keyboard.press_and_release('shift+F3'), # rotates between 'this', 'This' and 'THIS'
+    "HIGHLIGHT" = {
+        'DOWN': 'ctrl+shift+down',
+        'UP': 'ctrl+shift+up',
+        'RIGHT': 'ctrl+shift+right',
+        'LEFT': 'ctrl+shift+left',
+        'BOLD': 'ctrl+b',
+        'ITALICS': 'ctrl+i',
+        'UNDERLINE': 'ctrl+u',
+        'DELETE': 'backspace',
+        'ALL': 'ctrl+a',
+        'INCREASE SIZE': 'ctrl+]',
+        'DECREASE SIZE': 'ctrl+[',
+        'CAPS': 'shift+F3', # rotates between 'this', 'This' and 'THIS'
     }
 }
 
@@ -132,6 +133,8 @@ class state:
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
+        self.wordMode = "NAVIGATE"
+        self.recording = False
         self.gui = g
         self.held = set()
 
@@ -279,6 +282,14 @@ class state:
             Tokens could be "Start" or "End" with the macro commands
             Sandwiched between "Record start" and "record end"
         """
+        if len(tokens) != 1:
+            self.gui.showError("Unrecognized\nrecord command")
+        if tokens[0] == "START":
+            self.recording = True
+        elif tokens [0] == "END":
+            self.recording = False
+        else:
+            self.gui.showError("Unrecognized\nrecord command")
         self.gui.showError("Not yet\nimplemented")
 
     def executeSearch(self, tokens):
@@ -297,6 +308,32 @@ class state:
 
         time.sleep(1)
         keyboard.press_and_release('alt+enter')
+
+    def forwardWord(self, tokens):
+        tokenStr = ' '.join(tokens)
+        if tokenStr in ["INSERT", "NAVIGATE", "HIGHLIGHT"]:
+            self.wordMode = tokenStr
+            return
+
+        if self.wordMode == "INSERT":
+            keyboard.write(tokenStr.lower())
+            return
+
+        elif tokenStr in wordKeywords[self.wordMode]:
+            keyboard.press_and_release(wordKeywords[self.wordMode][tokenStr])
+            return
+
+        #This is because we support "down X" where x is arbitrary
+        elif tokens[0] in ["UP", "DOWN", "LEFT", "RIGHT"]:
+            try:
+                num = text2int(tokens[1:])
+            except Exception as e:
+                raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+            for i in range(num):
+                keyboard.press_and_release(wordKeywords[self.wordMode][tokens[0]])
+                time.sleep(.1)
+
+
 
 
     def forwardBrowser(self, tokens):
@@ -358,6 +395,8 @@ class state:
         else:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
+            elif currentApp() == 'Microsoft Word:
+                self.forwardWord(tokens)'
             else:
                 self.gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
