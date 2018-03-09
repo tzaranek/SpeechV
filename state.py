@@ -71,6 +71,52 @@ browserKeywords = {
 
 }
 
+wordKeywords = {
+    navigate = {
+        'UP'    : keyboard.press_and_release('up'),
+        'DOWN'  : keyboard.press_and_release('down'),
+        'PARAGRAPH UP': keyboard.press_and_release('ctrl+up'),
+        'PARAGRAPH DOWN': keyboard.press_and_release('ctrl+down'),
+        'PAGE UP': keyboard.press_and_release('ctrl+page up'),
+        'PAGE DOWN': keyboard.press_and_release('ctrl+page down'),
+        'LEFT'  : keyboard.press_and_release('ctrl+left'),
+        'RIGHT' : keyboard.press_and_release('ctrl+right'),
+        'PERIOD': keyboard.press_and_release('.'),
+        'COMMA': keyboard.press_and_release(','),
+        'EXCLAMATION': keyboard.press_and_release('!'),
+        'QUESTION': keyboard.press_and_release('?'),
+        'SLASH': keyboard.press_and_release('/'),
+        'COLON': keyboard.press_and_release(':'),
+        'SEMICOLON': keyboard.press_and_release(';'),
+        'APOSTROPHE': keyboard.press_and_release('\''),
+        'QUOTE': keyboard.press_and_release('\"'),
+        'OPEN PARENTHESIS': keyboard.press_and_release('('),
+        'CLOSE PARENTHESIS': keyboard.press_and_release(')'),
+        'AMPERSAND': keyboard.press_and_release('&'),
+        'DOLLAR': keyboard.press_and_release('$'),
+        'STAR': keyboard.press_and_release('*'),
+        'LEFT ALIGN': keyboard.press_and_release('ctrl+l'),
+        'CENTER ALIGN': keyboard.press_and_release('ctrl+e'),
+        'RIGHT ALIGN': keyboard.press_and_release('ctrl+r'),
+        'UNDO': keyboard.press_and_release('ctrl+z'),
+        'RE DO': keyboard.press_and_release('ctrl+y')
+    },
+
+    highlight = {
+        'DOWN': keyboard.press_and_release('ctrl+shift+down'),
+        'UP': keyboard.press_and_release('ctrl+shift+up'),
+        'RIGHT': keyboard.press_and_release('ctrl+shift+right'),
+        'LEFT': keyboard.press_and_release('ctrl+shift+left'),
+        'BOLD': keyboard.press_and_release('ctrl+b'),
+        'ITALICS': keyboard.press_and_release('ctrl+i'),
+        'UNDERLINE': keyboard.press_and_release('ctrl+u'),
+        'DELETE': keyboard.press_and_release('backspace'),
+        'ALL': keyboard.press_and_release('ctrl+a'),
+        'INCREASE SIZE': keyboard.press_and_relase('ctrl+]'),
+        'DECREASE SIZE': keyboard.press_and_release('ctrl+['),
+    }
+}
+
 
 class state:
     def __init__(self, g):
