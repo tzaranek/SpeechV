@@ -54,7 +54,12 @@ def recognize(audio_data, command_set):
 def voiceLoop(g):
     global restartLoop
     #Load the configuration file into a dictionary
-    config = loadConfig()
+    try:
+        config = loadConfig()
+    except FileNotFoundError:
+        # FIXME: handle case where there is no config file
+        log.error("No config file found! Ignoring error for now...")
+        config = {} 
 
     AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
 
@@ -97,7 +102,7 @@ def voiceLoop(g):
                 if recording:                    
                     #We've finished recording a macro
                     #Name the macro (and confirm) to finish the process
-                    elif response.strip().upper() == "RECORD END":
+                    if response.strip().upper() == "RECORD END":
                         recording = False
                         confirm = False
                         macro['commands'] = macroCommands

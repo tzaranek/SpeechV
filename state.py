@@ -12,7 +12,7 @@ import log
 from forwarder import encode_message, send_message
 
 from voice import recalibrate
-from wordToNumber import text2int
+from word2number import w2n
 
 
 class KeyboardMessage():
@@ -105,7 +105,7 @@ wordKeywords = {
         'REMOVE INDENT': 'shift+tab',
     },
 
-    "HIGHLIGHT" = {
+    "HIGHLIGHT" : {
         'DOWN': 'ctrl+shift+down',
         'UP': 'ctrl+shift+up',
         'RIGHT': 'ctrl+shift+right',
@@ -326,7 +326,7 @@ class state:
         #This is because we support "down X" where x is arbitrary
         elif tokens[0] in ["UP", "DOWN", "LEFT", "RIGHT"]:
             try:
-                num = text2int(tokens[1:])
+                num = w2n.word_to_num(tokens[1:])
             except Exception as e:
                 raise Exception("Navigate (U/D/L/R) did not receive a number arg")
             for i in range(num):
@@ -395,8 +395,8 @@ class state:
         else:
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
-            elif currentApp() == 'Microsoft Word:
-                self.forwardWord(tokens)'
+            elif currentApp() == 'Microsoft Word':
+                self.forwardWord(tokens)
             else:
                 self.gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
@@ -449,7 +449,6 @@ class state:
         
         return commandList
 
-# v = state()
 # v.parse("hold alt")
 # time.sleep(2)
 # v.parse("tab")
