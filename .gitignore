@@ -5,3 +5,7 @@ env/
 __pycache__/
 *.egg-info/
 log.txt
+manifest.json                                                                                                                                           
+speechV.bat                                                                                                                                             
+speechV.reg    
+credentials.bat
