@@ -2,6 +2,7 @@ import subprocess
 
 import win32pipe
 import win32api
+import win32file
 
 import log
 
@@ -20,8 +21,14 @@ def main():
     # Run speechv by starting up web-ext. We sever all input/output to the 
     # web-ext process so that the debug prompt remains clean. Using a bat
     # script must be done because web-ext couldn't be run from here (?)
-    speechv = subprocess.Popen(['debug_helper.bat'], 
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    speechv = subprocess.Popen(['debug_helper.bat'], stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE)
+
+    log.info('waiting for speechv to start and connect with us...')
+    print('Waiting to connect with SpeechV...')
+    win32pipe.ConnectNamedPipe(pipe, None)
+    print('CONNECTED')
+    win32file.WriteFile(pipe, 'hello world\n'.encode())
 
     # TODO: quick start documentation printed at beginning of each session
 
@@ -39,19 +46,12 @@ def main():
         except KeyboardInterrupt:
             print()
 
-    # TODO: this currently kills nothing. Figure out why. The current workaround
-    # is to restart the command prompt after each use, but that sucks
     for subprogram in ['firefox.exe', 'python.exe']:
         try:
             subprocess.check_call(['taskkill', '/T', '/F', '/IM', subprogram])
         except Exception as e:
             log.error(e)
 
-    log.info('waiting for speechv to start and connect with us...')
-    print('Waiting to connect with SpeechV...')
-    win32pipe.ConnectNamedPipe(pipe, None)
-
-    # TODO: connect from speechv's side with the named pipe
 
 if __name__ == '__main__':
     main()
