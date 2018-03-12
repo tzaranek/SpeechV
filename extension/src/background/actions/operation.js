@@ -2,6 +2,7 @@ import operations from 'shared/operations';
 import messages from 'shared/messages';
 import * as tabs from 'background/tabs';
 import * as zooms from 'background/zooms';
+import * as bookmarks from 'background/bookmarks';
 
 const sendConsoleShowCommand = (tab, command) => {
   return browser.tabs.sendMessage(tab.id, {
@@ -47,6 +48,9 @@ const exec = (operation, tab) => {
     return zooms.zoomOut();
   case operations.ZOOM_NEUTRAL:
     return zooms.neutral();
+  case operations.BOOKMARKS_CREATE:
+    console.log("CREATING BOOKMARK");
+    return bookmarks.createBookmarkFromCurrent();
   case operations.COMMAND_SHOW:
     return sendConsoleShowCommand(tab, '');
   case operations.COMMAND_SHOW_OPEN:
