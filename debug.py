@@ -8,7 +8,14 @@ import log
 
 
 def show_help():
-    print('TODO: help')
+    print("Usage: use all speechv commands like you would with voice. Each command")
+    print("       is executed after alt-tabbing once. There are also some")
+    print("       additional commands exclusive to this prompt:")
+    print()
+    print("    'debug help'  : list this help information")
+    print("    'debug quit'  : quit the interactive prompt")
+    print("    'debug batch' : run commands from a file in speechv/batch_inputs")
+    print()
 
 
 def run_prompt(speechv_pipe):
@@ -61,6 +68,7 @@ def main():
     win32pipe.ConnectNamedPipe(pipe, None)
     print('connected')
 
+    show_help()
     run_prompt(pipe)
 
     for subprogram in ['firefox.exe', 'python.exe']:
