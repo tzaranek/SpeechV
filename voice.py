@@ -14,6 +14,8 @@ import time
 import traceback
 import sys
 
+import win32file
+
 def loadConfig():
     with open("config.cfg", "r") as f:
         s = f.read()
@@ -75,8 +77,15 @@ def voiceLoop(g):
         if os.path.exists('DEBUG_FLAG'):
             in_debug_mode = True
             log.info("debug mode activated")
+            pipe = win32file.CreateFile(
+                    r'\\.\pipe\named_pipe',
+                    win32file.GENERIC_READ, 
+                    win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
+                    None, win32file.OPEN_EXISTING, 0, None)
+            time.sleep(1) 
         else:
             log.info("voice mode activeated")
+
 
         r = sr.Recognizer()
         s = state.state(g)
@@ -92,31 +101,43 @@ def voiceLoop(g):
                 try:
                     #print("Say something!") # TODO: change to GUI alert
                     g.ready()
-                    log.debug("Before listen")
-                    audio = r.listen(source)
 
-                    # recognize speech using Google Cloud Speech API            
-                    log.debug("Pre recognize")
-                    response = recognize(audio, command_set)
+                    raw_command = ''
+                    if in_debug_mode:
+                        log.debug("reading from pipe")
+                        message = win32file.ReadFile(pipe, 4096)
+                        log.debug('pipe message: ', message[1].decode())
+                        raw_command = message[1].decode()
+                    else:
+                        log.debug("Before listen")
+                        audio = r.listen(source)
 
-                    log.debug(response)
+                        # recognize speech using Google Cloud Speech API            
+                        log.debug("Pre recognize")
+                        raw_command = recognize(audio, command_set)
 
                     g.processing()
-                    s.parse(response)
-                    log.debug(response)
-                    g.updateCommands(response)
+
+                    if in_debug_mode:
+                        s.parse('switch')
+                    s.parse(raw_command)
+                    if in_debug_mode:
+                        time.sleep(1)
+                        s.parse('switch')
+
+                    g.updateCommands(raw_command)
                     
 
                     #if not recording:
                     #    #We've begun recording a macro
-                    #    if response.strip().upper() == "RECORD START":
+                    #    if raw_command.strip().upper() == "RECORD START":
                     #        recording = True
                     #        macroCommands = []
 
                     #if recording:                    
                     #    #We've finished recording a macro
                     #    #Name the macro (and confirm) to finish the process
-                    #    if response.strip().upper() == "RECORD END":
+                    #    if raw_command.strip().upper() == "RECORD END":
                     #        recording = False
                     #        confirm = False
                     #        macro['commands'] = macroCommands

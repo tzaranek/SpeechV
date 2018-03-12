@@ -15,7 +15,6 @@ def run_prompt(speechv_pipe):
     while True:
         try:
             command = input('-> ')
-            print('received command: ', command)
             command_words = command.split()
             if command_words[0].lower() == 'debug':
                 try:
@@ -30,7 +29,7 @@ def run_prompt(speechv_pipe):
                 except IndexError:
                     suggest_help(command)
             else:
-                win32file.WriteFile(speechv_pipe, (command + '\n').encode())
+                win32file.WriteFile(speechv_pipe, command.encode())
         except KeyboardInterrupt:
             print()
 
@@ -40,6 +39,9 @@ def main():
         subprocess.check_call(['del', 'named_pipe'])
     except FileNotFoundError:
         pass # allow for no pre-existing named pipe
+
+    with open('DEBUG_FLAG', 'w') as debug_flag:
+        pass # create a file to let speechv.py know it should connect with us
 
     pipe = win32pipe.CreateNamedPipe(
             r'\\.\pipe\named_pipe',
@@ -59,8 +61,6 @@ def main():
     win32pipe.ConnectNamedPipe(pipe, None)
     print('connected')
 
-    win32file.WriteFile(pipe, 'hello world\n'.encode())
-
     run_prompt(pipe)
 
     for subprogram in ['firefox.exe', 'python.exe']:
@@ -69,7 +69,8 @@ def main():
         except Exception as e:
             log.error(e)
 
-    # TODO: quick start documentation printed at beginning of each session
+    # clean up so that voice activated usage will work on future use
+    subprocess.check_call(['del', 'DEBUG_FLAG'])
 
 def suggest_help(bad_command):
     print("error: command '{}' is incomplete. Use 'debug help'"
