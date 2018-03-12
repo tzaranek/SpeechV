@@ -156,7 +156,21 @@ export default class Follow {
       if (dom.isContentEditable(element)) {
         return element.focus();
       } else if (element.hasAttribute('tabindex')) {
-        return element.click();
+        // try clicking first
+        element.click();
+
+        // then try to manually create down/up events
+        // TODO: is it safe to assume element will still exist after
+        // 'click'ing on it?
+        let down = new MouseEvent('mousedown');
+        let up = new MouseEvent('mouseup');
+
+        // send events and return success statuses
+        let downSuccess = element.dispatchEvent(down);
+        if (downSuccess) {
+            return element.dispatchEvent(up);
+        }
+        return false;
       }
     }
   }
