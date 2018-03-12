@@ -6,6 +6,11 @@ import win32file
 
 import log
 
+
+def show_help():
+    print('TODO: help')
+
+
 def run_prompt(speechv_pipe):
     while True:
         try:
@@ -69,9 +74,6 @@ def main():
 def suggest_help(bad_command):
     print("error: command '{}' is incomplete. Use 'debug help'"
             " for correct usage", bad_command)
-
-def show_help():
-    print('TODO: help')
 
 if __name__ == '__main__':
     main()

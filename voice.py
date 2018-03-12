@@ -9,8 +9,10 @@ from google.cloud.speech import types
 import log
 
 import state
+import os
 import time
 import traceback
+import sys
 
 def loadConfig():
     with open("config.cfg", "r") as f:
@@ -52,89 +54,104 @@ def recognize(audio_data, command_set):
     return transcript
 
 def voiceLoop(g):
-    global restartLoop
-    #Load the configuration file into a dictionary
     try:
-        config = loadConfig()
-    except FileNotFoundError:
-        # FIXME: handle case where there is no config file
-        log.error("No config file found! Ignoring error for now...")
-        config = {} 
+        global restartLoop
+        #Load the configuration file into a dictionary
+        try:
+            config = loadConfig()
+        except FileNotFoundError:
+            # FIXME: handle case where there is no config file
+            log.error("No config file found! Ignoring error for now...")
+            config = {} 
 
-    AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
+        AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
 
-    with open('command_set.txt', 'r') as myfile:
-        str_command_set = myfile.read()
+        with open('command_set.txt', 'r') as myfile:
+            str_command_set = myfile.read()
 
-    command_set = str_command_set.split('\n')
+        command_set = str_command_set.split('\n')
 
-    r = sr.Recognizer()
-    s = state.state(g)
-    with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
-        r.pause_threshold = AUDIO_TIMEOUT
+        in_debug_mode = False
+        if os.path.exists('DEBUG_FLAG'):
+            in_debug_mode = True
+            log.info("debug mode activated")
+        else:
+            log.info("voice mode activeated")
 
-        recording = False
-        macro = {}
-        macroCommands = []
+        r = sr.Recognizer()
+        s = state.state(g)
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
+            r.pause_threshold = AUDIO_TIMEOUT
 
-        while True:                
-            try:
-                #print("Say something!") # TODO: change to GUI alert
-                g.ready()
-                log.debug("Before listen")
-                audio = r.listen(source)
+            recording = False
+            macro = {}
+            macroCommands = []
 
-                # recognize speech using Google Cloud Speech API            
-                log.debug("Pre recognize")
-                response = recognize(audio, command_set)
-                g.processing()
-                s.parse(response)
-                log.debug(response)
-                g.updateCommands(response)
+            while True:                
+                try:
+                    #print("Say something!") # TODO: change to GUI alert
+                    g.ready()
+                    log.debug("Before listen")
+                    audio = r.listen(source)
 
-                if not recording:
-                    #We've begun recording a macro
-                    if response.strip().upper() == "RECORD START":
-                        recording = True
-                        macroCommands = []
+                    # recognize speech using Google Cloud Speech API            
+                    log.debug("Pre recognize")
+                    response = recognize(audio, command_set)
 
-                if recording:                    
-                    #We've finished recording a macro
-                    #Name the macro (and confirm) to finish the process
-                    if response.strip().upper() == "RECORD END":
-                        recording = False
-                        confirm = False
-                        macro['commands'] = macroCommands
+                    log.debug(response)
 
-                        #While we haven't confirmed the macro's name
-                        while not confirm:
-                            g.showError("Name your\nmacro")
-                            log.debug("Recording the macro name")
-                            audio = r.listen(source)        
-                            macroName = recognize(audio, command_set)
-                            g.showError("Name:" + macroName + "\n'Yes' to confirm\n'No' to retry")
-                            audio = r.listen(source)        
-                            answer = recognize(audio, command_set)
-                            #Ask to confirm the macro
-                            if answer.strip().upper == "YES":
-                                confirm = True
-                        
-                        #Insert the macro into the dictionary
-                        macro['name'] = macroName
-                        config.macros[macroName] = macroCommands
-                        saveConfig(config)
+                    g.processing()
+                    s.parse(response)
+                    log.debug(response)
+                    g.updateCommands(response)
+                    
+
+                    #if not recording:
+                    #    #We've begun recording a macro
+                    #    if response.strip().upper() == "RECORD START":
+                    #        recording = True
+                    #        macroCommands = []
+
+                    #if recording:                    
+                    #    #We've finished recording a macro
+                    #    #Name the macro (and confirm) to finish the process
+                    #    if response.strip().upper() == "RECORD END":
+                    #        recording = False
+                    #        confirm = False
+                    #        macro['commands'] = macroCommands
+
+                    #        #While we haven't confirmed the macro's name
+                    #        while not confirm:
+                    #            g.showError("Name your\nmacro")
+                    #            log.debug("Recording the macro name")
+                    #            audio = r.listen(source)        
+                    #            macroName = recognize(audio, command_set)
+                    #            g.showError("Name:" + macroName + "\n'Yes' to confirm\n'No' to retry")
+                    #            audio = r.listen(source)        
+                    #            answer = recognize(audio, command_set)
+                    #            #Ask to confirm the macro
+                    #            if answer.strip().upper == "YES":
+                    #                confirm = True
+                    #        
+                    #        #Insert the macro into the dictionary
+                    #        macro['name'] = macroName
+                    #        config.macros[macroName] = macroCommands
+                    #        saveConfig(config)
 
 
-            except Exception as e:
-                log.error(str(e))
-                log.error(traceback.format_exc())
-                g.showError("Error parsing\nTry again.")
-            
-            g.setMode(s.mode)
+                except Exception as e:
+                    log.error(str(e))
+                    log.error(traceback.format_exc())
+                    g.showError("Error parsing\nTry again.")
+                
+                g.setMode(s.mode)
 
-            # TODO: check that speech consists of valid commands
-            # TODO: forward speech to parser
+                # TODO: check that speech consists of valid commands
+                # TODO: forward speech to parser
+    except Exception as e:
+        log.error("voice loop:", e)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
