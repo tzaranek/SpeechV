@@ -6,6 +6,30 @@ import win32file
 
 import log
 
+def run_prompt(speechv_pipe):
+    while True:
+        try:
+            command = input('-> ')
+            print('received command: ', command)
+            command_words = command.split()
+            if command_words[0].lower() == 'debug':
+                try:
+                    if command_words[1] == 'quit':
+                        break
+                    elif command_words[1] == 'help':
+                        show_help()
+                    elif command_words[1] == 'batch':
+                        print('TODO')
+                    else:
+                        suggest_help(command)
+                except IndexError:
+                    suggest_help(command)
+            else:
+                win32file.WriteFile(speechv_pipe, (command + '\n').encode())
+        except KeyboardInterrupt:
+            print()
+
+
 def main():
     try:
         subprocess.check_call(['del', 'named_pipe'])
@@ -25,26 +49,14 @@ def main():
             stdout=subprocess.PIPE)
 
     log.info('waiting for speechv to start and connect with us...')
-    print('Waiting to connect with SpeechV...')
+
+    print('Waiting to connect with SpeechV... ', end='')
     win32pipe.ConnectNamedPipe(pipe, None)
-    print('CONNECTED')
+    print('connected')
+
     win32file.WriteFile(pipe, 'hello world\n'.encode())
 
-    # TODO: quick start documentation printed at beginning of each session
-
-    # FIXME: proof of concept
-    for i in range(30):
-        # TODO: add debug only commands, prefixed with 'debug'
-        #  - quit, batch, help
-        # TODO: create batch input file examples
-        try:
-            print('-> ', end='')
-            what = input()
-            print(what)
-            if what.strip() == 'quit':
-                break
-        except KeyboardInterrupt:
-            print()
+    run_prompt(pipe)
 
     for subprogram in ['firefox.exe', 'python.exe']:
         try:
@@ -52,6 +64,14 @@ def main():
         except Exception as e:
             log.error(e)
 
+    # TODO: quick start documentation printed at beginning of each session
+
+def suggest_help(bad_command):
+    print("error: command '{}' is incomplete. Use 'debug help'"
+            " for correct usage", bad_command)
+
+def show_help():
+    print('TODO: help')
 
 if __name__ == '__main__':
     main()
