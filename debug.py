@@ -41,8 +41,11 @@ def main():
 
     # TODO: this currently kills nothing. Figure out why. The current workaround
     # is to restart the command prompt after each use, but that sucks
-    speechv.kill()
-    
+    for subprogram in ['firefox.exe', 'python.exe']:
+        try:
+            subprocess.check_call(['taskkill', '/T', '/F', '/IM', subprogram])
+        except Exception as e:
+            log.error(e)
 
     log.info('waiting for speechv to start and connect with us...')
     print('Waiting to connect with SpeechV...')
