@@ -38,4 +38,5 @@ class ParseError(Enum):
     RESIZE = "RESIZE"
     BROWSER = "BROWSER"
     HELP = "HELP"
+    TYPE = "TYPE"
 

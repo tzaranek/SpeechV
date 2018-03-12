@@ -56,6 +56,9 @@ def main():
             win32pipe.PIPE_TYPE_MESSAGE | win32pipe.PIPE_WAIT,
             2, 65536, 65536, 300, None)
 
+
+    print('Waiting to connect with SpeechV... ', end='')
+
     # Run speechv by starting up web-ext. We sever all input/output to the 
     # web-ext process so that the debug prompt remains clean. Using a bat
     # script must be done because web-ext couldn't be run from here (?)
@@ -63,8 +66,6 @@ def main():
             stdout=subprocess.PIPE)
 
     log.info('waiting for speechv to start and connect with us...')
-
-    print('Waiting to connect with SpeechV... ', end='')
     win32pipe.ConnectNamedPipe(pipe, None)
     print('connected')
 

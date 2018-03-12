@@ -149,7 +149,8 @@ class state:
             "SWITCH": self.parseSwitch,
             "FOCUS": self.parseFocus,
             "MOVE": self.gui.enter, #Moves the GUI out of the way
-            "RECORD": self.parseRecord
+            "RECORD": self.parseRecord,
+            "TYPE":  self.parseKeystroke
         }
 
 
@@ -291,6 +292,12 @@ class state:
         else:
             self.gui.showError("Unrecognized\nrecord command")
         self.gui.showError("Not yet\nimplemented")
+
+    def parseKeystroke(self, tokens):
+        if len(tokens) == 1:
+            keyboard.press_and_release(tokens[0])
+        else:
+            log.Logger.log(log.ParseError.TYPE, tokens)
 
     def executeSearch(self, tokens):
         """TODO:
