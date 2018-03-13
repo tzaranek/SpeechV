@@ -6,6 +6,7 @@ import sys
 import win32gui, win32con, win32api, win32com
 
 import keyboard
+import pyautogui
 import psutil
 from keyboardEvent import KeyboardEvent
 from window_properties import currentApp
@@ -154,7 +155,9 @@ class state:
             "TYPE":  self.parseKeystroke,
             "FOCUS": self.parseFocus,
             "MINIMIZE": self.parseMinimize,
-            "MAXIMIZE": self.parseMaximize
+            "MAXIMIZE": self.parseMaximize,
+            "SNAP": self.parseSnap,
+            "UNSNAP": self.parseUnsnap
         }
 
 
@@ -303,6 +306,7 @@ class state:
         win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
 
     def parseMaximize(self, tokens):
+
         if tokens:
             self.gui.showError("Incorrect\nusage of maximize")
 
@@ -316,6 +320,37 @@ class state:
 
         handle = win32gui.GetForegroundWindow()
         win32gui.ShowWindow(handle, win32con.SW_MINIMIZE)
+
+    def parseSnap(self, tokens):
+        if len(tokens) != 1:
+            self.gui.showError("Incorrect\nusage")
+            log.warn("exactly one token required for snap. {} found".format(len(tokens)))
+            return
+
+        self.parseUnsnap([])
+
+        # escape is needed to cancel another shortcut that activates inadvertently
+        snap_type = tokens[0]
+        if snap_type == 'LEFT':
+            pyautogui.hotkey('win', 'left', 'escape')
+            time.sleep(1)
+        elif snap_type == 'RIGHT':
+            pyautogui.hotkey('win', 'right', 'escape')
+            time.sleep(1)
+        else:
+            self.gui.showError("Invalid\nsnap type")
+            log.warn("invalid snap type")
+
+
+    def parseUnsnap(self, tokens):
+        if tokens:
+            self.gui.showError("Incorrect\nusage")
+            log.warn("Expected 0 tokens for unsnap")
+            return
+
+        handle = win32gui.GetForegroundWindow()
+        win32gui.ShowWindow(handle, win32con.SW_NORMAL)
+
 
     def parseRecord(self, tokens):
         """TODO:
