@@ -272,8 +272,10 @@ class state:
         log.debug('listing processes...')
         window_handles = window_properties.getVisibleWindowHandles('firefox.exe')
         for handle in window_handles:
+            log.debug('')
             log.debug('window handle:', str(handle))
             log.debug('window text:', win32gui.GetWindowText(handle))
+            log.debug('window placement:', win32gui.GetWindowPlacement(handle))
     def parseRecord(self, tokens):
         """TODO:
             Add ability to record macros.

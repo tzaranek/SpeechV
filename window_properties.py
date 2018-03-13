@@ -76,11 +76,18 @@ def getVisibleWindowHandles(process_name):
     win32gui.EnumWindows(windowFilter, None)
 
     # find all visible/primary windows with process_name
+    primary_handles = []
     for handle in whandles:
         parent_handle = win32gui.GetParent(handle)
         log.debug('parent handle: {}'.format(parent_handle))
-        extended_style = win32api.GetWindowLong(handle, win32con.GWL_EXSTYLE)
-        log.debug('style: ', extended_style, type(extended_style))
+        if parent_handle == 0:
+            primary_handles.append(handle)
+            continue
 
-    return []
+        extended_style = win32api.GetWindowLong(handle, win32con.GWL_EXSTYLE)
+        if extended_style & win32con.WS_EX_APPWINDOW:
+            primary_handles.append(handle)
+            continue
+
+    return primary_handles
 
