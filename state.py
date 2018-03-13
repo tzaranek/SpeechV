@@ -6,8 +6,10 @@ import sys
 import win32gui, win32con, win32api
 
 import keyboard
+import psutil
 from keyboardEvent import KeyboardEvent
 from window_properties import currentApp
+import window_properties
 import log
 from forwarder import encode_message, send_message
 
@@ -266,16 +268,12 @@ class state:
         keyboard.press_and_release("alt+tab")
 
     def parseFocus(self, tokens):
-        """TODO:
-            Create a macro to perform one or more alt tabs
-            Token should be the name of the application we want to switch to
-            Then, this function can alt tab up to active applications - 1 times
-            and compare currentApp() with the target application and stop
-        """
-        while currentApp() != "Microsoft Word":
-            self.parseSwitch("Test")
-        self.gui.showError("Not yet\nimplemented\nDemo Hardcode")
-    
+        # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
+        log.debug('listing processes...')
+        window_handles = window_properties.getVisibleWindowHandles('firefox.exe')
+        for handle in window_handles:
+            log.debug('window handle:', str(handle))
+            log.debug('window text:', win32gui.GetWindowText(handle))
     def parseRecord(self, tokens):
         """TODO:
             Add ability to record macros.
