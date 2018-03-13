@@ -3,7 +3,7 @@ import re
 import json
 import struct
 import sys
-import win32gui, win32con, win32api
+import win32gui, win32con, win32api, win32com
 
 import keyboard
 import psutil
@@ -149,10 +149,12 @@ class state:
             "SETTINGS": self.parseSettings,
             "LAUNCH": self.parseLaunch,
             "SWITCH": self.parseSwitch,
-            "FOCUS": self.parseFocus,
             "MOVE": self.gui.enter, #Moves the GUI out of the way
             "RECORD": self.parseRecord,
-            "TYPE":  self.parseKeystroke
+            "TYPE":  self.parseKeystroke,
+            "FOCUS": self.parseFocus,
+            "MINIMIZE": self.parseMinimize,
+            "MAXIMIZE": self.parseMaximize
         }
 
 
@@ -278,22 +280,42 @@ class state:
         log.debug('tokens passed: ', tokens)
         tokens[0] = tokens[0].lower()
 
-        window_handles = window_properties.getMainWindowHandles(tokens[0] + '.exe')
+        handles = window_properties.getMainWindowHandles(tokens[0] + '.exe', expect_one=True)
+        if not handles:
+            self.gui.showError("No app to focus")
+            return
 
-        if not window_handles:
-            log.warn("FOCUS could not find a window to focus on for application '{}'".format(tokens[0]))
-        elif len(window_handles) > 1:
-            log.warn("too many windows are 'focus'able for application '{}'".format(tokens[0]))
-            for count, handle in enumerate(window_handles):
-                log.blank()
-                log.debug('window ({})'.format(count))
-                log.debug('window handle:', str(handle))
-                log.debug('window text:', win32gui.GetWindowText(handle))
-                log.debug('window placement:', win32gui.GetWindowPlacement(handle))
-                log.debug('window visibility:', win32gui.IsWindowVisible(handle))
-            
         # NOTE: we choose an arbitrary handle if there's more than one
-        win32gui.SetForegroundWindow(window_handles[0])
+        handle = handles[0]
+
+        for ntries in range(3):
+            try:
+                win32gui.SetForegroundWindow(handle)
+                break
+            except Exception:
+                time.sleep(1) # hopefully the error was temporary?
+        else:
+            log.error("couldn't focus app '{}'".format(tokens[0]))
+            self.gui.showError("Couldn't focus app")
+            return
+
+        # Display the window normally (i.e. not minimized/maximized)
+        win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
+
+    def parseMaximize(self, tokens):
+        if tokens:
+            self.gui.showError("Incorrect\nusage of maximize")
+
+        handle = win32gui.GetForegroundWindow()
+        win32gui.ShowWindow(handle, win32con.SW_MAXIMIZE)
+
+
+    def parseMinimize(self, tokens):
+        if tokens:
+            self.gui.showError("Incorrect\nusage of minimize")
+
+        handle = win32gui.GetForegroundWindow()
+        win32gui.ShowWindow(handle, win32con.SW_MINIMIZE)
 
     def parseRecord(self, tokens):
         """TODO:

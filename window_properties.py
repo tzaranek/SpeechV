@@ -56,7 +56,7 @@ def currentApp():
     return getApplicationName(win32gui.GetForegroundWindow())
 
 # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
-def getMainWindowHandles(process_name):
+def getMainWindowHandles(process_name, expect_one=False):
     """Return a list of handles for visible windows with a given process name"""
 
     # find all processes with process_name
@@ -74,20 +74,33 @@ def getMainWindowHandles(process_name):
     win32gui.EnumWindows(windowFilter, None)
 
     # find all visible/primary windows with process_name
-    primary_handles = []
+    main_handles = []
     for handle in whandles:
         if not win32gui.IsWindowVisible(handle):
             continue
         
         parent_handle = win32gui.GetParent(handle)
         if parent_handle == 0:
-            primary_handles.append(handle)
+            main_handles.append(handle)
             continue
 
         extended_style = win32api.GetWindowLong(handle, win32con.GWL_EXSTYLE)
         if extended_style & win32con.WS_EX_APPWINDOW:
-            primary_handles.append(handle)
+            main_handles.append(handle)
             continue
+    if expect_one:
+        if not main_handles:
+            log.warn("Expected exactly one main window for app '{}'. Found 0".format(process_name))
+        elif len(main_handles) > 1:
+            log.warn("Expected exactly one main window for app '{}'. Found {}"
+                    .format(process_name, len(main_handles)))
+            for count, handle in enumerate(main_handles):
+                log.blank()
+                log.debug('window ({})'.format(count))
+                log.debug('window handle:', str(handle))
+                log.debug('window text:', win32gui.GetWindowText(handle))
+                log.debug('window placement:', win32gui.GetWindowPlacement(handle))
+                log.debug('window visibility:', win32gui.IsWindowVisible(handle))
 
-    return primary_handles
+    return main_handles
 
