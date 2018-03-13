@@ -42,6 +42,9 @@ export default {
   FOLLOW_ACTIVATE: 'follow.activate',
   FOLLOW_KEY_PRESS: 'follow.key.press',
 
+  BOOKMARKS_GET: 'bookmarks.get',
+  BOOKMARKS_SHOW: 'bookmarks.show',
+
   SPEECHV_VIRTUAL_KEYSTROKE: 'speechv.virtual.keystroke',
 
   FIND_NEXT: 'find.next',

@@ -12,6 +12,7 @@ export default {
     "W": { "type": "command.show.winopen", "alter": true },
     "b": { "type": "command.show.buffer" },
     "D": { "type": "bookmarks.create" },
+    "A": { "type": "bookmarks.get" },
     "k": { "type": "scroll.vertically", "count": -1 },
     "j": { "type": "scroll.vertically", "count": 1 },
     "h": { "type": "scroll.horizonally", "count": -1 },

@@ -1,5 +1,6 @@
 import messages from 'shared/messages';
 import Hint from './hint';
+import * as bookmarks from 'content/bookmarks';
 import * as dom from 'shared/utils/dom';
 
 const TARGET_SELECTOR = [
@@ -187,6 +188,8 @@ export default class Follow {
       return this.activateHints(message.keys);
     case messages.FOLLOW_REMOVE_HINTS:
       return this.removeHints(message.keys);
+    case messages.BOOKMARKS_SHOW:
+      return bookmarks.showBookmarks(this.win, message.keys);
     }
   }
 

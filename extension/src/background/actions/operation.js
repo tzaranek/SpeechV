@@ -49,8 +49,11 @@ const exec = (operation, tab) => {
   case operations.ZOOM_NEUTRAL:
     return zooms.neutral();
   case operations.BOOKMARKS_CREATE:
-    console.log("CREATING BOOKMARK");
+    console.log("CREATING BOOKMARKS");
     return bookmarks.createBookmarkFromCurrent();
+  case operations.BOOKMARKS_GET:
+    console.log("GETTING BOOKMARKS");
+    return bookmarks.retrieveBookmarks();
   case operations.COMMAND_SHOW:
     return sendConsoleShowCommand(tab, '');
   case operations.COMMAND_SHOW_OPEN:

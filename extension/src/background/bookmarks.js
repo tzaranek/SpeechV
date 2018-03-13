@@ -1,3 +1,4 @@
+import operations from 'shared/operations'
 
 const createBookmarkFromCurrent = () => {
   return browser.tabs.query({
@@ -24,7 +25,19 @@ const createBookmarkFromCurrent = () => {
       );
 };
 
+const retrieveBookmarks = () => {
+  console.log("RETRIEVING");
+  return browser.bookmarks.search({}).then((bs) => {
+      console.log("INSIDE THE THEN");
+      let user_bs = bs.filter(x => x.parentId === "unfiled_____");
+      browser.runtime.sendMessage({
+        type: operations.BOOKMARKS_SHOW,
+        keys: user_bs
+      });
+    });
+};
+
 export {
-  createBookmarkFromCurrent
+  createBookmarkFromCurrent, retrieveBookmarks
 };
 

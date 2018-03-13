@@ -13,6 +13,8 @@ export default {
 
   // Bookmarks
   BOOKMARKS_CREATE: 'bookmarks.create',
+  BOOKMARKS_GET: 'bookmarks.get',
+  BOOKMARKS_SHOW: 'bookmarks.show',
 
   // Scrolls
   SCROLL_VERTICALLY: 'scroll.vertically',
