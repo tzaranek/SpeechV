@@ -1,6 +1,6 @@
 import messages from 'shared/messages';
 import Hint from './hint';
-import * as bookmarks from 'content/bookmarks';
+import * as bookmarks from './bookmarks';
 import * as dom from 'shared/utils/dom';
 
 const TARGET_SELECTOR = [

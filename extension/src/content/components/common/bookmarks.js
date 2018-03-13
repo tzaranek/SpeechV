@@ -1,5 +1,6 @@
 
 const showBookmarks = (win, bs) => {
+  console.log("TRYING TO DISPLAY");
   let doc = win.document;
   let list = doc.createElement("ul");
 
@@ -18,6 +19,6 @@ const showBookmarks = (win, bs) => {
 };
 
 export {
-  appendBookmarksToPage
+  showBookmarks
 };
 

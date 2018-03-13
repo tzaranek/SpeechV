@@ -1,10 +1,8 @@
 import operations from 'shared/operations'
 
 const createBookmarkFromCurrent = () => {
-  return browser.tabs.query({
-      currentWindow: true,
-      active: true
-    }).then((focusedTabs) => {
+  return browser.tabs.query({ currentWindow: true, active: true })
+    .then((focusedTabs) => {
       if (focusedTabs.len > 1) {
         console.error("Firefox seems to have broken...");
         return;
@@ -18,8 +16,9 @@ const createBookmarkFromCurrent = () => {
       let url = focusedTabs[0].url;
 
       return { "title": title, "url": url };
-    }).then(browser.bookmarks.create)
-      .then(
+    })
+    .then(browser.bookmarks.create)
+    .then(
         (b) => console.log("Created bookmark: ${b}"),
         (e) => console.log("Error: ${e}")
       );
@@ -30,10 +29,16 @@ const retrieveBookmarks = () => {
   return browser.bookmarks.search({}).then((bs) => {
       console.log("INSIDE THE THEN");
       let user_bs = bs.filter(x => x.parentId === "unfiled_____");
-      browser.runtime.sendMessage({
-        type: operations.BOOKMARKS_SHOW,
-        keys: user_bs
-      });
+      browser.tabs.query({ currentWindow: true, active: true })
+          .then((focusedTabs) =>
+            browser.tabs.sendMessage(
+              focusedTabs[0].id,
+              {
+                  type: operations.BOOKMARKS_SHOW,
+                  keys: user_bs
+              })
+          );
+      console.log("SENT THE MESSAGE");
     });
 };
 
