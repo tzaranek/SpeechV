@@ -1,4 +1,5 @@
 import subprocess
+import time
 import os
 
 import win32pipe
@@ -13,9 +14,9 @@ def show_help():
     print("       is executed after alt-tabbing once. There are also some")
     print("       additional commands exclusive to this prompt:")
     print()
-    print("    'debug help'  : list this help information")
-    print("    'debug quit'  : quit the interactive prompt")
-    print("    'debug batch' : run commands from a file in speechv/batch_inputs")
+    print("    'debug help'        : list this help information")
+    print("    'debug quit'        : quit the interactive prompt")
+    print("    'debug batch <ARG>' : run commands from a file in speechv/batch_input")
     print()
 
 
@@ -31,7 +32,7 @@ def run_prompt(speechv_pipe):
                     elif command_words[1] == 'help':
                         show_help()
                     elif command_words[1] == 'batch':
-                        print('TODO')
+                        run_batch_input(command_words[2], speechv_pipe)
                     else:
                         suggest_help(command)
                 except IndexError:
@@ -41,6 +42,22 @@ def run_prompt(speechv_pipe):
         except KeyboardInterrupt:
             print()
 
+def run_batch_input(filename, speechv_pipe):
+    try:
+        with open('BATCH_FLAG', 'w') as new_file:
+            pass # create a file to signal we're doing batch input
+        with open(os.path.join('batch_input', filename), 'r') as batch:
+
+            for idx, line in enumerate(batch):
+                print('\t({}) {}'.format(idx + 1, line.rstrip()))
+                win32file.WriteFile(speechv_pipe, line.rstrip().encode())
+                win32file.ReadFile(speechv_pipe, 4096)
+                time.sleep(1) # important for letting pages load
+    except FileNotFoundError:
+        print("error: couldn't find batch input file with filename '{}'"
+                .format(filename))
+    finally:
+        os.remove('BATCH_FLAG')
 
 def main():
     try:
@@ -84,7 +101,7 @@ def main():
 
 def suggest_help(bad_command):
     print("error: command '{}' is incomplete. Use 'debug help'"
-            " for correct usage", bad_command)
+            " for correct usage".format(bad_command))
 
 if __name__ == '__main__':
     main()

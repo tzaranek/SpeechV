@@ -80,7 +80,7 @@ def voiceLoop(g):
             log.info("debug mode activated")
             pipe = win32file.CreateFile(
                     r'\\.\pipe\named_pipe',
-                    win32file.GENERIC_READ, 
+                    win32file.GENERIC_READ | win32file.GENERIC_WRITE, 
                     win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
                     None, win32file.OPEN_EXISTING, 0, None)
             time.sleep(1) 
@@ -119,12 +119,17 @@ def voiceLoop(g):
 
                     g.processing()
 
-                    if in_debug_mode:
+                    if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                         s.parse('switch')
                     s.parse(raw_command)
-                    if in_debug_mode:
+
+                    if os.path.exists('BATCH_FLAG'):
+                        # send an ACK to tell them we're ready for more input
+                        win32file.WriteFile(pipe, 'ACK'.encode())
+                    elif in_debug_mode:
                         time.sleep(1) # give the user time to see the result
                         s.parse('switch')
+                    
 
                     g.updateCommands(raw_command)
                     
