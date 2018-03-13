@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 import win32pipe
 import win32api
@@ -72,14 +73,14 @@ def main():
     show_help()
     run_prompt(pipe)
 
+    # clean up so that voice activated usage will work on future use
+    os.remove('DEBUG_FLAG')
     for subprogram in ['firefox.exe', 'python.exe']:
         try:
             subprocess.check_call(['taskkill', '/T', '/F', '/IM', subprogram])
         except Exception as e:
             log.error(e)
 
-    # clean up so that voice activated usage will work on future use
-    subprocess.check_call(['del', 'DEBUG_FLAG'])
 
 def suggest_help(bad_command):
     print("error: command '{}' is incomplete. Use 'debug help'"

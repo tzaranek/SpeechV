@@ -13,6 +13,7 @@ import os
 import time
 import traceback
 import sys
+import keyboard
 
 import win32file
 
@@ -123,14 +124,6 @@ def voiceLoop(g):
                     s.parse(raw_command)
                     if in_debug_mode:
                         time.sleep(1) # give the user time to see the result
-                        command_words = raw_command.split()
-                        log.debug('should we type escape?', command_words)
-                        if (command_words[0].strip().upper() == 'FOLLOW'
-                                and len(command_words) == 1):
-                            log.debug('typing escape')
-                            s.parse('type escape')
-
-                    if in_debug_mode:
                         s.parse('switch')
 
                     g.updateCommands(raw_command)

@@ -263,7 +263,6 @@ class state:
         self.gui.showError("Not yet\nimplemented")
     
     def parseSwitch(self, tokens):
-        assert(self.mode == self.NORMAL)
         keyboard.press_and_release("alt+tab")
 
     def parseFocus(self, tokens):
@@ -372,14 +371,18 @@ class state:
         #   them on assuming that there's no point in issuing commands
         #   before the link is followed. Also, there should not be more than 3
         if self.mode & self.FOLLOW:
+            # handle switch specially so that alt-tabbing works with the prompt
+            if tokens[0] == 'SWITCH' and len(tokens) == 1:
+                self.parseSwitch(tokens[1:])
+                return
             self.mode &= ~self.FOLLOW
 
             if len(tokens) > 3:
-                log.debug("OOPS")
+                log.warn("cannot handle more than 3 follow characters")
                 return
             for token in tokens:
                 if len(token) != 1:
-                    log.debug("OOPS")
+                    log.warn("cannot handle follow token size greater than 1")
                     return
 
             enumerated_keys = [KeyboardMessage(tok) for tok in tokens]
@@ -400,6 +403,7 @@ class state:
                 #Calls the function at levelDict[w] with args([rest])
                 levelDict[w](rest)
         else:
+            log.debug('current app: ', currentApp())
             if currentApp() == 'Firefox':
                 self.forwardBrowser(tokens)
             elif currentApp() == 'Microsoft Word':
@@ -411,6 +415,7 @@ class state:
 
     def parse(self, command):
         self.ready = False
+        log.debug('parse: command: ', command)
         command = command.strip().upper()
         if len(command) == 1:
             command = command.lower()
