@@ -78,11 +78,21 @@ def voiceLoop(g):
         if os.path.exists('DEBUG_FLAG'):
             in_debug_mode = True
             log.info("debug mode activated")
-            pipe = win32file.CreateFile(
-                    r'\\.\pipe\named_pipe',
-                    win32file.GENERIC_READ | win32file.GENERIC_WRITE, 
-                    win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
-                    None, win32file.OPEN_EXISTING, 0, None)
+            opened = False
+            while not opened:
+                try:
+                    pipe = win32file.CreateFile(
+                            r'\\.\pipe\named_pipe',
+                            win32file.GENERIC_READ | win32file.GENERIC_WRITE, 
+                            win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
+                            None, win32file.OPEN_EXISTING, 0, None)
+                    opened = True
+                except Exception as e:
+                    log.error("HELLO WORLD")
+                    log.error(str(e))
+                    log.error(traceback.format_exc())
+                    time.sleep(1)
+
             time.sleep(1) 
         else:
             log.info("voice mode activeated")
