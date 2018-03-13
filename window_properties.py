@@ -56,21 +56,19 @@ def currentApp():
     return getApplicationName(win32gui.GetForegroundWindow())
 
 # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
-def getVisibleWindowHandles(process_name):
+def getMainWindowHandles(process_name):
     """Return a list of handles for visible windows with a given process name"""
 
     # find all processes with process_name
     pids = []
     for process in psutil.process_iter():
         if process.name() == process_name:
-            log.debug('found process match with pid {}'.format(process.pid))
             pids.append(process.pid)
 
     # find all window handles with process_name
     whandles = []
     def windowFilter(handle, extra):
         if win32process.GetWindowThreadProcessId(handle)[1] in pids:
-            log.debug('window handle:', handle)
             whandles.append(handle)
         return True
     win32gui.EnumWindows(windowFilter, None)
@@ -78,8 +76,10 @@ def getVisibleWindowHandles(process_name):
     # find all visible/primary windows with process_name
     primary_handles = []
     for handle in whandles:
+        if not win32gui.IsWindowVisible(handle):
+            continue
+        
         parent_handle = win32gui.GetParent(handle)
-        log.debug('parent handle: {}'.format(parent_handle))
         if parent_handle == 0:
             primary_handles.append(handle)
             continue

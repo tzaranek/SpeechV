@@ -26,6 +26,10 @@ def debug(*args, **kwargs):
     print(*args, file=LOGFILE, **kwargs)
     LOGFILE.flush()
 
+def blank():
+    print('', file=LOGFILE)
+    LOGFILE.flush()
+
 
 def parse_error(parse_type, command):
     warn("Parsing {} command failed. Could not recognize: {}".format(
@@ -39,4 +43,5 @@ class ParseError(Enum):
     BROWSER = "BROWSER"
     HELP = "HELP"
     TYPE = "TYPE"
+    FOCUS = "FOCUS"
 

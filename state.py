@@ -269,13 +269,32 @@ class state:
 
     def parseFocus(self, tokens):
         # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
-        log.debug('listing processes...')
-        window_handles = window_properties.getVisibleWindowHandles('firefox.exe')
-        for handle in window_handles:
-            log.debug('')
-            log.debug('window handle:', str(handle))
-            log.debug('window text:', win32gui.GetWindowText(handle))
-            log.debug('window placement:', win32gui.GetWindowPlacement(handle))
+
+        if len(tokens) != 1:
+            self.gui.showError("Incorrect\nusage of focus")
+            log.warn("focus used without exactly one token")
+            return
+
+        log.debug('tokens passed: ', tokens)
+        tokens[0] = tokens[0].lower()
+
+        window_handles = window_properties.getMainWindowHandles(tokens[0] + '.exe')
+
+        if not window_handles:
+            log.warn("FOCUS could not find a window to focus on for application '{}'".format(tokens[0]))
+        elif len(window_handles) > 1:
+            log.warn("too many windows are 'focus'able for application '{}'".format(tokens[0]))
+            for count, handle in enumerate(window_handles):
+                log.blank()
+                log.debug('window ({})'.format(count))
+                log.debug('window handle:', str(handle))
+                log.debug('window text:', win32gui.GetWindowText(handle))
+                log.debug('window placement:', win32gui.GetWindowPlacement(handle))
+                log.debug('window visibility:', win32gui.IsWindowVisible(handle))
+            
+        # NOTE: we choose an arbitrary handle if there's more than one
+        win32gui.SetForegroundWindow(window_handles[0])
+
     def parseRecord(self, tokens):
         """TODO:
             Add ability to record macros.
