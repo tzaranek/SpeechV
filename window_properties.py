@@ -71,12 +71,14 @@ def getMainWindowHandles(process_name, expect_one=False):
     def windowFilter(handle, extra):
         if win32process.GetWindowThreadProcessId(handle)[1] in pids:
             whandles.append(handle)
+        # debug_window(handle)
         return True
     win32gui.EnumWindows(windowFilter, None)
 
     # find all visible/primary windows with process_name
     main_handles = []
     for handle in whandles:
+        # debug_window(handle)
         if not win32gui.IsWindowVisible(handle):
             continue
         
@@ -89,19 +91,32 @@ def getMainWindowHandles(process_name, expect_one=False):
         if extended_style & win32con.WS_EX_APPWINDOW:
             main_handles.append(handle)
             continue
+
     if expect_one:
         if not main_handles:
             log.warn("Expected exactly one main window for app '{}'. Found 0".format(process_name))
         elif len(main_handles) > 1:
             log.warn("Expected exactly one main window for app '{}'. Found {}"
                     .format(process_name, len(main_handles)))
-            for count, handle in enumerate(main_handles):
-                log.blank()
-                log.debug('window ({})'.format(count))
-                log.debug('window handle:', str(handle))
-                log.debug('window text:', win32gui.GetWindowText(handle))
-                log.debug('window placement:', win32gui.GetWindowPlacement(handle))
-                log.debug('window visibility:', win32gui.IsWindowVisible(handle))
+            for handle in main_handles:
+                debug_window(handle)
 
     return main_handles
+
+
+def debug_window(whandle):
+    extended_style = win32api.GetWindowLong(whandle, win32con.GWL_EXSTYLE)
+
+    log.debug('window handle:', str(whandle))
+    try:
+        win_text = win32gui.GetWindowText(whandle)
+        log.debug(' - text:', win_text)
+    except UnicodeEncodeError:
+        log.debug(' - text: <cannot print: contains undefined character>')
+    log.debug(' - placement:', win32gui.GetWindowPlacement(whandle))
+    log.debug(' - visibility:', win32gui.IsWindowVisible(whandle))
+    log.debug(' - parent:', win32gui.GetParent(whandle))
+    log.debug(' - extended style:', extended_style)
+    log.debug(' - pid: {}'.format(
+        win32process.GetWindowThreadProcessId(whandle)[1]))
 

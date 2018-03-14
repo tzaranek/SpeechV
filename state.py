@@ -278,15 +278,20 @@ class state:
     def parseFocus(self, tokens):
         # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
 
+        log.debug("app to focus: '{}'".format(tokens[0]))
         if len(tokens) != 1:
             self.gui.showError("Incorrect\nusage of focus")
             log.warn("focus used without exactly one token")
             return
 
-        log.debug('tokens passed: ', tokens)
-        tokens[0] = tokens[0].lower()
 
-        handles = window_properties.getMainWindowHandles(tokens[0] + '.exe', expect_one=True)
+        process_name = None
+        if tokens[0] == 'WORD':
+            process_name = 'WINWORD.EXE'
+        else:
+            process_name = tokens[0].lower() + '.exe'
+
+        handles = window_properties.getMainWindowHandles(process_name, expect_one=True)
         if not handles:
             self.gui.showError("No app to focus")
             return
