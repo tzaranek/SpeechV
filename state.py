@@ -159,7 +159,8 @@ class state:
             "MINIMIZE": self.parseMinimize,
             "MAXIMIZE": self.parseMaximize,
             "SNAP": self.parseSnap,
-            "UNSNAP": self.parseUnsnap
+            "UNSNAP": self.parseUnsnap,
+            "CANCEL": self.parseCancel
         }
 
 
@@ -353,6 +354,12 @@ class state:
         handle = win32gui.GetForegroundWindow()
         win32gui.ShowWindow(handle, win32con.SW_NORMAL)
 
+    def parseCancel(self, tokens):
+        """Remove all follow pop-ups and leave follow mode"""
+
+        # NOTE: this could be extended to exit insert mode, etc.
+        pyautogui.hotkey('escape')
+        self.mode &= ~self.FOLLOW
 
     def parseRecord(self, tokens):
         """TODO:
@@ -453,6 +460,10 @@ class state:
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
                 self.parseSwitch(tokens[1:])
                 return
+            elif tokens[0] == 'CANCEL' and len(tokens) == 1:
+                self.parseCancel([])
+                return
+
             self.mode &= ~self.FOLLOW
 
             if len(tokens) > 3:
