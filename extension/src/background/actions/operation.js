@@ -11,6 +11,15 @@ const sendConsoleShowCommand = (tab, command) => {
   });
 };
 
+const timeout = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+async function sleep(fn, ...args) {
+  await timeout(1000);
+  return fn(...args);
+}
+
 // This switch statement is only gonna get longer as more
 // features are added, so disable complexity check
 /* eslint-disable complexity */
@@ -53,7 +62,9 @@ const exec = (operation, tab) => {
     return bookmarks.createBookmarkFromCurrent();
   case operations.BOOKMARKS_GET:
     console.log("GETTING BOOKMARKS");
-    return bookmarks.retrieveBookmarks();
+    let bookmark_page = "C:\\Users\\Lawrence Wu\\Documents\\SpeechV\\extension\\src\\background\\bookmarks.html";
+    return browser.tabs.create({ url: bookmark_page })
+      .then(sleep(bookmarks.retrieveBookmarks));
   case operations.COMMAND_SHOW:
     return sendConsoleShowCommand(tab, '');
   case operations.COMMAND_SHOW_OPEN:
