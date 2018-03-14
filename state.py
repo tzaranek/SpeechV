@@ -1,3 +1,6 @@
+import log
+
+
 import time
 import re
 import json
@@ -11,7 +14,6 @@ import psutil
 from keyboardEvent import KeyboardEvent
 from window_properties import currentApp
 import window_properties
-import log
 from forwarder import encode_message, send_message
 
 from voice import recalibrate

@@ -1,5 +1,8 @@
 #!/usr/bin/python -u
 
+import log
+
+
 import threading
 import win32file
 import win32api
@@ -7,7 +10,6 @@ import win32api
 import gui
 import state
 import voice
-import log
 import time
 import sys
 

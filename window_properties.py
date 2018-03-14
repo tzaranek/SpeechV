@@ -1,7 +1,8 @@
+import log
+
+
 import win32api, win32con, win32process, win32gui, win32con
 import psutil
-
-import log
 
 def getFileProperties(fname):
     """

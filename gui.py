@@ -1,3 +1,6 @@
+import log
+
+
 from tkinter import *
 from enum import Enum
 import platform

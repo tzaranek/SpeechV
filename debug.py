@@ -1,12 +1,14 @@
+import log
+
+
 import subprocess
 import time
 import os
 
+
 import win32pipe
 import win32api
 import win32file
-
-import log
 
 
 def show_help():

@@ -1,3 +1,6 @@
+import log
+
+
 import win32api
 import win32con
 import time

@@ -1,3 +1,6 @@
+import log
+
+
 from time import sleep
 
 class Demos:
