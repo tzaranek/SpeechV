@@ -119,24 +119,6 @@ class GUI:
 		self.status = Status.PROCESSING
 		self.updateText()
 
-	#Call when there is a recognized command
-	# def commandRecognized(self):
-	# 	mode = self.getMode()
-	# 	self.setText("Success")
-	# 	self.label.config(bg=READY)
-	# 	t = Thread(target=self.restoreMode, args=[mode])
-	# 	t.start()
-
-	#Add a key to the list to display
-	def addHold(self, key):
-		self.heldKeys.add(key)
-		self.updateText()
-
-	#Remove a key from the list
-	def removeHold(self, key):
-		self.heldKeys.remove(key)
-		self.updateText()
-
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
 		self.recent[2] = self.recent[1]
@@ -154,14 +136,7 @@ class GUI:
 	#Update the text in the GUI
 	def updateText(self):
 		s = ("Status: " + statusStr(self.status) + \
-			  "\nMode: " + modeStr(self.mode) + \
-			  "\nHeld Keys: ")
-
-		if len(self.heldKeys) > 0:
-			for k in self.heldKeys:
-				s += k
-				s += ", "
-			s = s[:-2]
+			  "\nMode: " + modeStr(self.mode))
 		
 		s += "\nRecent Commands: "
 		for cmd in self.recent:
@@ -181,9 +156,6 @@ class GUI:
 		self.setText(error)
 		t = Thread(target=self.restoreText, args=[text])
 		t.start()
-	
-	def crashNotify(self):
-		self.setText("Voice module\nhas crashed :(")
 
 	#Display the help menu
 	def settingsMode(self, type="DEFAULT"):
@@ -278,25 +250,21 @@ class GUI:
 	def start(self):
 		self.root.mainloop()
 
-	#Loop to ensure the GUI is always on top of other windows
-	def bringToFront(self):
-		return
-		while(True):
-			self.root.lift()
-			sleep(1)
-
 	#Constructor for the GUI class
 	#Initializes the Tkinter GUI object, binds the mouse hover event
 	#and sets the object's properties
 	def __init__(self):
-		#Create the GUI object
+		#Create the GUI object and set window properties
 		self.root = Tk()
-		
-		self.root.attributes("-topmost", True)
-		self.mode = 0
-		#Create an empty set to show the held keys
-		self.heldKeys = set()
+
+		#Create member variables first to populate strings
 		self.recent = ["None", "None", "None"]
+		self.mode = 0
+		self.textLock = False
+		self.status = Status.INITIALIZING
+
+		#Setup window properties
+		self.root.attributes("-topmost", True)
 
 		#Set up the frame and label properties
 		back = Frame(master=self.root,bg='black')
@@ -307,26 +275,19 @@ class GUI:
 		self.label = Label(back, textvariable=self.text)
 		self.label.pack()
 
-		self.textLock = False
-
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
 		self.label.config(width=30, height=10)
 		self.label.config(font=("Courier", 8))
-
-		#Initialize the status and mode
-		self.status = Status.INITIALIZING
 		self.label.config(bg=READY)
-		self.updateText()
 
-		#Calculate screen size and get positions to move the window
+		#Calculate screen size and move the window to the bottom right
 		self.getPositions()
-
 		self.root.geometry(self.RIGHT + self.BOTTOM)
 		self.right = True
 
-		t = Thread(target=self.bringToFront)
-		t.start()
+		#Fill in the GUI text
+		self.updateText()
 
 
 if __name__ == "__main__":
