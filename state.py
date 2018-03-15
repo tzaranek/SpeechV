@@ -187,8 +187,6 @@ class state:
             "FOCUS": self.parseFocus,
             "MINIMIZE": self.parseMinimize,
             "MAXIMIZE": self.parseMaximize,
-            "SNAP": self.parseSnap,
-            "UNSNAP": self.parseUnsnap,
             "CANCEL": self.parseCancel
         }
 
@@ -357,36 +355,6 @@ class state:
 
         handle = win32gui.GetForegroundWindow()
         win32gui.ShowWindow(handle, win32con.SW_MINIMIZE)
-
-    def parseSnap(self, tokens):
-        if len(tokens) != 1:
-            self.gui.showError("Incorrect\nusage")
-            log.warn("exactly one token required for snap. {} found".format(len(tokens)))
-            return
-
-        self.parseUnsnap([])
-
-        # escape is needed to cancel another shortcut that activates inadvertently
-        snap_type = tokens[0]
-        if snap_type == 'LEFT':
-            pyautogui.hotkey('win', 'left', 'escape')
-            time.sleep(1)
-        elif snap_type == 'RIGHT':
-            pyautogui.hotkey('win', 'right', 'escape')
-            time.sleep(1)
-        else:
-            self.gui.showError("Invalid\nsnap type")
-            log.warn("invalid snap type")
-
-
-    def parseUnsnap(self, tokens):
-        if tokens:
-            self.gui.showError("Incorrect\nusage")
-            log.warn("Expected 0 tokens for unsnap")
-            return
-
-        handle = win32gui.GetForegroundWindow()
-        win32gui.ShowWindow(handle, win32con.SW_NORMAL)
 
     def parseCancel(self, tokens):
         """Remove all follow pop-ups and leave follow mode"""
