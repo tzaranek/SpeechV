@@ -523,10 +523,18 @@ class state:
                 self.forwardBrowser(tokens)
             elif currentApp() == 'Microsoft Word':
                 self.forwardWord(tokens)
+            elif ' '.join(tokens) in self.config['macros']:
+                self.playbackMacro(self.config['macros'][' '.join(tokens)])
             else:
                 self.gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
 
+    def playbackMacro(self, commands):
+        for cmd in commands:
+            self.parse(cmd)
+            time.sleep(1.0)
+        
+        return
 
     def parse(self, command):
         self.ready = False
