@@ -90,7 +90,6 @@ def voiceLoop(g):
 
             while True:                
                 try:
-                    log.debug("ENTERED LOOP")
                     #print("Say something!") # TODO: change to GUI alert
                     g.ready()
 
