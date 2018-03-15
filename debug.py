@@ -27,20 +27,20 @@ def run_prompt(speechv_pipe):
         try:
             command = input('-> ')
             command_words = command.split()
-            if command_words[0].lower() == 'debug':
-                try:
-                    if command_words[1] == 'quit':
-                        break
-                    elif command_words[1] == 'help':
-                        show_help()
-                    elif command_words[1] == 'batch':
-                        run_batch_input(command_words[2], speechv_pipe)
-                    else:
-                        suggest_help(command)
-                except IndexError:
+            try:
+                if command_words[0].lower() == 'debug':
+                        if command_words[1] == 'quit':
+                            break
+                        elif command_words[1] == 'help':
+                            show_help()
+                        elif command_words[1] == 'batch':
+                            run_batch_input(command_words[2], speechv_pipe)
+                        else:
+                            suggest_help(command)
+                else:
+                    win32file.WriteFile(speechv_pipe, command.encode())
+            except IndexError:
                     suggest_help(command)
-            else:
-                win32file.WriteFile(speechv_pipe, command.encode())
         except KeyboardInterrupt:
             print()
 

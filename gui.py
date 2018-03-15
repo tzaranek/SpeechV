@@ -21,7 +21,9 @@ from threading import Thread
 # 		raise
 
 def modeStr(m):
-	if m & 2**3:
+	if m & 2**5:
+		return "RECORDING"
+	elif m & 2**3:
 		return "Insert"
 	elif m & 2**2:
 		return "Follow"
@@ -96,40 +98,34 @@ class GUI:
 		self.label.config(bg=RECORDING)
 
 	def endRecording(self):
-		if (self.status != Status.RECORDING):
-			raise AttributeError("We weren't recording!")
-
-		self.label.config(font=("Courier", 8))
-		self.setText("Name the macro\nand say done\nName: ")
+		self.textLock = True
+		self.setText("Enter a\nmacro name", True)
 
 	def macroNameEntered(self, name):
-		if (self.status != Status.RECORDING):
-			raise AttributeError("We weren't recording!")
-
-		self.setText(self.getText() + name)
+		self.setText("Name: " + name + "\nSay yes to confirm\nSay no to retry", True)
 		
-	def macroNameConfirmed(self, name):
+	def macroNameConfirmed(self):
 		self.status = Status.READY
+		self.label.config(bg=READY)
+		self.textLock = False
 		self.updateText()
 
 	#Update the GUI to "Ready"
 	def ready(self):
 		self.status = Status.READY
-		self.label.config(bg=READY)
 		self.updateText()
 
 	def processing(self):
 		self.status = Status.PROCESSING
-		self.label.config(bg=READY)
 		self.updateText()
 
 	#Call when there is a recognized command
-	def commandRecognized(self):
-		mode = self.getMode()
-		self.setText("Success")
-		self.label.config(bg=READY)
-		t = Thread(target=self.restoreMode, args=[mode])
-		t.start()
+	# def commandRecognized(self):
+	# 	mode = self.getMode()
+	# 	self.setText("Success")
+	# 	self.label.config(bg=READY)
+	# 	t = Thread(target=self.restoreMode, args=[mode])
+	# 	t.start()
 
 	#Add a key to the list to display
 	def addHold(self, key):
@@ -173,28 +169,21 @@ class GUI:
 			s += cmd
 		self.setText(s)
 
-	#Updates the GUI to reflect text mode
-	def textMode(self):
-		self.setText("Text\nMode")
-		#self.updateMode(Mode.TEXT)
-
 	#Restores the last mode before the unrecognized command
-	def restoreMode(self, m):
+	def restoreText(self, text):
 		sleep(2)
-		self.label.config(font=("Courier", 8))
-		self.setMode(m)
+		self.setText(text)
 
 	#Displays an error and spawns a thread to restore the old mode later
 	def showError(self, error):
-		mode = self.getMode()
+		text = self.getText()
 		self.label.config(font=("Courier", 8))
 		self.setText(error)
-		t = Thread(target=self.restoreMode, args=[mode])
+		t = Thread(target=self.restoreText, args=[text])
 		t.start()
 	
 	def crashNotify(self):
 		self.setText("Voice module\nhas crashed :(")
-
 
 	#Display the help menu
 	def settingsMode(self, type="DEFAULT"):
@@ -254,11 +243,6 @@ class GUI:
 		self.setMode(0)
 		self.window.destroy()
 
-	#Updates the GUI to reflect command mode
-	def commandMode(self):
-		self.setText("Command\nMode")
-		#self.updateMode(Mode.COMMAND)
-
 	#Returns the current GUI mode
 	def getMode(self):
 		return self.mode
@@ -281,7 +265,9 @@ class GUI:
 		self.root.geometry(loc)
 
 	#Sets the text on the GUI
-	def setText(self, s):
+	def setText(self, s, override=False):
+		if self.textLock and not override:
+			return
 		self.text.set(s)
 
 	#Returns the currently displayed text
@@ -294,6 +280,7 @@ class GUI:
 
 	#Loop to ensure the GUI is always on top of other windows
 	def bringToFront(self):
+		return
 		while(True):
 			self.root.lift()
 			sleep(1)
@@ -319,6 +306,8 @@ class GUI:
 		self.text = StringVar()
 		self.label = Label(back, textvariable=self.text)
 		self.label.pack()
+
+		self.textLock = False
 
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text

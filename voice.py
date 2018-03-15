@@ -19,17 +19,6 @@ import keyboard
 
 import win32file
 
-def loadConfig():
-    with open("config.cfg", "r") as f:
-        s = f.read()
-        config = json.loads(s)
-    return config 
-
-def saveConfig(config):
-    with open("config.cfg", "w") as f:
-        s = json.dumps(config)
-        f.write(s)
-
 def recalibrate():
     sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
 
@@ -61,13 +50,6 @@ def recognize(audio_data, command_set):
 def voiceLoop(g):
     try:
         global restartLoop
-        #Load the configuration file into a dictionary
-        try:
-            config = loadConfig()
-        except FileNotFoundError:
-            # FIXME: handle case where there is no config file
-            log.error("No config file found! Ignoring error for now...")
-            config = {} 
 
         AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
 
@@ -106,12 +88,9 @@ def voiceLoop(g):
             r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
             r.pause_threshold = AUDIO_TIMEOUT
 
-            recording = False
-            macro = {}
-            macroCommands = []
-
             while True:                
                 try:
+                    log.debug("ENTERED LOOP")
                     #print("Say something!") # TODO: change to GUI alert
                     g.ready()
 
@@ -144,39 +123,6 @@ def voiceLoop(g):
                     
 
                     g.updateCommands(raw_command)
-                    
-
-                    #if not recording:
-                    #    #We've begun recording a macro
-                    #    if raw_command.strip().upper() == "RECORD START":
-                    #        recording = True
-                    #        macroCommands = []
-
-                    #if recording:                    
-                    #    #We've finished recording a macro
-                    #    #Name the macro (and confirm) to finish the process
-                    #    if raw_command.strip().upper() == "RECORD END":
-                    #        recording = False
-                    #        confirm = False
-                    #        macro['commands'] = macroCommands
-
-                    #        #While we haven't confirmed the macro's name
-                    #        while not confirm:
-                    #            g.showError("Name your\nmacro")
-                    #            log.debug("Recording the macro name")
-                    #            audio = r.listen(source)        
-                    #            macroName = recognize(audio, command_set)
-                    #            g.showError("Name:" + macroName + "\n'Yes' to confirm\n'No' to retry")
-                    #            audio = r.listen(source)        
-                    #            answer = recognize(audio, command_set)
-                    #            #Ask to confirm the macro
-                    #            if answer.strip().upper == "YES":
-                    #                confirm = True
-                    #        
-                    #        #Insert the macro into the dictionary
-                    #        macro['name'] = macroName
-                    #        config.macros[macroName] = macroCommands
-                    #        saveConfig(config)
 
 
                 except Exception as e:

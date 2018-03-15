@@ -20,6 +20,17 @@ from voice import recalibrate
 from word2number import w2n
 
 
+def loadConfig():
+    with open("config.cfg", "r") as f:
+        s = f.read()
+        config = json.loads(s)
+    return config 
+
+def saveConfig(config):
+    with open("config.cfg", "w") as f:
+        s = json.dumps(config)
+        f.write(s)
+
 class KeyboardMessage():
     def __init__(self, key, repeat=False, shiftKey=False, ctrlKey=False, altKey=False, metaKey=False):
         self.message = {
@@ -135,13 +146,31 @@ class state:
         self.FOLLOW     = 2**2  # Hacky meta-method to accept letters
         self.INSERT     = 2**3
         self.SETTINGS   = 2**4
+        self.RECORDING  = 2**5
         self.CLEAR      = 0
 
         self.mode = self.NORMAL
         self.wordMode = "NAVIGATE"
-        self.recording = False
+
+        #0 = not recording
+        #1 = recording
+        #2 = naming
+        #3 = confirming
+        self.recordingStatus = 0
+        self.macroName = None
+        self.macroCommands = []
+
         self.gui = g
         self.held = set()
+
+        #Load the configuration file into a dictionary
+        try:
+            self.config = loadConfig()
+        except FileNotFoundError:
+            # FIXME: handle case where there is no config file
+            log.error("No config file found! Ignoring error for now...")
+            self.config = {} 
+            self.config['macros'] = {}
 
         self.commands = {
             "ALT": self.parseAlt,
@@ -372,15 +401,7 @@ class state:
             Tokens could be "Start" or "End" with the macro commands
             Sandwiched between "Record start" and "record end"
         """
-        if len(tokens) != 1:
-            self.gui.showError("Unrecognized\nrecord command")
-        if tokens[0] == "START":
-            self.recording = True
-        elif tokens [0] == "END":
-            self.recording = False
-        else:
-            self.gui.showError("Unrecognized\nrecord command")
-        self.gui.showError("Not yet\nimplemented")
+        pass
 
     def parseKeystroke(self, tokens):
         if len(tokens) == 1:
@@ -511,6 +532,38 @@ class state:
         self.ready = False
         log.debug('parse: command: ', command)
         command = command.strip().upper()
+
+        #Handle recording commands here so we can return immediately after
+        if self.recordingStatus == 0: #Not recording
+            if command == "RECORD START":
+                self.gui.startRecording()
+                self.macroCommands = []
+                self.recordingStatus = 1
+                return
+        elif self.recordingStatus == 1: #Recording
+            if command == "RECORD END":
+                self.gui.endRecording()
+                self.recordingStatus = 2
+                return
+        elif self.recordingStatus == 2: #Naming
+            self.macroName = command
+            self.gui.macroNameEntered(command)
+            self.recordingStatus = 3
+            return
+        elif self.recordingStatus == 3: #Confirming
+            if command.strip().upper() == "YES":
+                self.config['macros'][self.macroName] = self.macroCommands
+                saveConfig(self.config)
+                self.gui.macroNameConfirmed()
+                self.recordingStatus = 0
+                return
+            elif command.strip().upper() == "NO":
+                self.gui.endRecording()
+                self.recordingStatus = 2
+                return
+            else:
+                raise ValueError("Please answer\nyes or no")
+
         if len(command) == 1:
             command = command.lower()
         if self.mode & self.NORMAL:
@@ -540,6 +593,10 @@ class state:
             raise ValueError('Unknown mode in parser!')
 
 
+        #If we are recording and the command parsed successfully, store it
+        if self.recordingStatus == 1:
+            self.macroCommands.append(command)
+        
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.5)
 
