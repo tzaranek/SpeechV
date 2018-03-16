@@ -107,12 +107,14 @@ class Parser:
 
         if len(command) == 1:
             command = command.lower()
+
+        log.debug("hello world")
         if self.mode == GlobalMode.NORMAL:
             command = re.sub('[!@#$\']', '', command)
             text = re.findall(r"[a-zA-Z]+", command)
             log.info("Tokens parsed: {}".format(text))
 
-            self.parseNormCmd(text)
+            self.parseImpl(text)
         elif self.mode == GlobalMode.INSERT:
             #
             # Only use these meta-commands if they're by themselves.
@@ -133,6 +135,7 @@ class Parser:
         else:
             raise ValueError('Unknown mode in parser!')
 
+        log.debug("pass")
 
         #If we are recording and the command parsed successfully, store it
         if self.recordingStatus == 1:
@@ -141,7 +144,7 @@ class Parser:
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.5)
 
-    def parseNormCmd(self, tokens, levelDict = None):
+    def parseImpl(self, tokens, levelDict = None):
         if not tokens:
             return
 
@@ -178,28 +181,28 @@ class Parser:
         if levelDict is None:
             levelDict = self.commands
 
+
+        # See the comment by self.commands in __init__ for the details
+        def handleCmdRet(ret):
+            if ret is not None:
+                leftoverTokens, self.mode = ret[0], ret[1]
+                self.parseImpl(leftoverTokens, self.mode)
+            
         w, rest = tokens[0], tokens[1:]
         if w in levelDict:
             if isinstance(levelDict[w], dict):
-                self.parseNormCmd(rest, levelDict[w])
+                self.parseImpl(rest, levelDict[w])
             else:
                 ret = levelDict[w](rest, self.mode)
-                # See the comment by self.commands in __init__ for the details
-                if ret is not None:
-                    leftoverTokens, self.mode = ret[0], ret[1]
-                    self.parserNormCmd(leftoverTokens, self.mode) # tail recursive
+                handleCmdRet(ret)
         else:
             log.info('forwarding to current app: ', currentApp())
             if currentApp() == 'Firefox':
-                ret = commands.forwardBrowser(tokens, mode)
-                if ret is not None:
-                    leftoverTokens, self.mode = ret[0], ret[1]
-                    self.parserNormCmd(leftoverTokens, self.mode) # tail recursive
+                ret = commands.forwardBrowser(tokens, self.mode)
+                handleCmdRet(ret)
             elif currentApp() == 'Microsoft Word':
                 ret = self.wordForwarder.forward(tokens, self.mode)
-                if ret is not None:
-                    leftoverTokens, self.mode = ret[0], ret[1]
-                    self.parserNormCmd(leftoverTokens, self.mode) # tail recursive
+                handleCmdRet(ret)
             elif ' '.join(tokens) in self.config['macros']:
                 self.exeMacro((self.config['macros'][' '.join(tokens)]))
             else:

@@ -29,14 +29,14 @@ def run_prompt(speechv_pipe):
             command_words = command.split()
             try:
                 if command_words[0].lower() == 'debug':
-                        if command_words[1] == 'quit':
-                            break
-                        elif command_words[1] == 'help':
-                            show_help()
-                        elif command_words[1] == 'batch':
-                            run_batch_input(command_words[2], speechv_pipe)
-                        else:
-                            suggest_help(command)
+                    if command_words[1] == 'quit':
+                        break
+                    elif command_words[1] == 'help':
+                        show_help()
+                    elif command_words[1] == 'batch':
+                        run_batch_input(command_words[2], speechv_pipe)
+                    else:
+                        suggest_help(command)
                 else:
                     win32file.WriteFile(speechv_pipe, command.encode())
             except IndexError:
@@ -49,7 +49,6 @@ def run_batch_input(filename, speechv_pipe):
         with open('BATCH_FLAG', 'w') as new_file:
             pass # create a file to signal we're doing batch input
         with open(os.path.join('batch_input', filename), 'r') as batch:
-
             for idx, line in enumerate(batch):
                 print('\t({}) {}'.format(idx + 1, line.rstrip()))
                 win32file.WriteFile(speechv_pipe, line.rstrip().encode())

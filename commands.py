@@ -21,6 +21,7 @@ import window_properties
 from window_properties import currentApp
 from forwarder import encode_message, send_message
 from globs import gui
+from mode import *
 
 
 try:
@@ -206,9 +207,8 @@ def exeKeystroke(tokens, mode):
     else:
         log.Logger.log(log.ParseError.TYPE, tokens)
 
-def exeSearch(tokens, mode):
-    """TODO:
-        Add ability to search in one command.
+def exeSearch(tokens):
+    """Searchs text in the address bar
         Tokens should be the search term.
         This effectively accomplishes:
             ctrl+k (go to search bar),
@@ -271,15 +271,17 @@ def forwardBrowser(tokens, mode):
     if tokenStr in browserKeywords:
         # Hacky interception of next few chars to send with follow
         if tokenStr == 'FOLLOW' or tokenStr == 'OPEN':
-            self.mode |= self.FOLLOW
+            mode = GlobalMode.FOLLOW
         send_message(encode_message(browserKeywords[tokenStr]))
 
     elif tokens[0] == 'SEARCH':
-            self.executeSearch(tokens[1:])
+        exeSearch(tokens[1:])
     elif len(tokens) > 1 and tokens[0] == "NEW" and tokens[1] == "TAB":
         keyboard.press_and_release("ctrl+t")
     else:
         log.parse_error(log.ParseError.BROWSER, tokenStr)
+
+    return ([], mode)
 
 wordCmds = {
     "NAVIGATE" : {
