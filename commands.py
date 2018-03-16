@@ -343,7 +343,7 @@ class WordForwarder:
     def __init__(self):
         self.mode = WordMode.NAVIGATE
 
-    def forward(tokens, globalMode):
+    def forward(self, tokens, globalMode):
         tokenStr = ' '.join(tokens)
         if tokenStr in WordMode.__members__:
             self.mode = WordMode[tokenStr]
@@ -351,16 +351,17 @@ class WordForwarder:
 
         # FIXME: I think insert mode can be handled in one central location, which
         #        is in the Parser at the moment. Feel free to add a word-specific 
-        #        INSERT mode back if it's infeasible/dumb to do. In fact, if the parser's
-        #        mode is NORMAL then it may intercept words that are being said even
-        #        if word's mode is INSERT
+        #        INSERT mode back if it's infeasible/dumb to do. 
+        #        
+        #        *** In fact, if the parser's mode is NORMAL then it may 
+        #        intercept words that are being said even if word's mode is INSERT
         #if self.wordMode == "INSERT":
         #    keyboard.write(tokenStr.lower())
-        #    return ([], mode)
+        #    return ([], globalMode)
 
-        if tokenStr in wordCmds[self.wordMode]:
-            keyboard.press_and_release(wordCmds[self.wordMode][tokenStr])
-            return ([], mode)
+        if tokenStr in wordCmds[self.mode.name]:
+            keyboard.press_and_release(wordCmds[self.mode.name][tokenStr])
+            return ([], globalMode)
 
         #This is because we support "down X" where x is arbitrary
         elif tokens[0] in ["UP", "DOWN", "LEFT", "RIGHT"]:
@@ -369,6 +370,6 @@ class WordForwarder:
             except Exception as e:
                 raise Exception("Navigate (U/D/L/R) did not receive a number arg")
             for i in range(num):
-                keyboard.press_and_release(wordCmds[self.wordMode][tokens[0]])
+                keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
 

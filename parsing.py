@@ -24,23 +24,62 @@ from forwarder import encode_message, send_message
 from mode import *
 from globs import gui
 
+class MacroManager:
+    def __init__(self, config):
+        self.mode = RecordMode.IDLE
+        self.macroName = None
+        self.macroCommands = []
+        self.config = config
+
+    def interceptCommand(self, command):
+        """Returns true if the Parser has nothing left to do with the command"""
+        #Handle recording commands here so we can return immediately after
+        if self.mode == RecordMode.IDLE: #Not recording
+            if command == "RECORD START":
+                gui.startRecording()
+                self.macroCommands = []
+                self.mode = RecordMode.RECORDING
+                return True
+        elif self.mode == RecordMode.RECORDING:
+            if command == "RECORD END":
+                gui.endRecording()
+                self.mode = RecordMode.NAMING
+                return True
+        elif self.mode == RecordMode.NAMING:
+            self.macroName = command
+            gui.macroNameEntered(command)
+            self.mode = RecordMode.CONFIRMING
+            return True
+        elif self.mode == RecordMode.CONFIRMING:
+            if command.strip().upper() == "YES":
+                self.config['macros'][self.macroName] = self.macroCommands
+                saveConfig(self.config)
+                gui.macroNameConfirmed()
+                self.mode = RecordMode.IDLE
+                return True
+            elif command.strip().upper() == "NO":
+                gui.endRecording()
+                self.mode = RecordMode.NAMING
+                return True
+            else:
+                raise ValueError("Please answer\nyes or no")
+
+        return False
+
+    
+    def conditionalCommit(self, command):
+        """Commits the command to this macro, if we're recording"""
+        if self.mode == RecordMode.RECORDING:
+            self.macroCommands.append(command)
+
 
 
 class Parser:
     def __init__(self):
-        # Define bits for modes we can be in
+        # handle input based on mode
         self.mode = GlobalMode.NORMAL
-        self.wordForwarder = commands.WordForwarder()
 
-        #0 = not recording
-        #1 = recording
-        #2 = naming
-        #3 = confirming
-        self.recordingStatus = RecordMode.IDLE
-        self.macroName = None
-        self.macroCommands = []
-
-        #Load the configuration file into a dictionary
+        # Load the configuration file into a dictionary
         try:
             self.config = loadConfig()
         except FileNotFoundError:
@@ -49,9 +88,13 @@ class Parser:
             self.config = {} 
             self.config['macros'] = {}
 
+        self.wordForwarder = commands.WordForwarder()
+        self.macroManager = MacroManager(self.config)
+
         # all of these functions must return one of the following:
-        #       None (this is returned if there is no explicit 'return')
-        #       A tuple of the form ([list of tokens left to parse], new_mode)
+        #  - None (this is returned if there is no explicit 'return')
+        #  - A tuple of the form (A, B) where A is a list of tokens that 
+        #    need to be parsed after command execution and B is the global mode
         self.commands = {
             "ALT":      commands.exeAlt,
             "RESIZE":   commands.exeResize,
@@ -74,36 +117,9 @@ class Parser:
         log.debug("parsing command: '{}'".format(command))
         command = command.strip().upper()
 
-        #Handle recording commands here so we can return immediately after
-        if self.recordingStatus == 0: #Not recording
-            if command == "RECORD START":
-                gui.startRecording()
-                self.macroCommands = []
-                self.recordingStatus = 1
-                return
-        elif self.recordingStatus == 1: #Recording
-            if command == "RECORD END":
-                gui.endRecording()
-                self.recordingStatus = 2
-                return
-        elif self.recordingStatus == 2: #Naming
-            self.macroName = command
-            gui.macroNameEntered(command)
-            self.recordingStatus = 3
+        isFullyHandled = self.macroManager.interceptCommand(command)
+        if isFullyHandled:
             return
-        elif self.recordingStatus == 3: #Confirming
-            if command.strip().upper() == "YES":
-                self.config['macros'][self.macroName] = self.macroCommands
-                saveConfig(self.config)
-                gui.macroNameConfirmed()
-                self.recordingStatus = 0
-                return
-            elif command.strip().upper() == "NO":
-                gui.endRecording()
-                self.recordingStatus = 2
-                return
-            else:
-                raise ValueError("Please answer\nyes or no")
 
         if len(command) == 1:
             command = command.lower()
@@ -137,9 +153,8 @@ class Parser:
             self.mode = GlobalMode.NORMAL
 
 
-        #If we are recording and the command parsed successfully, store it
-        if self.recordingStatus == 1:
-            self.macroCommands.append(command)
+        # the command was succesfull commit it if we need to
+        self.macroManager.conditionalCommit(command)
         
         # sleep after parsing to allow commands to send appropriately
         time.sleep(0.5)
@@ -214,7 +229,6 @@ class Parser:
         for cmd in commands:
             self.parse(cmd)
             time.sleep(1.0)
-
 
 def loadConfig():
     with open("config.cfg", "r") as f:
