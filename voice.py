@@ -110,6 +110,8 @@ def voiceLoop():
 
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                     p.parse('switch')
+                if raw_command == -1:
+                    raise ValueError("Failed to recognize speech")
                 p.parse(raw_command)
 
                 if os.path.exists('BATCH_FLAG'):
