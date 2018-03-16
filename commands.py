@@ -156,16 +156,19 @@ def exeFocus(tokens, mode):
     # NOTE: we choose an arbitrary handle if there's more than one
     handle = handles[0]
 
-    for ntries in range(3):
+    try:
+        win32gui.SetForegroundWindow(handle)
+    except Exception:
         try:
+            # SetForegroundWindow is unreliable
+            # workarounds: https://stackoverflow.com/questions/3772233/
+            win32gui.ShowWindow(handle, win32con.SW_MINIMIZE)
+            win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
             win32gui.SetForegroundWindow(handle)
-            break
         except Exception:
-            time.sleep(1) # hopefully the error was temporary?
-    else:
-        log.error("couldn't focus app '{}'".format(tokens[0]))
-        gui.showError("Couldn't focus app")
-        return ([], mode)
+            log.error("couldn't focus app '{}'".format(tokens[0]))
+            gui.showError("Couldn't focus app")
+            return ([], mode)
 
     # Display the window normally (i.e. not minimized/maximized)
     win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
