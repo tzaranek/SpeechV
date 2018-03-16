@@ -78,6 +78,8 @@ class Parser:
     def __init__(self):
         # handle input based on mode
         self.mode = GlobalMode.NAVIGATE
+        #Stores whether to interpret the next command as a new sentence
+        self.newSentence = True
 
         # Load the configuration file into a dictionary
         try:
@@ -133,7 +135,7 @@ class Parser:
         elif self.mode == GlobalMode.INSERT:
             if command == 'NAVIGATE':
                 self.mode = GlobalMode.NAVIGATE
-            if command == 'HIGHLIGHT' and currentApp() == 'Microsoft Word':
+            elif command == 'HIGHLIGHT' and currentApp() == 'Microsoft Word':
                 self.mode = GlobalMode.NAVIGATE
                 #Send as a list or it will end up as "H I G H L I G H T"
                 self.wordForwarder.forward(["HIGHLIGHT"], self.mode)
@@ -146,6 +148,24 @@ class Parser:
             elif command == 'ENTER':
                 keyboard.press_and_release('enter')
             else:
+                #In this case, send the top application the text to type it
+                command = re.sub('[!@#$\']', '', command)
+                text = re.findall(r"[a-zA-Z]+", command)
+                text = [word.lower() for word in text]
+                #If we ended the last command with a period
+                if self.newSentence:
+                    text[0] = text[0].title()
+                    self.newSentence = False
+                if text[-1].upper() == "PERIOD":
+                    #Remove the word period and replace with a dot
+                    #Either as its own string or attached to the last word
+                    text = text[:-1]
+                    if len(text) == 0:
+                        text[0] = '.'
+                    else:
+                        text[-1] += '.'
+                    self.newSentence = True
+                command = ' '.join(text)
                 log.info("Sending: \"{}\" to top application".format(command))
                 keyboard.write(command + ' ')
                 #keys = [commands.KeyboardMessage(ch) for ch in command]
