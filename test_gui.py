@@ -1,3 +1,6 @@
+import log
+
+
 from threading import Thread
 from gui import *
 from time import sleep

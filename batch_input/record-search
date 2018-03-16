@@ -1,0 +1,7 @@
+record start
+focus firefox
+search hello world
+record end
+test
+yes
+focus cmd

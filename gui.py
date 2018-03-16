@@ -1,3 +1,6 @@
+import log
+
+
 from tkinter import *
 from enum import Enum
 import platform
@@ -6,6 +9,7 @@ import signal
 import sys
 from time import sleep
 from threading import Thread
+from mode import *
 
 # def modeStr(m):
 # 	if m == Mode.COMMAND:
@@ -17,19 +21,21 @@ from threading import Thread
 # 	else:
 # 		raise
 
-def modeStr(m):
-	if m & 2**3:
-		return "Insert"
-	elif m & 2**2:
-		return "Follow"
-	elif m & 2**1:
-		return "Holding"
-	elif m == 0:
-		return "Normal"
-	elif m == "":
-		return ""
-	else:
-		return "Normal"
+#def modeStr(m):
+#	if m & 2**5:
+#		return "RECORDING"
+#	elif m & 2**3:
+#		return "Insert"
+#	elif m & 2**2:
+#		return "Follow"
+#	elif m & 2**1:
+#		return "Holding"
+#	elif m == 0:
+#		return "Normal"
+#	elif m == "":
+#		return ""
+#	else:
+#		return "Normal"
 
 def statusStr(s):
 	if s == Status.READY:
@@ -93,49 +99,25 @@ class GUI:
 		self.label.config(bg=RECORDING)
 
 	def endRecording(self):
-		if (self.status != Status.RECORDING):
-			raise AttributeError("We weren't recording!")
-
-		self.label.config(font=("Courier", 8))
-		self.setText("Name the macro\nand say done\nName: ")
+		self.textLock = True
+		self.setText("Enter a\nmacro name", True)
 
 	def macroNameEntered(self, name):
-		if (self.status != Status.RECORDING):
-			raise AttributeError("We weren't recording!")
-
-		self.setText(self.getText() + name)
+		self.setText("Name: " + name + "\nSay yes to confirm\nSay no to retry", True)
 		
-	def macroNameConfirmed(self, name):
+	def macroNameConfirmed(self):
 		self.status = Status.READY
+		self.label.config(bg=READY)
+		self.textLock = False
 		self.updateText()
 
 	#Update the GUI to "Ready"
 	def ready(self):
 		self.status = Status.READY
-		self.label.config(bg=READY)
 		self.updateText()
 
 	def processing(self):
 		self.status = Status.PROCESSING
-		self.label.config(bg=READY)
-		self.updateText()
-
-	#Call when there is a recognized command
-	def commandRecognized(self):
-		mode = self.getMode()
-		self.setText("Success")
-		self.label.config(bg=READY)
-		t = Thread(target=self.restoreMode, args=[mode])
-		t.start()
-
-	#Add a key to the list to display
-	def addHold(self, key):
-		self.heldKeys.add(key)
-		self.updateText()
-
-	#Remove a key from the list
-	def removeHold(self, key):
-		self.heldKeys.remove(key)
 		self.updateText()
 
 	#Updates the last 3 used commands to display
@@ -155,14 +137,7 @@ class GUI:
 	#Update the text in the GUI
 	def updateText(self):
 		s = ("Status: " + statusStr(self.status) + \
-			  "\nMode: " + modeStr(self.mode) + \
-			  "\nHeld Keys: ")
-
-		if len(self.heldKeys) > 0:
-			for k in self.heldKeys:
-				s += k
-				s += ", "
-			s = s[:-2]
+			  "\nMode: " + self.mode.name.lower().capitalize())
 		
 		s += "\nRecent Commands: "
 		for cmd in self.recent:
@@ -170,28 +145,18 @@ class GUI:
 			s += cmd
 		self.setText(s)
 
-	#Updates the GUI to reflect text mode
-	def textMode(self):
-		self.setText("Text\nMode")
-		#self.updateMode(Mode.TEXT)
-
 	#Restores the last mode before the unrecognized command
-	def restoreMode(self, m):
+	def restoreText(self, text):
 		sleep(2)
-		self.label.config(font=("Courier", 8))
-		self.setMode(m)
+		self.setText(text)
 
 	#Displays an error and spawns a thread to restore the old mode later
 	def showError(self, error):
-		mode = self.getMode()
+		text = self.getText()
 		self.label.config(font=("Courier", 8))
 		self.setText(error)
-		t = Thread(target=self.restoreMode, args=[mode])
+		t = Thread(target=self.restoreText, args=[text])
 		t.start()
-	
-	def crashNotify(self):
-		self.setText("Voice module\nhas crashed :(")
-
 
 	#Display the help menu
 	def settingsMode(self, type="DEFAULT"):
@@ -251,11 +216,6 @@ class GUI:
 		self.setMode(0)
 		self.window.destroy()
 
-	#Updates the GUI to reflect command mode
-	def commandMode(self):
-		self.setText("Command\nMode")
-		#self.updateMode(Mode.COMMAND)
-
 	#Returns the current GUI mode
 	def getMode(self):
 		return self.mode
@@ -278,7 +238,9 @@ class GUI:
 		self.root.geometry(loc)
 
 	#Sets the text on the GUI
-	def setText(self, s):
+	def setText(self, s, override=False):
+		if self.textLock and not override:
+			return
 		self.text.set(s)
 
 	#Returns the currently displayed text
@@ -289,24 +251,21 @@ class GUI:
 	def start(self):
 		self.root.mainloop()
 
-	#Loop to ensure the GUI is always on top of other windows
-	def bringToFront(self):
-		while(True):
-			self.root.lift()
-			sleep(1)
-
 	#Constructor for the GUI class
 	#Initializes the Tkinter GUI object, binds the mouse hover event
 	#and sets the object's properties
 	def __init__(self):
-		#Create the GUI object
+		#Create the GUI object and set window properties
 		self.root = Tk()
-		
-		self.root.attributes("-topmost", True)
-		self.mode = 0
-		#Create an empty set to show the held keys
-		self.heldKeys = set()
+
+		#Create member variables first to populate strings
 		self.recent = ["None", "None", "None"]
+		self.mode = GlobalMode.NAVIGATE
+		self.textLock = False
+		self.status = Status.INITIALIZING
+
+		#Setup window properties
+		self.root.attributes("-topmost", True)
 
 		#Set up the frame and label properties
 		back = Frame(master=self.root,bg='black')
@@ -321,20 +280,15 @@ class GUI:
 		#As long as they're bigger than the frame and the text
 		self.label.config(width=30, height=10)
 		self.label.config(font=("Courier", 8))
-
-		#Initialize the status and mode
-		self.status = Status.INITIALIZING
 		self.label.config(bg=READY)
-		self.updateText()
 
-		#Calculate screen size and get positions to move the window
+		#Calculate screen size and move the window to the bottom right
 		self.getPositions()
-
 		self.root.geometry(self.RIGHT + self.BOTTOM)
 		self.right = True
 
-		t = Thread(target=self.bringToFront)
-		t.start()
+		#Fill in the GUI text
+		self.updateText()
 
 
 if __name__ == "__main__":

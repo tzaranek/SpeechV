@@ -1,4 +1,8 @@
-import win32api, win32con, win32process, win32gui
+import log
+
+
+import win32api, win32con, win32process, win32gui, win32con
+import psutil
 
 def getFileProperties(fname):
     """
@@ -52,4 +56,67 @@ def getApplicationName(hwnd):
 def currentApp():
     return getApplicationName(win32gui.GetForegroundWindow())
 
+# https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
+def getMainWindowHandles(process_name, expect_one=False):
+    """Return a list of handles for visible windows with a given process name"""
+
+    # find all processes with process_name
+    pids = []
+    for process in psutil.process_iter():
+        if process.name() == process_name:
+            pids.append(process.pid)
+
+    # find all window handles with process_name
+    whandles = []
+    def windowFilter(handle, extra):
+        if win32process.GetWindowThreadProcessId(handle)[1] in pids:
+            whandles.append(handle)
+        # debug_window(handle)
+        return True
+    win32gui.EnumWindows(windowFilter, None)
+
+    # find all visible/primary windows with process_name
+    main_handles = []
+    for handle in whandles:
+        # debug_window(handle)
+        if not win32gui.IsWindowVisible(handle):
+            continue
+        
+        parent_handle = win32gui.GetParent(handle)
+        if parent_handle == 0:
+            main_handles.append(handle)
+            continue
+
+        extended_style = win32api.GetWindowLong(handle, win32con.GWL_EXSTYLE)
+        if extended_style & win32con.WS_EX_APPWINDOW:
+            main_handles.append(handle)
+            continue
+
+    if expect_one:
+        if not main_handles:
+            log.warn("Expected exactly one main window for app '{}'. Found 0".format(process_name))
+        elif len(main_handles) > 1:
+            log.warn("Expected exactly one main window for app '{}'. Found {}"
+                    .format(process_name, len(main_handles)))
+            for handle in main_handles:
+                debug_window(handle)
+
+    return main_handles
+
+
+def debug_window(whandle):
+    extended_style = win32api.GetWindowLong(whandle, win32con.GWL_EXSTYLE)
+
+    log.debug('window handle:', str(whandle))
+    try:
+        win_text = win32gui.GetWindowText(whandle)
+        log.debug(' - text:', win_text)
+    except UnicodeEncodeError:
+        log.debug(' - text: <cannot print: contains undefined character>')
+    log.debug(' - placement:', win32gui.GetWindowPlacement(whandle))
+    log.debug(' - visibility:', win32gui.IsWindowVisible(whandle))
+    log.debug(' - parent:', win32gui.GetParent(whandle))
+    log.debug(' - extended style:', extended_style)
+    log.debug(' - pid: {}'.format(
+        win32process.GetWindowThreadProcessId(whandle)[1]))
 

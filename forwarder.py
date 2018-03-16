@@ -1,11 +1,13 @@
 #!/usr/bin/env python -u
 
+import log
+
+
 import json
 import subprocess
 import struct
 import time
 import sys
-import log
 
 
 class EncoderOverload(json.JSONEncoder):

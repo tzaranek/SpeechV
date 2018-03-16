@@ -1,0 +1,9 @@
+record start
+focus word
+insert
+hello
+world
+record end
+test
+yes
+focus cmd

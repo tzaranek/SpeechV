@@ -1,18 +1,27 @@
 #!/usr/bin/python -u
 
-import gui
-import state
-import voice
-from threading import Thread
 import log
 
+
+import threading
+import win32file
+import win32api
+
+
+import voice
+import time
+import sys
+from globs import gui
+
+
 if __name__ == "__main__":
-    #Create the gui
-    g = gui.GUI()
+    try:
+        t = threading.Thread(target=voice.voiceLoop)
+        t.daemon = True
+        t.start()
 
-    t = Thread(target=voice.voiceLoop, args=[g])
-    t.daemon = True
-    t.start()
+        gui.start()
 
-    #Send the gui into its main loop
-    g.start()
+    except Exception as e:
+        log.error("speechV.py:", e)
+        sys.exit(1)
