@@ -252,6 +252,9 @@ browserKeywords = {
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
     'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('z')],
 
+    'BOOKMARK SAVE'  : [KeyboardMessage('D', shiftKey=True)],
+    'BOOKMARK SHOW'  : [KeyboardMessage('A', shiftKey=True)],
+
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
     'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
