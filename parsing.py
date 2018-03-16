@@ -133,12 +133,21 @@ class Parser:
         elif self.mode == GlobalMode.INSERT:
             if command == 'NAVIGATE':
                 self.mode = GlobalMode.NAVIGATE
+            if command == 'HIGHLIGHT' and currentApp() == 'Microsoft Word':
+                self.mode = GlobalMode.NAVIGATE
+                #Send as a list or it will end up as "H I G H L I G H T"
+                self.wordForwarder.forward(["HIGHLIGHT"], self.mode)
+
+            #     #if currentApp() == 'Microsoft Word':
+            #      #   self.wordmode = WordMode.NAVIGATE
+            # elif command == 'HIGHLIGHT' and currentApp() == 'Microsoft Word':
+            #     self.mode = GlobalMode.NAVIGATE
+            #     #self.wordmode = WordMode.HIGHLIGHT
             elif command == 'ENTER':
-                # Might want to consider having this implicitly exit insert mode?
                 keyboard.press_and_release('enter')
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
-                keyboard.write(command)
+                keyboard.write(command + ' ')
                 #keys = [commands.KeyboardMessage(ch) for ch in command]
                 #send_message(encode_message(keys))
 
@@ -185,6 +194,11 @@ class Parser:
             send_message(encode_message(enumerated_keys))
 
             return
+        
+        if self.mode == GlobalMode.NAVIGATE and len(tokens) == 1:
+            if tokens[0] == "INSERT":
+                self.mode = GlobalMode.INSERT
+
 
         # FIXME: we currently don't use this feature. Maybe we want to remove
         #        it so that the code is easier to read?

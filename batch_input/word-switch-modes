@@ -1,0 +1,18 @@
+focus word
+insert
+world
+navigate
+left
+insert
+Hello
+highlight
+right
+delete
+insert
+world period
+highlight
+left
+delete
+navigate
+left
+focus cmd

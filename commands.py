@@ -333,6 +333,8 @@ class WordForwarder:
         self.mode = WordMode.NAVIGATE
 
     def forward(self, tokens, globalMode):
+        log.debug("In word, current mode: " + self.mode.name)
+        log.debug("Received tokens: " + ' '.join(tokens))
         tokenStr = ' '.join(tokens)
         if tokenStr in WordMode.__members__:
             self.mode = WordMode[tokenStr]
