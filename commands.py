@@ -44,15 +44,6 @@ class KeyboardMessage():
     def __json__(self):
         return self.message
 
-def switchMode(self):
-    log.info("Switching modes")
-    if self.mode & self.NORMAL:
-        self.mode = self.INSERT
-        gui.setMode(self.mode)
-    else:
-        self.mode = self.NORMAL
-        gui.setMode(self.mode)
-
 
 def exeAlt(tokens, mode):
     if len(tokens) > 1 and tokens[0] == 'TAB':
@@ -92,10 +83,8 @@ def exeResize(tokens, mode):
 
     return (tokens[1:], mode)
 
-
-def exeEscape(tokens, mode):
-    self.switchMode()
-    return (tokens, mode)
+def exeClose(tokens, mode):
+    pass
 
 def exeHelp(tokens, mode):
     if len(tokens) == 0:

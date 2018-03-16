@@ -260,7 +260,7 @@ class GUI:
 
 		#Create member variables first to populate strings
 		self.recent = ["None", "None", "None"]
-		self.mode = GlobalMode.NORMAL
+		self.mode = GlobalMode.NAVIGATE
 		self.textLock = False
 		self.status = Status.INITIALIZING
 

@@ -5,7 +5,7 @@ from enum import Enum
 
 
 class GlobalMode(Enum):
-    NORMAL = 0
+    NAVIGATE = 0
     INSERT = 1 # forward text directly to topmost application through OS
     FOLLOW = 2 # expecting text for following a link in the browser
 

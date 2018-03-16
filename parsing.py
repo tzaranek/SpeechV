@@ -77,7 +77,7 @@ class MacroManager:
 class Parser:
     def __init__(self):
         # handle input based on mode
-        self.mode = GlobalMode.NORMAL
+        self.mode = GlobalMode.NAVIGATE
 
         # Load the configuration file into a dictionary
         try:
@@ -98,7 +98,6 @@ class Parser:
         self.commands = {
             "ALT":      commands.exeAlt,
             "RESIZE":   commands.exeResize,
-            "ESCAPE":   commands.exeEscape,
             "HELP":     commands.exeHelp,
             "SETTINGS": commands.exeSettings,
             "LAUNCH":   commands.exeLaunch,
@@ -109,7 +108,8 @@ class Parser:
             "FOCUS":    commands.exeFocus,
             "MINIMIZE": commands.exeMinimize,
             "MAXIMIZE": commands.exeMaximize,
-            "CANCEL":   commands.exeCancel
+            "CANCEL":   commands.exeCancel,
+            "CLOSE":    commands.exeClose
         }
 
     def parse(self, command):
@@ -124,22 +124,17 @@ class Parser:
         if len(command) == 1:
             command = command.lower()
 
-        if self.mode == GlobalMode.NORMAL or self.mode == GlobalMode.FOLLOW:
+        if self.mode == GlobalMode.NAVIGATE or self.mode == GlobalMode.FOLLOW:
             command = re.sub('[!@#$\']', '', command)
             text = re.findall(r"[a-zA-Z]+", command)
             log.info("Tokens parsed: {}".format(text))
 
             self.parseImpl(text)
         elif self.mode == GlobalMode.INSERT:
-            #
-            # Only use these meta-commands if they're by themselves.
-            # 'ESCAPE' = Exit insert mode
-            if command == 'ESCAPE':
-                self.switchMode()
-            
-            # 'ENTER' = Send the Enter key
-            # Might want to consider having this implicitly exit insert mode?
+            if command == 'NAVIGATE':
+                self.mode = GlobalMode.NAVIGATE
             elif command == 'ENTER':
+                # Might want to consider having this implicitly exit insert mode?
                 keyboard.press_and_release('enter')
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
@@ -148,9 +143,9 @@ class Parser:
                 #send_message(encode_message(keys))
 
         else:
-            # Oh no! We have a bad mode. Hopefully going back to NORMAL saves us
+            # Oh no! We have a bad mode. Hopefully going back to NAVIGATE saves us
             log.error('unknown mode:', self.mode)
-            self.mode = GlobalMode.NORMAL
+            self.mode = GlobalMode.NAVIGATE
 
 
         # the command was succesfull commit it if we need to
@@ -176,7 +171,7 @@ class Parser:
                 commands.exeCancel([], self.mode)
                 return
 
-            self.mode = GlobalMode.NORMAL
+            self.mode = GlobalMode.NAVIGATE
 
             if len(tokens) > 3:
                 log.warn("cannot handle more than 3 follow characters")

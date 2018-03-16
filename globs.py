@@ -1,6 +1,8 @@
 import log
 from gui import GUI
 
+# Globals
+#
 # While it may be tempting to name this module globals.py, that wouldn't
 # play well with the keyword 'globals' when importing
 
