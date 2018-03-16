@@ -60,9 +60,9 @@ web pages by finding and labelling all links/input fields on the page. You can t
 #### Navigating web pages
 
 **Follow**: Label links and input fields    
-    - **<label>**: Open link in current tab, enter text into input field, or click button.   
+    - **<label>** Open link in current tab, enter text into input field, or click button.   
 **Open**: Label links and input fields   
-    - **<label>**: Open link in new tab. Invalid entry if input field is selected.
+    - **<label>** Open link in new tab. Invalid entry if input field is selected.
 
 **Back**: Go back in history   
 **Forward**: Go forward in history
@@ -91,10 +91,49 @@ web pages by finding and labelling all links/input fields on the page. You can t
 **Save**: Save current page   
 
 ### Microsoft Word actions
-Coming soon.
+Commands for Microsoft Word are broken up into three categories: Navigate, Highlight, and Insert. To enter each mode, simply say its name, allowing access to that categories' command set until another mode is switched to.
+### Navigate: Allows navigation around the document 
+**Up (X)**: Moves the cursor up one line, or a number of lines if followed by an optional number argument X     
+**Down (X)**: Moves the cursor down one line, or a number of lines if followed by an optional number argument X     
+**Left (X)**: Moves the cursor left one word, or a number of words if followed by an optional number argument X     
+**Right (X)**: Moves the cursor right one word, or a number of words if followed by an optional number argument X       
+**Paragraph up**: Moves the cursor up one paragraph     
+**Paragraph down**: Moves the cursor down one paragraph     
+**Page up**: Moves the cursor up one page       
+**Page down**: Moves the cursor down one page       
+**Period**: Enters a period at the cursor's position        
+    - **<label>** Replacing period with any of the following will enter the corresponding symbol: comma, exclamation, question, slash, colon, semicolon, apostrophe, quote, open parenthesis, close parenthesis, ampersand, dollar, star    
+    
+**Left/Right/Center align**: Align the text at your cursor      
+**Undo**: Undoes the previous text entry        
+**Re do**: Redoes an undone text entry      
+**Indent**: Indents at the cursor position      
+**Remove indent**: Removes an indent at the cursor position     
+
+
+### Highlight: Allows highlighting of text while navigating
+**Down (X)**: Moves the cursor and highlights down one line, or a number of lines if followed by an optional number argument X  
+**Up (X)**: Moves the cursor up and highlights one line, or a number of lines if followed by an optional number argument X  
+**Right (X)**: Moves the cursor right and highlights one word, or a number of words if followed by an optional number argument X    
+**Left (X)**: Moves the cursor left and highlights one word, or a number of words if followed by an optional number argument X  
+**Bold**: Bolds the highlighted text    
+**Italics**: Italicizes the highlighted text    
+**Underline**: Underlines the highlighted text  
+**Delete**: Deletes the highlighted text    
+**All**: Highlights the entire document     
+**Increase size**: Increases the size of the highlighted text   
+**Decrease size**: Decreases the size of the highlighted text   
+**Caps**: Cycles the highlighted text between UPPER CASE, lower case, and Title Case    
+
+### Insert: Allows insertion of voice commands to text within the document
+Use your voice to enter in text. Ending a voice sample with "period" will end your sentence with a period and begin to format your next sentence.
+
 
 ### Creating macros and aliases
-Coming soon.
+**Record start**: Begin recording a macro   
+    - **<label>** Between these two commands, any commands issued will be recorded  
+**Record end**: Finish recording a macro    
+    - **<label>** After ending a recording, a prompt to name the macro and a confirmation prompt will appear to complete the process.   
 
 ### Adjusting microphone settings (coming soon)
 If speech recognition is not performing well, you are likely experiencing one of two problems:   
