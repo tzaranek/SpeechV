@@ -203,7 +203,11 @@ def exeRecord(tokens, mode):
 
 def exeKeystroke(tokens, mode):
     if len(tokens) == 1:
-        keyboard.press_and_release(tokens[0])
+        try:
+            keyboard.press_and_release(tokens[0])
+        except ValueError:
+            log.error("bad keystroke '{}'".format(tokens[0]))
+            gui.showError('Invalid usage')
     else:
         log.Logger.log(log.ParseError.TYPE, tokens)
 

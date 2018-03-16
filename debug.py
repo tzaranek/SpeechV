@@ -66,6 +66,14 @@ def main():
     except FileNotFoundError:
         pass # allow for no pre-existing named pipe
 
+    try:
+        # delete this just in case we crashed before deleting last time
+        subprocess.check_call(['del', 'BATCH_FLAG'])
+    except FileNotFoundError:
+        pass
+
+
+
     with open('DEBUG_FLAG', 'w') as debug_flag:
         pass # create a file to let speechv.py know it should connect with us
 

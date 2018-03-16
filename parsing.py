@@ -109,7 +109,7 @@ class Parser:
             command = command.lower()
 
         log.debug("hello world")
-        if self.mode == GlobalMode.NORMAL:
+        if self.mode == GlobalMode.NORMAL or self.mode == GlobalMode.FOLLOW:
             command = re.sub('[!@#$\']', '', command)
             text = re.findall(r"[a-zA-Z]+", command)
             log.info("Tokens parsed: {}".format(text))
@@ -129,11 +129,13 @@ class Parser:
             else:
                 log.info("Sending: \"{}\" to top application".format(command))
                 keyboard.write(command)
-                #keys = [KeyboardMessage(ch) for ch in command]
+                #keys = [commands.KeyboardMessage(ch) for ch in command]
                 #send_message(encode_message(keys))
 
         else:
-            raise ValueError('Unknown mode in parser!')
+            # Oh no! We have a bad mode. Hopefully going back to NORMAL saves us
+            log.error('unknown mode:', self.mode)
+            self.mode = GlobalMode.NORMAL
 
         log.debug("pass")
 
@@ -158,7 +160,7 @@ class Parser:
                 self.parseSwitch(tokens[1:])
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
-                self.parseCancel([])
+                commands.exeCancel([], self.mode)
                 return
 
             self.mode = GlobalMode.NORMAL
@@ -171,7 +173,7 @@ class Parser:
                     log.warn("cannot handle follow token size greater than 1")
                     return
 
-            enumerated_keys = [KeyboardMessage(tok) for tok in tokens]
+            enumerated_keys = [commands.KeyboardMessage(tok) for tok in tokens]
             send_message(encode_message(enumerated_keys))
 
             return

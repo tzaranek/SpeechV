@@ -97,12 +97,10 @@ def voiceLoop():
 
                 raw_command = ''
                 if in_debug_mode:
-                    log.debug("reading from pipe")
                     message = win32file.ReadFile(pipe, 4096)
                     log.debug('pipe message: ', message[1].decode())
                     raw_command = message[1].decode()
                 else:
-                    log.debug("Before listen")
                     audio = r.listen(source)
 
                     # recognize speech using Google Cloud Speech API            
@@ -111,12 +109,9 @@ def voiceLoop():
 
                 gui.processing()
 
-                log.debug('before first switch')
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                     p.parse('switch')
-                log.debug('after first switch')
                 p.parse(raw_command)
-                log.debug('before second switch')
 
                 if os.path.exists('BATCH_FLAG'):
                     # send an ACK to tell them we're ready for more input
@@ -124,8 +119,6 @@ def voiceLoop():
                 elif in_debug_mode:
                     time.sleep(1) # give the user time to see the result
                     p.parse('switch')
-                log.debug('after second switch')
-                
 
                 gui.updateCommands(raw_command)
                 log.debug('end of loop try')
@@ -134,9 +127,7 @@ def voiceLoop():
                 log.error(traceback.format_exc())
                 gui.showError("Error parsing\nTry again.")
             
-            log.debug('before setMode')
             gui.setMode(p.mode)
-            log.debug('after setMode')
 
 if __name__ == "__main__":
     voiceLoop()
