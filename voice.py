@@ -111,9 +111,12 @@ def voiceLoop():
 
                 gui.processing()
 
+                log.debug('before first switch')
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                     p.parse('switch')
+                log.debug('after first switch')
                 p.parse(raw_command)
+                log.debug('before second switch')
 
                 if os.path.exists('BATCH_FLAG'):
                     # send an ACK to tell them we're ready for more input
@@ -121,17 +124,19 @@ def voiceLoop():
                 elif in_debug_mode:
                     time.sleep(1) # give the user time to see the result
                     p.parse('switch')
+                log.debug('after second switch')
                 
 
                 gui.updateCommands(raw_command)
-
-
+                log.debug('end of loop try')
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())
                 gui.showError("Error parsing\nTry again.")
             
+            log.debug('before setMode')
             gui.setMode(p.mode)
+            log.debug('after setMode')
 
 if __name__ == "__main__":
     voiceLoop()
