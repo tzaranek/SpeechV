@@ -9,6 +9,7 @@ import signal
 import sys
 from time import sleep
 from threading import Thread
+from mode import *
 
 # def modeStr(m):
 # 	if m == Mode.COMMAND:
@@ -20,21 +21,21 @@ from threading import Thread
 # 	else:
 # 		raise
 
-def modeStr(m):
-	if m & 2**5:
-		return "RECORDING"
-	elif m & 2**3:
-		return "Insert"
-	elif m & 2**2:
-		return "Follow"
-	elif m & 2**1:
-		return "Holding"
-	elif m == 0:
-		return "Normal"
-	elif m == "":
-		return ""
-	else:
-		return "Normal"
+#def modeStr(m):
+#	if m & 2**5:
+#		return "RECORDING"
+#	elif m & 2**3:
+#		return "Insert"
+#	elif m & 2**2:
+#		return "Follow"
+#	elif m & 2**1:
+#		return "Holding"
+#	elif m == 0:
+#		return "Normal"
+#	elif m == "":
+#		return ""
+#	else:
+#		return "Normal"
 
 def statusStr(s):
 	if s == Status.READY:
@@ -136,7 +137,7 @@ class GUI:
 	#Update the text in the GUI
 	def updateText(self):
 		s = ("Status: " + statusStr(self.status) + \
-			  "\nMode: " + modeStr(self.mode))
+			  "\nMode: " + self.mode.name.lower().capitalize())
 		
 		s += "\nRecent Commands: "
 		for cmd in self.recent:
