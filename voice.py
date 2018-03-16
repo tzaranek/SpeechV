@@ -4,20 +4,22 @@
 import log
 
 
+import win32file
 import speech_recognition as sr
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
 
 
-import state
+import parsing
 import os
 import time
 import traceback
 import sys
 import keyboard
+from globs import gui
 
-import win32file
+
 
 def recalibrate():
     sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
@@ -47,97 +49,89 @@ def recognize(audio_data, command_set):
     if transcript == "": return -1
     return transcript
 
-def voiceLoop(g):
-    try:
-        global restartLoop
+def voiceLoop():
+    global restartLoop
 
-        AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
+    AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
 
-        with open('command_set.txt', 'r') as myfile:
-            str_command_set = myfile.read()
+    with open('command_set.txt', 'r') as myfile:
+        str_command_set = myfile.read()
 
-        command_set = str_command_set.split('\n')
+    command_set = str_command_set.split('\n')
 
-        in_debug_mode = False
-        if os.path.exists('DEBUG_FLAG'):
-            in_debug_mode = True
-            log.info("debug mode activated")
-            opened = False
-            while not opened:
-                try:
-                    pipe = win32file.CreateFile(
-                            r'\\.\pipe\named_pipe',
-                            win32file.GENERIC_READ | win32file.GENERIC_WRITE, 
-                            win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
-                            None, win32file.OPEN_EXISTING, 0, None)
-                    opened = True
-                except Exception as e:
-                    log.error("HELLO WORLD")
-                    log.error(str(e))
-                    log.error(traceback.format_exc())
-                    time.sleep(1)
+    in_debug_mode = False
+    if os.path.exists('DEBUG_FLAG'):
+        in_debug_mode = True
+        log.info("debug mode activated")
+        opened = False
+        while not opened:
+            try:
+                pipe = win32file.CreateFile(
+                        r'\\.\pipe\named_pipe',
+                        win32file.GENERIC_READ | win32file.GENERIC_WRITE, 
+                        win32file.FILE_SHARE_WRITE | win32file.FILE_SHARE_READ,
+                        None, win32file.OPEN_EXISTING, 0, None)
+                opened = True
+            except Exception as e:
+                log.error("HELLO WORLD")
+                log.error(str(e))
+                log.error(traceback.format_exc())
+                time.sleep(1)
 
-            time.sleep(1) 
-        else:
-            log.info("voice mode activeated")
-
-
-        r = sr.Recognizer()
-        s = state.state(g)
-        with sr.Microphone() as source:
-            r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
-            r.pause_threshold = AUDIO_TIMEOUT
-
-            while True:                
-                try:
-                    log.debug("ENTERED LOOP")
-                    #print("Say something!") # TODO: change to GUI alert
-                    g.ready()
-
-                    raw_command = ''
-                    if in_debug_mode:
-                        log.debug("reading from pipe")
-                        message = win32file.ReadFile(pipe, 4096)
-                        log.debug('pipe message: ', message[1].decode())
-                        raw_command = message[1].decode()
-                    else:
-                        log.debug("Before listen")
-                        audio = r.listen(source)
-
-                        # recognize speech using Google Cloud Speech API            
-                        log.debug("Pre recognize")
-                        raw_command = recognize(audio, command_set)
-
-                    g.processing()
-
-                    if in_debug_mode and not os.path.exists('BATCH_FLAG'):
-                        s.parse('switch')
-                    s.parse(raw_command)
-
-                    if os.path.exists('BATCH_FLAG'):
-                        # send an ACK to tell them we're ready for more input
-                        win32file.WriteFile(pipe, 'ACK'.encode())
-                    elif in_debug_mode:
-                        time.sleep(1) # give the user time to see the result
-                        s.parse('switch')
-                    
-
-                    g.updateCommands(raw_command)
+        time.sleep(1) 
+    else:
+        log.info("voice mode activeated")
 
 
-                except Exception as e:
-                    log.error(str(e))
-                    log.error(traceback.format_exc())
-                    g.showError("Error parsing\nTry again.")
+    r = sr.Recognizer()
+    p = parsing.Parser()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
+        r.pause_threshold = AUDIO_TIMEOUT
+
+        while True:                
+            try:
+                log.debug("ENTERED LOOP")
+                #print("Say something!") # TODO: change to GUI alert
+                gui.ready()
+
+                raw_command = ''
+                if in_debug_mode:
+                    log.debug("reading from pipe")
+                    message = win32file.ReadFile(pipe, 4096)
+                    log.debug('pipe message: ', message[1].decode())
+                    raw_command = message[1].decode()
+                else:
+                    log.debug("Before listen")
+                    audio = r.listen(source)
+
+                    # recognize speech using Google Cloud Speech API            
+                    log.debug("Pre recognize")
+                    raw_command = recognize(audio, command_set)
+
+                gui.processing()
+
+                if in_debug_mode and not os.path.exists('BATCH_FLAG'):
+                    p.parse('switch')
+                p.parse(raw_command)
+
+                if os.path.exists('BATCH_FLAG'):
+                    # send an ACK to tell them we're ready for more input
+                    win32file.WriteFile(pipe, 'ACK'.encode())
+                elif in_debug_mode:
+                    time.sleep(1) # give the user time to see the result
+                    p.parse('switch')
                 
-                g.setMode(s.mode)
 
-                # TODO: check that speech consists of valid commands
-                # TODO: forward speech to parser
-    except Exception as e:
-        log.error("voice loop:", e)
-        sys.exit(1)
+                gui.updateCommands(raw_command)
 
+
+            except Exception as e:
+                log.error(str(e))
+                log.error(traceback.format_exc())
+                gui.showError("Error parsing\nTry again.")
+            
+            gui.setMode(p.mode)
 
 if __name__ == "__main__":
     voiceLoop()
