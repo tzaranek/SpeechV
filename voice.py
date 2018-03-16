@@ -91,7 +91,6 @@ def voiceLoop():
 
         while True:                
             try:
-                log.debug("ENTERED LOOP")
                 #print("Say something!") # TODO: change to GUI alert
                 gui.ready()
 
@@ -121,7 +120,6 @@ def voiceLoop():
                     p.parse('switch')
 
                 gui.updateCommands(raw_command)
-                log.debug('end of loop try')
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())

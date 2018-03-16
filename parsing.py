@@ -71,7 +71,7 @@ class Parser:
 
     def parse(self, command):
         self.ready = False
-        log.debug('parse: command: ', command)
+        log.debug("parsing command: '{}'".format(command))
         command = command.strip().upper()
 
         #Handle recording commands here so we can return immediately after
@@ -108,7 +108,6 @@ class Parser:
         if len(command) == 1:
             command = command.lower()
 
-        log.debug("hello world")
         if self.mode == GlobalMode.NORMAL or self.mode == GlobalMode.FOLLOW:
             command = re.sub('[!@#$\']', '', command)
             text = re.findall(r"[a-zA-Z]+", command)
@@ -137,7 +136,6 @@ class Parser:
             log.error('unknown mode:', self.mode)
             self.mode = GlobalMode.NORMAL
 
-        log.debug("pass")
 
         #If we are recording and the command parsed successfully, store it
         if self.recordingStatus == 1:
