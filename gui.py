@@ -160,8 +160,6 @@ class GUI:
 
 	#Display the help menu
 	def settingsMode(self, type="DEFAULT"):
-		if self.status != Status.READY:
-			raise AttributeError("Tried to open settings while busy")
 		if hasattr(self, 'window'):
 			self.window.destroy()
 
@@ -183,6 +181,7 @@ class GUI:
 		self.window.geometry(self.LEFT + self.TOP)
 	
 	def closeSettings(self):
+		pass
 		if self.status != self.SETTINGS:
 			raise AttributeError("Tried to close settings that doesn't exist!")
 

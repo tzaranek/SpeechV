@@ -19,7 +19,16 @@ import sys
 import keyboard
 from globs import gui
 
-
+def adjustTimeout(tokens):
+    if len(tokens) != 3 or tokens[1] != "POINT":
+        raise AttributeError("Ill-formed timeout command")
+    try:
+        wholeNum = w2n(tokens[0])
+        decimal = w2n(tokens[2])
+        global _r
+        _r.pause_threshold = wholeNum+decimal/10
+    except:
+        raise AttributeError("Number conversion failed in adjust timeout")
 
 def recalibrate():
     sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())

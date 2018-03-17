@@ -25,8 +25,9 @@ from mode import *
 
 
 try:
-    from voice import recalibrate
+    from voice import recalibrate, adjustTimeout
 except ImportError:
+    log.error("FAILED TO IMPORT VOICE")
     pass # FIXME: ignore circular import 
 
 class KeyboardMessage():
@@ -101,6 +102,13 @@ def exeSettings(self,tokens, mode):
         gui.settingsMode()
     elif tokens[0] == 'CALIBRATE':
         recalibrate()
+    #Need to fix circular dependency in order to do this
+    elif tokens[0] == 'TIMEOUT':
+        pass
+        adjustTimeout(tokens[1:])
+    elif len(tokens) > 1 and tokens[0] == 'TIME' and tokens[1] == 'OUT':
+        pass
+        adjustTimeout(tokens[2:])
     elif tokens[0] == 'MACRO':
         gui.settingsMode("MACRO")
     elif tokens[0] == 'ALIAS':
@@ -184,6 +192,12 @@ def exeCancel(tokens, mode):
     # NOTE: this could be extended to exit insert mode, etc.
     pyautogui.hotkey('escape')
     self.mode &= ~self.FOLLOW
+
+def exeCopy(tokens, mode):
+    keyboard.press_and_release("ctrl+c")
+
+def exePaste(tokens, mode):
+    keyboard.press_and_release("ctrl+v")
 
 def exeRecord(tokens, mode):
     """TODO:
@@ -310,6 +324,8 @@ wordCmds = {
         'RE DO': 'ctrl+y',
         'INDENT': 'tab',
         'REMOVE INDENT': 'shift+tab',
+        'NEW LINE': 'enter',
+        'NEWLINE': 'enter',
     },
 
     "HIGHLIGHT" : {

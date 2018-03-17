@@ -111,7 +111,9 @@ class Parser:
             "MINIMIZE": commands.exeMinimize,
             "MAXIMIZE": commands.exeMaximize,
             "CANCEL":   commands.exeCancel,
-            "CLOSE":    commands.exeClose
+            "CLOSE":    commands.exeClose,
+            "COPY":     commands.exeCopy,
+            "PASTE":    commands.exePaste
         }
 
     def parse(self, command):
