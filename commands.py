@@ -97,7 +97,7 @@ def exeHelp(tokens, mode):
     else:
         log.parse_error(log.ParseError.HELP, tokens[0])
 
-def exeSettings(self,tokens, mode):
+def exeSettings(tokens, mode):
     if len(tokens) == 0:
         gui.settingsMode()
     elif tokens[0] == 'CALIBRATE':
@@ -115,6 +115,8 @@ def exeSettings(self,tokens, mode):
         gui.settingsMode("ALIAS")
     elif tokens[0] == 'CLOSE':
         gui.closeSettings()
+    elif tokens[0] == 'RESIZE':
+        gui.resizeWindow(tokens[1:])
     else:
         log.Logger.log(log.ParseError.HELP, tokens[0])
 
@@ -375,7 +377,8 @@ class WordForwarder:
             try:
                 num = w2n.word_to_num(tokens[1:])
             except Exception as e:
-                raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+                #raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+                return
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)

@@ -10,46 +10,10 @@ import sys
 from time import sleep
 from threading import Thread
 from mode import *
-
-# def modeStr(m):
-# 	if m == Mode.COMMAND:
-# 		return "Command"
-# 	elif m == Mode.TEXT:
-# 		return "Text"
-# 	elif m == Mode.HELP:
-# 		return "Text"
-# 	else:
-# 		raise
-
-#def modeStr(m):
-#	if m & 2**5:
-#		return "RECORDING"
-#	elif m & 2**3:
-#		return "Insert"
-#	elif m & 2**2:
-#		return "Follow"
-#	elif m & 2**1:
-#		return "Holding"
-#	elif m == 0:
-#		return "Normal"
-#	elif m == "":
-#		return ""
-#	else:
-#		return "Normal"
+from word2number import w2n
 
 def statusStr(s):
-	if s == Status.READY:
-		return "Ready"
-	elif s == Status.PROCESSING:
-		return "Processing"
-	elif s == Status.RECORDING:
-		return "Recording"
-	elif s == Status.SETTINGS:
-		return "Settings"
-	elif s == Status.INITIALIZING:
-		return "Initializing"
-	else:
-		raise
+	return s.name.title()
 
 #Mode definitions
 class Mode(Enum):
@@ -85,7 +49,17 @@ class GUI:
 		self.BOTTOM = "+" + str(s_height - 170)
 		self.LEFT = "+0"
 		self.RIGHT = "+" + str(s_width - 190)
-		
+	
+	def resizeWindow(self, tokens):
+		if len(tokens) == 0:
+			return
+		if isinstance(tokens[0], int):
+			size = tokens[0]
+		else:
+			if isinstance(tokens, list):
+				tokens = ' '.join(tokens)
+			size = w2n.word_to_num(tokens.lower())
+		self.root.geometry(str(size)+'x'+str(size))
 
 	#Returns a string formatted for use with the geometry function
 	def strCoordinate(self, x, y):
@@ -153,7 +127,6 @@ class GUI:
 	#Displays an error and spawns a thread to restore the old mode later
 	def showError(self, error):
 		text = self.getText()
-		self.label.config(font=("Courier", 8))
 		self.setText(error)
 		t = Thread(target=self.restoreText, args=[text])
 		t.start()
@@ -182,8 +155,6 @@ class GUI:
 	
 	def closeSettings(self):
 		pass
-		if self.status != self.SETTINGS:
-			raise AttributeError("Tried to close settings that doesn't exist!")
 
 	#Called upon closing the help menu
 	def closeHelpMenu(self):

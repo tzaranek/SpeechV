@@ -61,8 +61,6 @@ class MacroManager:
                 gui.endRecording()
                 self.mode = RecordMode.NAMING
                 return True
-            else:
-                raise ValueError("Please answer\nyes or no")
 
         return False
 
