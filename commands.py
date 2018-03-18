@@ -6,6 +6,7 @@ import re
 import json
 import struct
 import sys
+import subprocess
 from enum import Enum
 
 
@@ -25,7 +26,7 @@ from mode import *
 
 
 try:
-    from voice import recalibrate, adjustTimeout
+    import voice
 except ImportError:
     log.error("FAILED TO IMPORT VOICE")
     pass # FIXME: ignore circular import 
@@ -84,9 +85,6 @@ def exeResize(tokens, mode):
 
     return (tokens[1:], mode)
 
-def exeClose(tokens, mode):
-    pass
-
 def exeHelp(tokens, mode):
     if len(tokens) == 0:
         gui.helpMode()
@@ -101,14 +99,14 @@ def exeSettings(tokens, mode):
     if len(tokens) == 0:
         gui.settingsMode()
     elif tokens[0] == 'CALIBRATE':
-        recalibrate()
+        voice.recalibrate()
     #Need to fix circular dependency in order to do this
     elif tokens[0] == 'TIMEOUT':
         pass
-        adjustTimeout(tokens[1:])
+        voice.adjustTimeout(tokens[1:])
     elif len(tokens) > 1 and tokens[0] == 'TIME' and tokens[1] == 'OUT':
         pass
-        adjustTimeout(tokens[2:])
+        voice.adjustTimeout(tokens[2:])
     elif tokens[0] == 'MACRO':
         gui.settingsMode("MACRO")
     elif tokens[0] == 'ALIAS':
@@ -118,15 +116,27 @@ def exeSettings(tokens, mode):
     elif tokens[0] == 'RESIZE':
         gui.resizeWindow(tokens[1:])
     else:
-        log.Logger.log(log.ParseError.HELP, tokens[0])
+        log.error(log.ParseError.HELP, tokens[0])
 
 def exeLaunch(tokens, mode):
-    """TODO:
-        Launch applications via Windows functionality.
-        Either Win -> Application name or using run?
-        Token will likely be the name of the application
-    """
-    gui.showError("Not yet\nimplemented")
+    """Launch application, or focus it if the app is already launched"""
+
+    if len(tokens) != 1:
+        gui.showError("Unrecognized\nApplication")
+        log.warn("unrecognized application for launch cmd: '{}'".format(' '.join(tokens)))
+    elif tokens[0] == 'FIREFOX':
+        # technically, this will always be open if speechv is running. Focus
+        # the application instead
+        exeFocus(['FIREFOX'], mode)
+    elif tokens[0] == 'WORD':
+        # check if it's already open
+        handles = window_properties.getMainWindowHandles(processNameOf('WORD'))
+        if handles:
+            exeFocus(['WORD'], mode)
+        else:
+            # launch it. To complete this project in a reasonable amount of time
+            # we hardcode it. Windows has spotty support for this type of stuff
+            subprocess.Popen([r'C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE'])
 
 def exeSwitch(tokens, mode):
     keyboard.press_and_release("alt+tab")
@@ -141,13 +151,9 @@ def exeFocus(tokens, mode):
         return ([], mode)
 
 
-    process_name = None
-    if tokens[0] == 'WORD':
-        process_name = 'WINWORD.EXE'
-    else:
-        process_name = tokens[0].lower() + '.exe'
-
-    handles = window_properties.getMainWindowHandles(process_name, expect_one=True)
+    processName = processNameOf(tokens[0])
+    log.debug("processName: '{}'".format(processName))
+    handles = window_properties.getMainWindowHandles(processName, expect_one=True)
     if not handles:
         gui.showError("No app to focus")
         return ([], mode)
@@ -171,6 +177,37 @@ def exeFocus(tokens, mode):
 
     # Display the window normally (i.e. not minimized/maximized)
     win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
+
+def processNameOf(app_name):
+    """Translate the name a user says to the associated process name"""
+
+    # this list is intentionally non-comprehensive. Windows doesn't offer
+    # enough support to make complete coverage feasible
+    if app_name == 'WORD' or app_name == "Microsoft Word":
+        return 'WINWORD.EXE'
+    else:
+        return app_name.lower() + '.exe'
+
+
+def exeTerminate(tokens, mode):
+    if currentApp() == 'Firefox':
+        gui.showError('Closing Firefox\nwould close SpeechV')
+        return ([], mode)
+
+    handles = window_properties.getMainWindowHandles(
+            processNameOf(currentApp()))
+    #try:
+    #    target = handles[0] # choose arbitrary window to terminate if more than one
+    #except IndexError:
+    #    log.error("No window to terminate for current app '{}'".format(currentApp()))
+    #    return ([], mode)
+    if not handles:
+        log.error("No window to terminate for current app '{}'".format(currentApp()))
+        return ([], mode)
+
+    for handle in handles:
+        win32api.SendMessage(handle, win32con.WM_DESTROY, None, None)
+
 
 def exeMaximize(tokens, mode):
 

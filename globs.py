@@ -1,5 +1,6 @@
 import log
 from gui import GUI
+import speech_recognition as sr
 
 # Globals
 #
@@ -9,6 +10,10 @@ from gui import GUI
 # What we really want is GUI to be a singleton class, but for expediency
 # we define one instance as a global variable
 gui = GUI()
+r = sr.Recognizer()
+mic = sr.Microphone()
+
+
 
 def start_gui():
     gui.start()
