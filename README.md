@@ -48,6 +48,7 @@ Besides the functionality afforded by the keyboard shortcuts, actions such as re
 **Move**: Moves the SpeechV GUI to the opposite corner
 **Launch <application>**: Attempts to launch the given application X
 **Focus <application>**: Focuses on the given open applciation X
+**Terminate: Closes the current application without saving or confirming
 **Copy**: Copy the highlighted data     
 **Paste**: Paste the data in the clipboard      
 

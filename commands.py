@@ -84,9 +84,6 @@ def exeResize(tokens, mode):
 
     return (tokens[1:], mode)
 
-def exeClose(tokens, mode):
-    pass
-
 def exeHelp(tokens, mode):
     if len(tokens) == 0:
         gui.helpMode()
@@ -141,13 +138,8 @@ def exeFocus(tokens, mode):
         return ([], mode)
 
 
-    process_name = None
-    if tokens[0] == 'WORD':
-        process_name = 'WINWORD.EXE'
-    else:
-        process_name = tokens[0].lower() + '.exe'
-
-    handles = window_properties.getMainWindowHandles(process_name, expect_one=True)
+    processName = processNameOf(tokens[0])
+    handles = window_properties.getMainWindowHandles(processName, expect_one=True)
     if not handles:
         gui.showError("No app to focus")
         return ([], mode)
@@ -171,6 +163,37 @@ def exeFocus(tokens, mode):
 
     # Display the window normally (i.e. not minimized/maximized)
     win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
+
+def processNameOf(app_name):
+    """Translate the name a user says to the associated process name"""
+
+    # this list is intentionally non-comprehensive. Windows doesn't offer
+    # enough support to make complete coverage feasible
+    if app_name == 'WORD' or "Microsoft Word":
+        return 'WINWORD.EXE'
+    else:
+        return app_name.lower() + '.exe'
+
+
+def exeTerminate(tokens, mode):
+    if currentApp() == 'Firefox':
+        gui.showError('Closing Firefox\nwould close SpeechV')
+        return ([], mode)
+
+    handles = window_properties.getMainWindowHandles(
+            processNameOf(currentApp()))
+    #try:
+    #    target = handles[0] # choose arbitrary window to terminate if more than one
+    #except IndexError:
+    #    log.error("No window to terminate for current app '{}'".format(currentApp()))
+    #    return ([], mode)
+    if not handles:
+        log.error("No window to terminate for current app '{}'".format(currentApp()))
+        return ([], mode)
+
+    for handle in handles:
+        win32api.SendMessage(handle, win32con.WM_DESTROY, None, None)
+
 
 def exeMaximize(tokens, mode):
 
