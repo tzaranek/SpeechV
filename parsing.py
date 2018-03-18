@@ -147,6 +147,9 @@ class Parser:
             #     #self.wordmode = WordMode.HIGHLIGHT
             elif command == 'ENTER':
                 keyboard.press_and_release('enter')
+            elif command == 'NEW PARAGRAPH':
+                keyboard.press_and_release('enter')
+                keyboard.press_and_release('enter')
             else:
                 #In this case, send the top application the text to type it
                 command = re.sub('[!@#$\']', '', command)
@@ -165,6 +168,14 @@ class Parser:
                     else:
                         text[-1] += '.'
                     self.newSentence = True
+                elif text[-1].upper() == "COMMA":
+                    #Remove the word comma and replace with ','
+                    #Either as its own string or attached to the last word
+                    text = text[:-1]
+                    if len(text) == 0:
+                        text[0] = ','
+                    else:
+                        text[-1] += ','
                 command = ' '.join(text)
                 log.info("Sending: \"{}\" to top application".format(command))
                 keyboard.write(command + ' ')
