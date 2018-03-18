@@ -46,7 +46,7 @@ Besides the functionality afforded by the keyboard shortcuts, actions such as re
 **Resize up/down**: Move current app into top/bottom half of the screen
 **Resize full**: Make current app fullscreen    
 **Move**: Moves the SpeechV GUI to the opposite corner
-**Launch <application>**: Attempts to launch the given application X
+**Launch <application>**: Attempts to launch the given application X. A limited number of applications are supported because of limited Windows support. "Firefox" and "Word" are officially supported.
 **Focus <application>**: Focuses on the given open applciation X
 **Terminate: Closes the current application without saving or confirming
 **Copy**: Copy the highlighted data     

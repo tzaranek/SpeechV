@@ -6,6 +6,7 @@ import re
 import json
 import struct
 import sys
+import subprocess
 from enum import Enum
 
 
@@ -118,12 +119,24 @@ def exeSettings(tokens, mode):
         log.Logger.log(log.ParseError.HELP, tokens[0])
 
 def exeLaunch(tokens, mode):
-    """TODO:
-        Launch applications via Windows functionality.
-        Either Win -> Application name or using run?
-        Token will likely be the name of the application
-    """
-    gui.showError("Not yet\nimplemented")
+    """Launch application, or focus it if the app is already launched"""
+
+    if len(tokens) != 1:
+        gui.showError("Unrecognized\nApplication")
+        log.warn("unrecognized application for launch cmd: '{}'".format(' '.join(tokens)))
+    elif tokens[0] == 'FIREFOX':
+        # technically, this will always be open if speechv is running. Focus
+        # the application instead
+        exeFocus(['FIREFOX'], mode)
+    elif tokens[0] == 'WORD':
+        # check if it's already open
+        handles = window_properties.getMainWindowHandles(processNameOf('WORD'))
+        if handles:
+            exeFocus(['WORD'], mode)
+        else:
+            # launch it. To complete this project in a reasonable amount of time
+            # we hardcode it. Windows has spotty support for this type of stuff
+            subprocess.Popen([r'C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE'])
 
 def exeSwitch(tokens, mode):
     keyboard.press_and_release("alt+tab")
@@ -139,6 +152,7 @@ def exeFocus(tokens, mode):
 
 
     processName = processNameOf(tokens[0])
+    log.debug("processName: '{}'".format(processName))
     handles = window_properties.getMainWindowHandles(processName, expect_one=True)
     if not handles:
         gui.showError("No app to focus")
@@ -169,7 +183,7 @@ def processNameOf(app_name):
 
     # this list is intentionally non-comprehensive. Windows doesn't offer
     # enough support to make complete coverage feasible
-    if app_name == 'WORD' or "Microsoft Word":
+    if app_name == 'WORD' or app_name == "Microsoft Word":
         return 'WINWORD.EXE'
     else:
         return app_name.lower() + '.exe'
