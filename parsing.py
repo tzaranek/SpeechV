@@ -96,22 +96,22 @@ class Parser:
         #  - A tuple of the form (A, B) where A is a list of tokens that 
         #    need to be parsed after command execution and B is the global mode
         self.commands = {
-            "ALT":      commands.exeAlt,
-            "RESIZE":   commands.exeResize,
-            "HELP":     commands.exeHelp,
-            "SETTINGS": commands.exeSettings,
-            "LAUNCH":   commands.exeLaunch,
-            "SWITCH":   commands.exeSwitch,
-            "MOVE":     gui.enter,
-            "RECORD":   commands.exeRecord,
-            "TYPE":     commands.exeKeystroke,
-            "FOCUS":    commands.exeFocus,
-            "MINIMIZE": commands.exeMinimize,
-            "MAXIMIZE": commands.exeMaximize,
-            "CANCEL":   commands.exeCancel,
-            "CLOSE":    commands.exeClose,
-            "COPY":     commands.exeCopy,
-            "PASTE":    commands.exePaste
+            "ALT":       commands.exeAlt,
+            "RESIZE":    commands.exeResize,
+            "HELP":      commands.exeHelp,
+            "SETTINGS":  commands.exeSettings,
+            "LAUNCH":    commands.exeLaunch,
+            "SWITCH":    commands.exeSwitch,
+            "MOVE":      gui.enter,
+            "RECORD":    commands.exeRecord,
+            "TYPE":      commands.exeKeystroke,
+            "FOCUS":     commands.exeFocus,
+            "MINIMIZE":  commands.exeMinimize,
+            "CANCEL":    commands.exeCancel,
+            "MAXIMIZE":  commands.exeMaximize,
+            "TERMINATE": commands.exeTerminate,
+            "COPY":      commands.exeCopy,
+            "PASTE":     commands.exePaste
         }
 
     def parse(self, command):
