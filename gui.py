@@ -43,12 +43,14 @@ class GUI:
                 #Get the resolution from the OS
 		s_width = self.root.winfo_screenwidth()
 		s_height = self.root.winfo_screenheight()
+		log.debug(str(s_width) + " " + str(s_height))
+		log.debug(str(self.root.winfo_height()) + ', ' + str(self.root.winfo_width()))
 
 		#Set locations for different GUI positions
 		self.TOP = "+0"
-		self.BOTTOM = "+" + str(s_height - 170)
+		self.BOTTOM = "+" + str(s_height - (90 + self.root.winfo_height()))
 		self.LEFT = "+0"
-		self.RIGHT = "+" + str(s_width - 190)
+		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
 	
 	def resizeWindow(self, tokens):
 		if len(tokens) == 0:
@@ -60,6 +62,15 @@ class GUI:
 				tokens = ' '.join(tokens)
 			size = w2n.word_to_num(tokens.lower())
 		self.root.geometry(str(size)+'x'+str(size))
+		self.root.update()
+		self.label.config(font=("Courier", int(size/16)))
+		self.label.config(width=30, height=10)
+		self.getPositions()
+		if self.right:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+		else:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+
 
 	#Returns a string formatted for use with the geometry function
 	def strCoordinate(self, x, y):
@@ -98,6 +109,8 @@ class GUI:
 	def updateCommands(self, cmd):
 		self.recent[2] = self.recent[1]
 		self.recent[1] = self.recent[0]
+		if len(cmd) > 15:
+			cmd = cmd[:15] + '...'
 		self.recent[0] = cmd
 		self.updateText()
 
@@ -242,6 +255,7 @@ class GUI:
 		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 		back.pack(fill=BOTH, expand=1) #Expand the frame to fill the root window
 		self.root.geometry("100x100")
+		self.root.update()
 		self.text = StringVar()
 		self.label = Label(back, textvariable=self.text)
 		self.label.pack()

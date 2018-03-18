@@ -25,7 +25,7 @@ from mode import *
 
 
 try:
-    from voice import recalibrate, adjustTimeout
+    import voice
 except ImportError:
     log.error("FAILED TO IMPORT VOICE")
     pass # FIXME: ignore circular import 
@@ -101,14 +101,14 @@ def exeSettings(tokens, mode):
     if len(tokens) == 0:
         gui.settingsMode()
     elif tokens[0] == 'CALIBRATE':
-        recalibrate()
+        voice.recalibrate()
     #Need to fix circular dependency in order to do this
     elif tokens[0] == 'TIMEOUT':
         pass
-        adjustTimeout(tokens[1:])
+        voice.adjustTimeout(tokens[1:])
     elif len(tokens) > 1 and tokens[0] == 'TIME' and tokens[1] == 'OUT':
         pass
-        adjustTimeout(tokens[2:])
+        voice.adjustTimeout(tokens[2:])
     elif tokens[0] == 'MACRO':
         gui.settingsMode("MACRO")
     elif tokens[0] == 'ALIAS':
@@ -118,7 +118,7 @@ def exeSettings(tokens, mode):
     elif tokens[0] == 'RESIZE':
         gui.resizeWindow(tokens[1:])
     else:
-        log.Logger.log(log.ParseError.HELP, tokens[0])
+        log.error(log.ParseError.HELP, tokens[0])
 
 def exeLaunch(tokens, mode):
     """TODO:

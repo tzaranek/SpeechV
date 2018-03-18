@@ -17,21 +17,24 @@ import time
 import traceback
 import sys
 import keyboard
-from globs import gui
+from globs import gui, r, mic
+from word2number import w2n
 
 def adjustTimeout(tokens):
     if len(tokens) != 3 or tokens[1] != "POINT":
         raise AttributeError("Ill-formed timeout command")
     try:
-        wholeNum = w2n(tokens[0])
-        decimal = w2n(tokens[2])
-        global _r
-        _r.pause_threshold = wholeNum+decimal/10
+        wholeNum = w2n.word_to_num(tokens[0])
+        decimal = w2n.word_to_num(tokens[2])
+        r.pause_threshold = wholeNum+decimal/10
+        log.info("Changed audio timeout to: " + str(r.pause_threshold))
     except:
         raise AttributeError("Number conversion failed in adjust timeout")
 
 def recalibrate():
-    sr.Recognizer().adjust_for_ambient_noise(sr.Microphone())
+    #We are now adjusting it automatically instead of calling calibrate
+    log.info("Recalibrate is deprecated, it now happens automatically")
+
 
 def recognize(audio_data, command_set):
     client = speech.SpeechClient()
@@ -89,18 +92,18 @@ def voiceLoop():
 
         time.sleep(1) 
     else:
-        log.info("voice mode activeated")
+        log.info("voice mode activated")
 
 
-    r = sr.Recognizer()
     p = parsing.Parser()
-    with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source) # listen for 1 second to calibrate the energy threshold for ambient noise levels
+    with mic as source:
+        #Automatically adjust for ambient noise instead of calling calibrate
+        r.dynamic_energy_threshold = True
         r.pause_threshold = AUDIO_TIMEOUT
+
 
         while True:                
             try:
-                #print("Say something!") # TODO: change to GUI alert
                 gui.ready()
 
                 raw_command = ''
