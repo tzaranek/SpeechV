@@ -201,6 +201,7 @@ class GUI:
 		self.status = Status.HELP
 		log.info("Help file opened: ", file_in)
 		self.window = Toplevel()
+		self.window.attributes("-topmost", True)
 		canvas = Canvas(master=self.window, height=900, width=800, background="#303030")
 		canvas.grid()
 		canvas.create_text((5,5), anchor="nw", text=help_text, width=700, font=("Arial", 14), fill="#FFFFFF")
