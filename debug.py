@@ -39,7 +39,8 @@ def run_prompt(speechv_pipe):
                         suggest_help(command)
                 else:
                     win32file.WriteFile(speechv_pipe, command.encode())
-            except IndexError:
+            except IndexError as e:
+                    log.error(str(e))
                     suggest_help(command)
         except KeyboardInterrupt:
             print()
@@ -54,7 +55,8 @@ def run_batch_input(filename, speechv_pipe):
                 win32file.WriteFile(speechv_pipe, line.rstrip().encode())
                 win32file.ReadFile(speechv_pipe, 4096)
                 time.sleep(1) # important for letting pages load
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        log.error(str(e))
         print("error: couldn't find batch input file with filename '{}'"
                 .format(filename))
     finally:
@@ -63,13 +65,15 @@ def run_batch_input(filename, speechv_pipe):
 def main():
     try:
         subprocess.check_call(['del', 'named_pipe'])
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        log.error(str(e))
         pass # allow for no pre-existing named pipe
 
     try:
         # delete this just in case we crashed before deleting last time
         subprocess.check_call(['del', 'BATCH_FLAG'])
-    except FileNotFoundError:
+    except FileNotFoundError as e:
+        log.error(str(e))
         pass
 
 
@@ -105,7 +109,7 @@ def main():
         try:
             subprocess.check_call(['taskkill', '/T', '/F', '/IM', subprogram])
         except Exception as e:
-            log.error(e)
+            log.error(str(e))
 
 
 def suggest_help(bad_command):

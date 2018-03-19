@@ -84,7 +84,8 @@ class Parser:
         # Load the configuration file into a dictionary
         try:
             self.config = settings.loadConfig()
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            log.error(str(e))
             # FIXME: handle case where there is no config file
             log.error("No config file found! Ignoring error for now...")
             self.config = {} 

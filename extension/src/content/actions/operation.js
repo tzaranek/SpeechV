@@ -46,6 +46,12 @@ const exec = (operation, repeat, settings) => {
       type: messages.FOLLOW_START,
       newTab: operation.newTab
     }), '*');
+  case operations.BOOKMARKS_SHOW:
+    console.log("SHOWING BOOKMARKS");
+    return window.top.postMessage(JSON.stringify({
+      type: messages.BOOKMARKS_SHOW,
+      keys: operation.keys
+    }), '*');
   case operations.NAVIGATE_HISTORY_PREV:
     return navigates.historyPrev(window);
   case operations.NAVIGATE_HISTORY_NEXT:

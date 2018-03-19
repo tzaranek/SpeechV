@@ -2,6 +2,7 @@ import operations from 'shared/operations';
 import messages from 'shared/messages';
 import * as tabs from 'background/tabs';
 import * as zooms from 'background/zooms';
+import * as bookmarks from 'background/bookmarks';
 
 const sendConsoleShowCommand = (tab, command) => {
   return browser.tabs.sendMessage(tab.id, {
@@ -9,6 +10,15 @@ const sendConsoleShowCommand = (tab, command) => {
     command,
   });
 };
+
+const timeout = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+async function sleep(fn, ...args) {
+  await timeout(1000);
+  return fn(...args);
+}
 
 // This switch statement is only gonna get longer as more
 // features are added, so disable complexity check
@@ -47,6 +57,14 @@ const exec = (operation, tab) => {
     return zooms.zoomOut();
   case operations.ZOOM_NEUTRAL:
     return zooms.neutral();
+  case operations.BOOKMARKS_CREATE:
+    console.log("CREATING BOOKMARKS");
+    return bookmarks.createBookmarkFromCurrent();
+  case operations.BOOKMARKS_GET:
+    console.log("GETTING BOOKMARKS");
+    let bookmark_page = "/src/background/bookmarks.html";
+    return browser.tabs.create({ url: bookmark_page })
+      .then(sleep(bookmarks.retrieveBookmarks));
   case operations.COMMAND_SHOW:
     return sendConsoleShowCommand(tab, '');
   case operations.COMMAND_SHOW_OPEN:

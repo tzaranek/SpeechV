@@ -111,7 +111,8 @@ def debug_window(whandle):
     try:
         win_text = win32gui.GetWindowText(whandle)
         log.debug(' - text:', win_text)
-    except UnicodeEncodeError:
+    except UnicodeEncodeError as e:
+        log.error(str(e))
         log.debug(' - text: <cannot print: contains undefined character>')
     log.debug(' - placement:', win32gui.GetWindowPlacement(whandle))
     log.debug(' - visibility:', win32gui.IsWindowVisible(whandle))
