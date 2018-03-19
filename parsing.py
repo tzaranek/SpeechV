@@ -243,41 +243,23 @@ class Parser:
 
             return
 
+        # See the comment by self.commands in __init__ for the details
+        def handleCmdRet(ret):
+            if ret is not None:
+                leftoverTokens, self.mode = ret[0], ret[1]
+                self.parseImpl(leftoverTokens, self.mode)
+
         if self.mode == GlobalMode.FOLLOW and currentApp() == 'Microsoft Word':
+            if tokens[0] == "INSERT":
+                self.mode = GlobalMode.INSERT
+                return
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
                 self.parseSwitch(tokens[1:])
                 return
-            elif tokens[0] == 'CANCEL' and len(tokens) == 1:
-                log.info("wordFollow: ", self.wordFollow)
-                for i in range(self.wordFollow + 1):
-                    pyautogui.hotkey('escape') # press escape to exit follow mode
-                self.mode = GlobalMode.NAVIGATE # put user back in navigate
-                self.wordFollow = 0
-                return
-            elif tokens[0] == 'BACK' and len(tokens) == 1:
-                pyautogui.hotkey('escape')
-                self.wordFollow = self.wordFollow - 1
-                if self.wordFollow == 0:
-                    self.mode = GlobalMode.NAVIGATE
-                return
-            elif tokens[0] in ['UP','DOWN','LEFT','RIGHT','ENTER'] and len(tokens) == 1:
-                key = tokens[0].lower()
-                pyautogui.hotkey(key)
-                return
-
-            for tok in tokens:
-                if len(tok) != 1:
-                    log.warn("cannot handle follow token size greater than 1")
-                    return
-
-            # send keystrokes to word
-            # does not automatically switch to navigate/insert mode
-            self.wordFollow = self.wordFollow + 1
-            log.info("Word follow layers: ", self.wordFollow)
-            command = ''.join(tokens)
-            pyautogui.typewrite(command)
-
-
+            # forward tokens to wordForwarder
+            ret = self.wordForwarder.followWord(tokens)
+            handleCmdRet(ret)
+            return
         
         if self.mode == GlobalMode.NAVIGATE and len(tokens) == 1:
             if tokens[0] == "INSERT":
@@ -288,13 +270,6 @@ class Parser:
         #        it so that the code is easier to read?
         if levelDict is None:
             levelDict = self.commands
-
-
-        # See the comment by self.commands in __init__ for the details
-        def handleCmdRet(ret):
-            if ret is not None:
-                leftoverTokens, self.mode = ret[0], ret[1]
-                self.parseImpl(leftoverTokens, self.mode)
             
         w, rest = tokens[0], tokens[1:]
         if w in levelDict:

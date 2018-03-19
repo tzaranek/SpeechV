@@ -387,6 +387,7 @@ wordCmds = {
 class WordForwarder:
     def __init__(self):
         self.mode = WordMode.NAVIGATE
+        self.followLayers = 0
 
     def forward(self, tokens, globalMode):
         log.debug("In word, current mode: " + self.mode.name)
@@ -394,6 +395,7 @@ class WordForwarder:
         tokenStr = ' '.join(tokens)
         if tokenStr == 'FOLLOW':
             pyautogui.press('alt')
+            self.followLayers = self.followLayers + 1
             mode = GlobalMode.FOLLOW
             return ([], mode)
         if tokenStr in WordMode.__members__:
@@ -424,6 +426,47 @@ class WordForwarder:
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
+
+    def followWord(self, tokens):
+        if tokens[0] == 'CANCEL' and len(tokens) == 1:
+            for i in range(self.followLayers + 1):
+                pyautogui.hotkey('escape')
+            self.followLayers = 0
+            return ([], GlobalMode.NAVIGATE)
+        elif tokens[0] == 'BACK' and len(tokens) == 1:
+            pyautogui.hotkey('escape')
+            self.followLayers = self.followLayers - 1
+            if self.followLayers == 0:
+                return ([], GlobalMode.NAVIGATE)
+            return ([], GlobalMode.FOLLOW)
+        elif tokens[0] in ['UP','DOWN','LEFT','RIGHT','ENTER'] and len(tokens) == 1:
+            key = tokens[0].lower()
+            pyautogui.hotkey(key)
+            return ([], GlobalMode.FOLLOW)
+        # if user gives NAVIGATE command, get out of follow and execute command
+        tokenStr = ' '.join(tokens)
+        if tokenStr in wordCmds['NAVIGATE']:
+            for i in range(self.followLayers + 1):
+                pyautogui.hotkey('escape')
+            self.followLayers = 0
+            return self.forward(tokens, GlobalMode.NAVIGATE)
+        if tokenStr in WordMode.__members__:
+            self.mode = WordMode[tokenStr]
+            return ([], GlobalMode.NAVIGATE)
+
+        # handle follow tokens
+        for tok in tokens:
+            if len(tok) != 1:
+                log.warn("cannot handle follow token size greater than 1")
+                return
+
+        # send keystrokes to word
+        self.followLayers = self.followLayers + 1
+        command = ''.join(tokens)
+        pyautogui.typewrite(command)
+        return ([], GlobalMode.FOLLOW)
+
+
 
 def deleteMacro(tokens):
     log.info("In deleteMacro. Tokens: " + ' '.join(tokens))
