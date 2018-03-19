@@ -1,0 +1,32 @@
+FOCUS <application>: Switch focus to open application
+RESIZE UP/DOWN/LEFT/RIGHT: Move current app into left/right/bottom/top half of screen
+RESIZE FULL: Full screen current app
+
+SETTINGS: Adjust SpeechV settings
+SLEEP/WAKE: Pause/resume operation of SpeechV
+RECORD START/END: Begin/finish recording macro
+
+FOLLOW: label links and input fields, then open matching link in current tab
+OPEN: label links and input fields, then open matching link in new tab
+INSERT: enter text in selected input field
+
+UP/DOWN: Scroll vertically
+LEFT/RIGHT: Scroll horizontally
+CONTROL UP/DOWN: Scroll vertically by half a screen
+CONTROL UPPER/DOWNER: Scroll pages by a screen
+TOP/BOTTOM: Scroll to top/bottom of page
+ZERO/DOLLAR: Scroll a page to leftmost/rightmost
+ZOOM IN/OUT: Zoom in/out
+ZOOM DEFAULT: Set default zoom
+
+DELETE: Close tab
+UNDO: Reopen closed tab
+PREVIOUS/NEXT: select left/right tab
+REFRESH: Reload current tab
+DUPLICATE: Duplicate current tab
+FIND: Search for text on page
+ADDRESS: Select address box
+NEW TAB: Open a new tab
+NEW WINDOW: Open a new window
+PRINT: Print current page
+SAVE: Save current page

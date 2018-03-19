@@ -1,0 +1,3 @@
+<LABEL> to enter toolbar section or select option
+BACK to go up one level toolbar
+CANCEL to escape toolbar with no selection

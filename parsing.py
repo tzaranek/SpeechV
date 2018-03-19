@@ -118,9 +118,6 @@ class Parser:
             "SLEEP":     commands.exeSleep
         }
 
-        # to keep track of follow in MS Word
-        self.wordFollow = 0
-
     def parse(self, command):
         self.ready = False
         log.debug("parsing command: '{}'".format(command))

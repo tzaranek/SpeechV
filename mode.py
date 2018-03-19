@@ -10,6 +10,7 @@ class GlobalMode(Enum):
     FOLLOW   = 2 # expecting text for following a link in the browser
     SETTINGS = 3
     SLEEPING = 4
+    HELP = 5
 
 
 class WordMode(Enum):

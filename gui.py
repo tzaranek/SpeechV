@@ -183,19 +183,17 @@ class GUI:
 
 	#Called upon closing the help menu
 	def closeHelpMenu(self):
-		self.setMode(0)
 		self.window.destroy()
+		pass
 
 	#Display the help menu
-	def helpMode(self, type="DEFAULT"):
+	def helpMode(self, type='default'):
 		if hasattr(self, 'window'):
 		    self.window.destroy()
 
 		self.setText("Help\nMenu!")
-		if type=='browser':
-			file_in = "browser_help.txt"
-		else:
-			file_in = "help_text.txt"
+		file_in = "help_menus/"+ type + ".txt"
+		
 		with open(file_in, 'r') as text_file:
 			help_text = text_file.read()
 
@@ -205,11 +203,6 @@ class GUI:
 		canvas.grid()
 		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
 		self.window.geometry(self.LEFT + self.TOP)
-
-	#Called upon closing the help menu
-	def closeHelpMenu(self):
-		self.setMode(0)
-		self.window.destroy()
 
 	#Returns the current GUI mode
 	def getMode(self):

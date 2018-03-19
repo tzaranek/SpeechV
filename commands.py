@@ -88,11 +88,12 @@ def exeResize(tokens, mode):
 
 def exeHelp(tokens, mode):
     if len(tokens) == 0:
-        gui.helpMode()
-    elif tokens[0] == 'BROWSER':
-        gui.helpMode('browser')
-    elif tokens[0] == 'CLOSE':
-        gui.closeHelpMenu()
+        if currentApp() == "Microsoft Word":
+            helpType = "word" + mode.name
+        elif currentApp() == "Firefox":
+            helpType = "firefox" + mode.name
+        gui.helpMode(helpType)
+        return ([], GlobalMode.HELP)
     else:
         log.parse_error(log.ParseError.HELP, tokens[0])
 
@@ -507,6 +508,15 @@ def forwardSettings(tokens):
         return ([], GlobalMode.NAVIGATE)
     log.debug("No match in forwardSettings!")
     return ([], GlobalMode.SETTINGS)
+
+def forwardHelp(tokens):
+    if len(tokens) == 0:
+        return ([], GlobalMode.HELP)
+    if tokens[0] == "CLOSE":
+        gui.closeHelp()
+        return ([], GlobalMode.NAVIGATE)
+    log.debug("No match in forwardHelp!")
+    return ([], GlobalMode.HELP)
 
 '''================
 SpeechV Settings

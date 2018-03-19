@@ -1,0 +1,5 @@
+End phrases with PERIOD/COMMA to insert punctuation
+ENTER to go to the next line
+NEW PARAGRAPH to insert an empty line
+
+NAVIGATE to stop text entry
