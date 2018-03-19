@@ -127,6 +127,7 @@ def voiceLoop():
 
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                     keyboard.press_and_release("alt+tab")
+                    time.sleep(1) # give OS time to alt-tab
                 if raw_command == -1:
                     raise ValueError("Failed to recognize speech")
                 p.parse(raw_command)
