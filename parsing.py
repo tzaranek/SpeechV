@@ -24,6 +24,8 @@ from forwarder import encode_message, send_message
 from mode import *
 from globs import gui
 
+import settings
+
 class MacroManager:
     def __init__(self, config):
         self.mode = RecordMode.IDLE
@@ -52,8 +54,8 @@ class MacroManager:
             return True
         elif self.mode == RecordMode.CONFIRMING:
             if command.strip().upper() == "YES":
-                self.config['macros'][self.macroName] = self.macroCommands
-                saveConfig(self.config)
+                self.config['MACROS'][self.macroName] = self.macroCommands
+                settings.saveConfig(self.config)
                 gui.macroNameConfirmed()
                 self.mode = RecordMode.IDLE
                 return True
@@ -81,12 +83,13 @@ class Parser:
 
         # Load the configuration file into a dictionary
         try:
-            self.config = loadConfig()
+            self.config = settings.loadConfig()
         except FileNotFoundError:
             # FIXME: handle case where there is no config file
             log.error("No config file found! Ignoring error for now...")
             self.config = {} 
-            self.config['macros'] = {}
+            self.config["MACROS"] = {}
+            self.config["SETTINGS"] = {}
 
         self.wordForwarder = commands.WordForwarder()
         self.macroManager = MacroManager(self.config)
@@ -102,7 +105,7 @@ class Parser:
             "SETTINGS":  commands.exeSettings,
             "LAUNCH":    commands.exeLaunch,
             "SWITCH":    commands.exeSwitch,
-            "MOVE":      gui.enter,
+            "MOVE":      commands.exeMove,
             "RECORD":    commands.exeRecord,
             "TYPE":      commands.exeKeystroke,
             "FOCUS":     commands.exeFocus,
@@ -125,6 +128,10 @@ class Parser:
 
         if len(command) == 1:
             command = command.lower()
+
+        def handleCmdRet(ret):
+            if ret is not None:
+                leftoverTokens, self.mode = ret[0], ret[1]
 
         if self.mode == GlobalMode.NAVIGATE or self.mode == GlobalMode.FOLLOW:
             command = re.sub('[!@#$\']', '', command)
@@ -181,6 +188,12 @@ class Parser:
                 keyboard.write(command + ' ')
                 #keys = [commands.KeyboardMessage(ch) for ch in command]
                 #send_message(encode_message(keys))
+
+        elif self.mode == GlobalMode.SETTINGS:
+            command = re.sub('[!@#$\']', '', command)
+            text = re.findall(r"[a-zA-Z]+", command)
+            ret = commands.forwardSettings(text)
+            handleCmdRet(ret)
 
         else:
             # Oh no! We have a bad mode. Hopefully going back to NAVIGATE saves us
@@ -258,8 +271,8 @@ class Parser:
             elif currentApp() == 'Microsoft Word':
                 ret = self.wordForwarder.forward(tokens, self.mode)
                 handleCmdRet(ret)
-            elif ' '.join(tokens) in self.config['macros']:
-                self.exeMacro((self.config['macros'][' '.join(tokens)]))
+            elif ' '.join(tokens) in self.config['MACROS']:
+                self.exeMacro((self.config['MACROS'][' '.join(tokens)]))
             else:
                 gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
@@ -270,13 +283,4 @@ class Parser:
             self.parse(cmd)
             time.sleep(1.0)
 
-def loadConfig():
-    with open("config.cfg", "r") as f:
-        s = f.read()
-        config = json.loads(s)
-    return config 
 
-def saveConfig(config):
-    with open("config.cfg", "w") as f:
-        s = json.dumps(config)
-        f.write(s)

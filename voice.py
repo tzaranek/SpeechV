@@ -19,6 +19,7 @@ import sys
 import keyboard
 from globs import gui, r, mic
 from word2number import w2n
+import settings
 
 def adjustTimeout(tokens):
     if len(tokens) != 3 or tokens[1] != "POINT":
@@ -28,6 +29,9 @@ def adjustTimeout(tokens):
         decimal = w2n.word_to_num(tokens[2])
         r.pause_threshold = wholeNum+decimal/10
         log.info("Changed audio timeout to: " + str(r.pause_threshold))
+        config = settings.loadConfig()
+        config["SETTINGS"]["TIMEOUT"] = r.pause_threshold
+        settings.saveConfig(config)
     except:
         raise AttributeError("Number conversion failed in adjust timeout")
 
@@ -63,8 +67,9 @@ def recognize(audio_data, command_set):
 
 def voiceLoop():
     global restartLoop
-
-    AUDIO_TIMEOUT = 0.5 # length of pause marking end of command
+    
+    config = settings.loadConfig()
+    AUDIO_TIMEOUT = config["SETTINGS"]["TIMEOUT"] # length of pause marking end of command
 
     with open('command_set.txt', 'r') as myfile:
         str_command_set = myfile.read()

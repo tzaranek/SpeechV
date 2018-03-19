@@ -23,6 +23,7 @@ from window_properties import currentApp
 from forwarder import encode_message, send_message
 from globs import gui
 from mode import *
+import settings
 
 
 try:
@@ -97,7 +98,8 @@ def exeHelp(tokens, mode):
 
 def exeSettings(tokens, mode):
     if len(tokens) == 0:
-        gui.settingsMode()
+        gui.settingsMode(settings.loadConfig()["MACROS"])
+        return ([], GlobalMode.SETTINGS)
     elif tokens[0] == 'CALIBRATE':
         voice.recalibrate()
     #Need to fix circular dependency in order to do this
@@ -107,10 +109,6 @@ def exeSettings(tokens, mode):
     elif len(tokens) > 1 and tokens[0] == 'TIME' and tokens[1] == 'OUT':
         pass
         voice.adjustTimeout(tokens[2:])
-    elif tokens[0] == 'MACRO':
-        gui.settingsMode("MACRO")
-    elif tokens[0] == 'ALIAS':
-        gui.settingsMode("ALIAS")
     elif tokens[0] == 'CLOSE':
         gui.closeSettings()
     elif tokens[0] == 'RESIZE':
@@ -272,6 +270,9 @@ def exeSearch(tokens):
     time.sleep(1)
     keyboard.press_and_release('alt+enter')
 
+def exeMove(tokens, mode):
+    gui.enter()
+
 browserKeywords = {
     'UP'             : [KeyboardMessage('k')],
     'DOWN'           : [KeyboardMessage('j')],
@@ -420,3 +421,51 @@ class WordForwarder:
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
 
+def deleteMacro(tokens):
+    log.info("In deleteMacro. Tokens: " + ' '.join(tokens))
+    config = settings.loadConfig()
+    if ' '.join(tokens) in config["MACROS"]:
+        del config["MACROS"][' '.join(tokens)]
+    settings.saveConfig(config)
+    #Reload the menu to reload the macros
+    gui.settingsMode(settings.loadConfig()["MACROS"])
+
+
+def forwardSettings(tokens):
+    log.info("In forwardSettings. Tokens: " + ' '.join(tokens))
+    if len(tokens) == 0:
+        return ([], GlobalMode.SETTINGS)
+    if ' '.join(tokens[:2]) == "MACRO DELETE":
+        deleteMacro(tokens[2:])
+        return
+    elif ' '.join(tokens[:3]) == "VOICE TIME OUT":
+        voice.adjustTimeout(tokens[3:])
+        return
+    elif ' '.join(tokens[:2]) == "VOICE TIMEOUT":
+        voice.adjustTimeout(tokens[2:])
+        return
+    elif tokens[0] == "RESIZE":
+        gui.resizeWindow(tokens[1:])
+        return
+    elif tokens[0] == "CLOSE":
+        gui.closeSettings()
+        return ([], GlobalMode.NAVIGATE)
+    log.debug("No match in forwardSettings!")
+    return ([], GlobalMode.SETTINGS)
+
+'''================
+SpeechV Settings
+================
+
+Select a setting
+
+"MACRO DELETE <macro>": Delete the given macro
+    
+    Macros:
+
+"VOICE TIME OUT <seconds>": Adjust timeout for speech recognition. 
+                            Seconds in tenths of a second e.g. "one point zero"
+
+"RESIZE <size>": Resize the SpeechV GUI. Default is 100.
+
+"CLOSE"'''

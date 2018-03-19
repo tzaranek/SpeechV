@@ -12,6 +12,8 @@ from threading import Thread
 from mode import *
 from word2number import w2n
 
+import settings
+
 def statusStr(s):
 	return s.name.title()
 
@@ -63,13 +65,17 @@ class GUI:
 			size = w2n.word_to_num(tokens.lower())
 		self.root.geometry(str(size)+'x'+str(size))
 		self.root.update()
-		self.label.config(font=("Courier", int(size/16)))
+		self.label.config(font=("Courier", int(size/18)))
 		self.label.config(width=30, height=10)
 		self.getPositions()
 		if self.right:
 			self.root.geometry(self.RIGHT + self.BOTTOM)
 		else:
 			self.root.geometry(self.RIGHT + self.BOTTOM)
+		
+		config = settings.loadConfig()
+		config["SETTINGS"]["WINDOW_SIZE"] = size
+		settings.saveConfig(config)
 
 
 	#Returns a string formatted for use with the geometry function
@@ -145,7 +151,7 @@ class GUI:
 		t.start()
 
 	#Display the help menu
-	def settingsMode(self, type="DEFAULT"):
+	def settingsMode(self, macros, type="DEFAULT"):
 		if hasattr(self, 'window'):
 			self.window.destroy()
 
@@ -158,15 +164,21 @@ class GUI:
 			file_in = "settings_alias.txt"
 		with open(file_in, 'r') as text_file:
 			help_text = text_file.read()
-
+		
+		help_text += "\n\n\tcurrent macros:"
+		for macro in macros:
+			m = "\n\t" + macro + ": " + ', '.join(macros[macro])
+			help_text += m
 		self.status = Status.SETTINGS
 		self.window = Toplevel()
+		self.window.attributes("-topmost", True)
 		canvas = Canvas(master=self.window, height=600, width=1000)
 		canvas.grid()
 		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
 		self.window.geometry(self.LEFT + self.TOP)
 	
 	def closeSettings(self):
+		self.window.destroy()
 		pass
 
 	#Called upon closing the help menu
@@ -209,7 +221,8 @@ class GUI:
 
 	#Handles when the mouse enters the window
 	#Will move the GUI out of the way
-	def enter(self, event):
+	def enter(self, event=None):
+		log.info("Mouse entered the GUI!")
 		if self.right:
 			loc = self.LEFT + self.BOTTOM
 			self.right = False
@@ -254,7 +267,10 @@ class GUI:
 		back = Frame(master=self.root,bg='black')
 		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 		back.pack(fill=BOTH, expand=1) #Expand the frame to fill the root window
-		self.root.geometry("100x100")
+
+		config = settings.loadConfig()
+		s = config["SETTINGS"]["WINDOW_SIZE"]
+		self.root.geometry(str(s) + "x" + str(s))
 		self.root.update()
 		self.text = StringVar()
 		self.label = Label(back, textvariable=self.text)
@@ -263,7 +279,7 @@ class GUI:
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
 		self.label.config(width=30, height=10)
-		self.label.config(font=("Courier", 8))
+		self.label.config(font=("Courier", int(s/18)))
 		self.label.config(bg=READY)
 
 		#Calculate screen size and move the window to the bottom right

@@ -8,6 +8,7 @@ class GlobalMode(Enum):
     NAVIGATE = 0
     INSERT = 1 # forward text directly to topmost application through OS
     FOLLOW = 2 # expecting text for following a link in the browser
+    SETTINGS = 3
 
 
 class WordMode(Enum):
