@@ -117,6 +117,9 @@ class Parser:
             "PASTE":     commands.exePaste
         }
 
+        # to keep track of follow in MS Word
+        self.wordFollow = 0
+
     def parse(self, command):
         self.ready = False
         log.debug("parsing command: '{}'".format(command))
@@ -215,7 +218,7 @@ class Parser:
         #   currently just takes all tokens as individual letters and sends
         #   them on assuming that there's no point in issuing commands
         #   before the link is followed. Also, there should not be more than 3
-        if self.mode == GlobalMode.FOLLOW:
+        if self.mode == GlobalMode.FOLLOW and currentApp() == 'Firefox':
             # handle switch specially so that alt-tabbing works with the prompt
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
                 self.parseSwitch(tokens[1:])
@@ -238,6 +241,37 @@ class Parser:
             send_message(encode_message(enumerated_keys))
 
             return
+
+        if self.mode == GlobalMode.FOLLOW and currentApp() == 'Microsoft Word':
+            if tokens[0] == 'SWITCH' and len(tokens) == 1:
+                self.parseSwitch(tokens[1:])
+                return
+            elif tokens[0] == 'CANCEL' and len(tokens) == 1:
+                for i in range(self.wordFollow + 1):
+                    pyautogui.hotkey('escape') # press escape to exit follow mode
+                self.mode = GlobalMode.NAVIGATE # put user back in navigate
+                self.wordFollow = 0
+                return
+            elif tokens[0] == 'BACK' and len(tokens) == 1:
+                pyautogui.hotkey('escape')
+                self.wordFollow = self.wordFollow - 1
+                return
+            elif tokens[0] in ['UP','DOWN','LEFT','RIGHT','ENTER'] and len(tokens) == 1:
+                key = tokens[0].lower()
+                pyautogui.hotkey(key)
+                return
+
+            for tok in tokens:
+                if len(token) != 1:
+                    log.warn("cannot handle follow token size greater than 1")
+                    return
+
+            # send keystrokes to word
+            # does not automatically switch to navigate/insert mode
+            command = ''.join(tokens)
+            pyautogui.typewrite(command)
+
+
         
         if self.mode == GlobalMode.NAVIGATE and len(tokens) == 1:
             if tokens[0] == "INSERT":

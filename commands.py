@@ -228,7 +228,7 @@ def exeCancel(tokens, mode):
 
     # NOTE: this could be extended to exit insert mode, etc.
     pyautogui.hotkey('escape')
-    self.mode &= ~self.FOLLOW
+    self.mode = GlobalMode.NAVIGATE
 
 def exeCopy(tokens, mode):
     keyboard.press_and_release("ctrl+c")
