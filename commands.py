@@ -6,6 +6,7 @@ import re
 import json
 import struct
 import sys
+import subprocess
 from enum import Enum
 
 
@@ -22,11 +23,13 @@ from window_properties import currentApp
 from forwarder import encode_message, send_message
 from globs import gui
 from mode import *
+import settings
 
 
 try:
-    from voice import recalibrate
+    import voice
 except ImportError:
+    log.error("FAILED TO IMPORT VOICE")
     pass # FIXME: ignore circular import 
 
 class KeyboardMessage():
@@ -83,9 +86,6 @@ def exeResize(tokens, mode):
 
     return (tokens[1:], mode)
 
-def exeClose(tokens, mode):
-    pass
-
 def exeHelp(tokens, mode):
     if len(tokens) == 0:
         gui.helpMode()
@@ -96,27 +96,45 @@ def exeHelp(tokens, mode):
     else:
         log.parse_error(log.ParseError.HELP, tokens[0])
 
-def exeSettings(self,tokens, mode):
+def exeSettings(tokens, mode):
     if len(tokens) == 0:
-        gui.settingsMode()
+        gui.settingsMode(settings.loadConfig()["MACROS"])
+        return ([], GlobalMode.SETTINGS)
     elif tokens[0] == 'CALIBRATE':
-        recalibrate()
-    elif tokens[0] == 'MACRO':
-        gui.settingsMode("MACRO")
-    elif tokens[0] == 'ALIAS':
-        gui.settingsMode("ALIAS")
+        voice.recalibrate()
+    #Need to fix circular dependency in order to do this
+    elif tokens[0] == 'TIMEOUT':
+        pass
+        voice.adjustTimeout(tokens[1:])
+    elif len(tokens) > 1 and tokens[0] == 'TIME' and tokens[1] == 'OUT':
+        pass
+        voice.adjustTimeout(tokens[2:])
     elif tokens[0] == 'CLOSE':
         gui.closeSettings()
+    elif tokens[0] == 'RESIZE':
+        gui.resizeWindow(tokens[1:])
     else:
-        log.Logger.log(log.ParseError.HELP, tokens[0])
+        log.error(log.ParseError.HELP, tokens[0])
 
 def exeLaunch(tokens, mode):
-    """TODO:
-        Launch applications via Windows functionality.
-        Either Win -> Application name or using run?
-        Token will likely be the name of the application
-    """
-    gui.showError("Not yet\nimplemented")
+    """Launch application, or focus it if the app is already launched"""
+
+    if len(tokens) != 1:
+        gui.showError("Unrecognized\nApplication")
+        log.warn("unrecognized application for launch cmd: '{}'".format(' '.join(tokens)))
+    elif tokens[0] == 'FIREFOX':
+        # technically, this will always be open if speechv is running. Focus
+        # the application instead
+        exeFocus(['FIREFOX'], mode)
+    elif tokens[0] == 'WORD':
+        # check if it's already open
+        handles = window_properties.getMainWindowHandles(processNameOf('WORD'))
+        if handles:
+            exeFocus(['WORD'], mode)
+        else:
+            # launch it. To complete this project in a reasonable amount of time
+            # we hardcode it. Windows has spotty support for this type of stuff
+            subprocess.Popen([r'C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE'])
 
 def exeSwitch(tokens, mode):
     keyboard.press_and_release("alt+tab")
@@ -131,13 +149,9 @@ def exeFocus(tokens, mode):
         return ([], mode)
 
 
-    process_name = None
-    if tokens[0] == 'WORD':
-        process_name = 'WINWORD.EXE'
-    else:
-        process_name = tokens[0].lower() + '.exe'
-
-    handles = window_properties.getMainWindowHandles(process_name, expect_one=True)
+    processName = processNameOf(tokens[0])
+    log.debug("processName: '{}'".format(processName))
+    handles = window_properties.getMainWindowHandles(processName, expect_one=True)
     if not handles:
         gui.showError("No app to focus")
         return ([], mode)
@@ -162,6 +176,37 @@ def exeFocus(tokens, mode):
     # Display the window normally (i.e. not minimized/maximized)
     win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
 
+def processNameOf(app_name):
+    """Translate the name a user says to the associated process name"""
+
+    # this list is intentionally non-comprehensive. Windows doesn't offer
+    # enough support to make complete coverage feasible
+    if app_name == 'WORD' or app_name == "Microsoft Word":
+        return 'WINWORD.EXE'
+    else:
+        return app_name.lower() + '.exe'
+
+
+def exeTerminate(tokens, mode):
+    if currentApp() == 'Firefox':
+        gui.showError('Closing Firefox\nwould close SpeechV')
+        return ([], mode)
+
+    handles = window_properties.getMainWindowHandles(
+            processNameOf(currentApp()))
+    #try:
+    #    target = handles[0] # choose arbitrary window to terminate if more than one
+    #except IndexError:
+    #    log.error("No window to terminate for current app '{}'".format(currentApp()))
+    #    return ([], mode)
+    if not handles:
+        log.error("No window to terminate for current app '{}'".format(currentApp()))
+        return ([], mode)
+
+    for handle in handles:
+        win32api.SendMessage(handle, win32con.WM_DESTROY, None, None)
+
+
 def exeMaximize(tokens, mode):
 
     if tokens:
@@ -184,6 +229,12 @@ def exeCancel(tokens, mode):
     # NOTE: this could be extended to exit insert mode, etc.
     pyautogui.hotkey('escape')
     self.mode = GlobalMode.NAVIGATE
+
+def exeCopy(tokens, mode):
+    keyboard.press_and_release("ctrl+c")
+
+def exePaste(tokens, mode):
+    keyboard.press_and_release("ctrl+v")
 
 def exeRecord(tokens, mode):
     """TODO:
@@ -218,6 +269,9 @@ def exeSearch(tokens):
 
     time.sleep(1)
     keyboard.press_and_release('alt+enter')
+
+def exeMove(tokens, mode):
+    gui.enter()
 
 browserKeywords = {
     'UP'             : [KeyboardMessage('k')],
@@ -291,18 +345,18 @@ wordCmds = {
         'RIGHT' : 'ctrl+right',
         'PERIOD': '.',
         'COMMA': ',',
-        'EXCLAMATION': '!',
-        'QUESTION': '?',
+        'EXCLAMATION': 'shift+!',
+        'QUESTION': 'shift+/',
         'SLASH': '/',
-        'COLON': ':',
+        'COLON': 'shift+:',
         'SEMICOLON': ';',
         'APOSTROPHE': '\'',
-        'QUOTE': '\"',
-        'OPEN PARENTHESIS': '(',
-        'CLOSE PARENTHESIS': ')',
-        'AMPERSAND': '&',
-        'DOLLAR': '$',
-        'STAR': '*',
+        'QUOTE': 'shift+\"',
+        'OPEN PARENTHESIS': 'shift+(',
+        'CLOSE PARENTHESIS': 'shift+)',
+        'AMPERSAND': 'shift+&',
+        'DOLLAR': 'shift+$',
+        'STAR': 'shift+*',
         'LEFT ALIGN': 'ctrl+l',
         'CENTER ALIGN': 'ctrl+e',
         'RIGHT ALIGN': 'ctrl+r',
@@ -310,6 +364,8 @@ wordCmds = {
         'RE DO': 'ctrl+y',
         'INDENT': 'tab',
         'REMOVE INDENT': 'shift+tab',
+        'NEW LINE': 'enter',
+        'NEWLINE': 'enter',
     },
 
     "HIGHLIGHT" : {
@@ -359,8 +415,57 @@ class WordForwarder:
             try:
                 num = w2n.word_to_num(tokens[1:])
             except Exception as e:
-                raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+                #raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+                return
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
 
+def deleteMacro(tokens):
+    log.info("In deleteMacro. Tokens: " + ' '.join(tokens))
+    config = settings.loadConfig()
+    if ' '.join(tokens) in config["MACROS"]:
+        del config["MACROS"][' '.join(tokens)]
+    settings.saveConfig(config)
+    #Reload the menu to reload the macros
+    gui.settingsMode(settings.loadConfig()["MACROS"])
+
+
+def forwardSettings(tokens):
+    log.info("In forwardSettings. Tokens: " + ' '.join(tokens))
+    if len(tokens) == 0:
+        return ([], GlobalMode.SETTINGS)
+    if ' '.join(tokens[:2]) == "MACRO DELETE":
+        deleteMacro(tokens[2:])
+        return
+    elif ' '.join(tokens[:3]) == "VOICE TIME OUT":
+        voice.adjustTimeout(tokens[3:])
+        return
+    elif ' '.join(tokens[:2]) == "VOICE TIMEOUT":
+        voice.adjustTimeout(tokens[2:])
+        return
+    elif tokens[0] == "RESIZE":
+        gui.resizeWindow(tokens[1:])
+        return
+    elif tokens[0] == "CLOSE":
+        gui.closeSettings()
+        return ([], GlobalMode.NAVIGATE)
+    log.debug("No match in forwardSettings!")
+    return ([], GlobalMode.SETTINGS)
+
+'''================
+SpeechV Settings
+================
+
+Select a setting
+
+"MACRO DELETE <macro>": Delete the given macro
+    
+    Macros:
+
+"VOICE TIME OUT <seconds>": Adjust timeout for speech recognition. 
+                            Seconds in tenths of a second e.g. "one point zero"
+
+"RESIZE <size>": Resize the SpeechV GUI. Default is 100.
+
+"CLOSE"'''

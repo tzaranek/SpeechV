@@ -38,19 +38,20 @@ SpeechV recognizes voice commands and translates them to actions executed by you
 
 Instructions on how to use SpeechV can be accessed when you are using the application via the **help** command.
 
-### Keyboard shortcuts
-
-You can execute a keyboard shortcut in SpeechV by simply saying the names of the keys to be pressed. Most keyboard shortcuts require the control, shift or alt key to be held. To do this, you say **hold** followed by the key to be held, the names of the other keys, followed by **escape** to release all held keys. Multiple keys can be held at the same time.
-
-For example, to switch between applications, say **hold alt** followed by **tab** (as many times as necessary) then **escape**. To go to the security screen, say **hold control hold alt delete escape**.
-
 ### Windows actions
 
 Besides the functionality afforded by the keyboard shortcuts, actions such as resizing and moving windows can be executed using SpeechV.
 
 **Resize left/right**: Move current app into the left/right half of the screen
 **Resize up/down**: Move current app into top/bottom half of the screen
-**Resize file**: Make current app fullscreen
+**Resize full**: Make current app fullscreen    
+**Move**: Moves the SpeechV GUI to the opposite corner
+**Launch <application>**: Attempts to launch the given application X. A limited number of applications are supported because of limited Windows support. "Firefox" and "Word" are officially supported.
+**Focus <application>**: Focuses on the given open applciation X
+**Terminate: Closes the current application without saving or confirming
+**Copy**: Copy the highlighted data     
+**Paste**: Paste the data in the clipboard      
+
 
 ### Browser actions
 
@@ -83,6 +84,7 @@ web pages by finding and labelling all links/input fields on the page. You can t
 **Previous/next**: Select previous/next tab   
 **Refresh**: Reload current tab   
 **Duplicate**: Duplicate current tab   
+**Search <query>**: Executes a google search for the given query   
 **Find**: Search for text on a page   
 **Address**: Select address box   
 **New tab**: Open a new tab   
@@ -90,13 +92,14 @@ web pages by finding and labelling all links/input fields on the page. You can t
 **Print**: Print current page   
 **Save**: Save current page   
 
+
 ### Microsoft Word actions
 Commands for Microsoft Word are broken up into three categories: Navigate, Highlight, and Insert. To enter each mode, simply say its name, allowing access to that categories' command set until another mode is switched to.
 ### Navigate: Allows navigation around the document 
-**Up (X)**: Moves the cursor up one line, or a number of lines if followed by an optional number argument X     
-**Down (X)**: Moves the cursor down one line, or a number of lines if followed by an optional number argument X     
-**Left (X)**: Moves the cursor left one word, or a number of words if followed by an optional number argument X     
-**Right (X)**: Moves the cursor right one word, or a number of words if followed by an optional number argument X       
+**Up <number>**: Moves the cursor up one line, or a number of lines if followed by an optional number argument 
+**Down <number>**: Moves the cursor down one line, or a number of lines if followed by an optional number argument 
+**Left <number>**: Moves the cursor left one word, or a number of words if followed by an optional number argument 
+**Right <number>**: Moves the cursor right one word, or a number of words if followed by an optional number argument     
 **Paragraph up**: Moves the cursor up one paragraph     
 **Paragraph down**: Moves the cursor down one paragraph     
 **Page up**: Moves the cursor up one page       
@@ -108,14 +111,15 @@ Commands for Microsoft Word are broken up into three categories: Navigate, Highl
 **Undo**: Undoes the previous text entry        
 **Re do**: Redoes an undone text entry      
 **Indent**: Indents at the cursor position      
-**Remove indent**: Removes an indent at the cursor position     
+**Remove indent**: Removes an indent at the cursor position
+**New line**: Makes a new line at the cursor position 
 
 
 ### Highlight: Allows highlighting of text while navigating
-**Down (X)**: Moves the cursor and highlights down one line, or a number of lines if followed by an optional number argument X  
-**Up (X)**: Moves the cursor up and highlights one line, or a number of lines if followed by an optional number argument X  
-**Right (X)**: Moves the cursor right and highlights one word, or a number of words if followed by an optional number argument X    
-**Left (X)**: Moves the cursor left and highlights one word, or a number of words if followed by an optional number argument X  
+**Down <number>**: Moves the cursor and highlights down one line, or a number of lines if followed by an optional number argument   
+**Up <number>**: Moves the cursor up and highlights one line, or a number of lines if followed by an optional number argument   
+**Right <number>**: Moves the cursor right and highlights one word, or a number of words if followed by an optional number argument     
+**Left <number>**: Moves the cursor left and highlights one word, or a number of words if followed by an optional number argument  
 **Bold**: Bolds the highlighted text    
 **Italics**: Italicizes the highlighted text    
 **Underline**: Underlines the highlighted text  

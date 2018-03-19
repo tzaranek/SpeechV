@@ -10,46 +10,12 @@ import sys
 from time import sleep
 from threading import Thread
 from mode import *
+from word2number import w2n
 
-# def modeStr(m):
-# 	if m == Mode.COMMAND:
-# 		return "Command"
-# 	elif m == Mode.TEXT:
-# 		return "Text"
-# 	elif m == Mode.HELP:
-# 		return "Text"
-# 	else:
-# 		raise
-
-#def modeStr(m):
-#	if m & 2**5:
-#		return "RECORDING"
-#	elif m & 2**3:
-#		return "Insert"
-#	elif m & 2**2:
-#		return "Follow"
-#	elif m & 2**1:
-#		return "Holding"
-#	elif m == 0:
-#		return "Normal"
-#	elif m == "":
-#		return ""
-#	else:
-#		return "Normal"
+import settings
 
 def statusStr(s):
-	if s == Status.READY:
-		return "Ready"
-	elif s == Status.PROCESSING:
-		return "Processing"
-	elif s == Status.RECORDING:
-		return "Recording"
-	elif s == Status.SETTINGS:
-		return "Settings"
-	elif s == Status.INITIALIZING:
-		return "Initializing"
-	else:
-		raise
+	return s.name.title()
 
 #Mode definitions
 class Mode(Enum):
@@ -79,13 +45,38 @@ class GUI:
                 #Get the resolution from the OS
 		s_width = self.root.winfo_screenwidth()
 		s_height = self.root.winfo_screenheight()
+		log.debug(str(s_width) + " " + str(s_height))
+		log.debug(str(self.root.winfo_height()) + ', ' + str(self.root.winfo_width()))
 
 		#Set locations for different GUI positions
 		self.TOP = "+0"
-		self.BOTTOM = "+" + str(s_height - 170)
+		self.BOTTOM = "+" + str(s_height - (90 + self.root.winfo_height()))
 		self.LEFT = "+0"
-		self.RIGHT = "+" + str(s_width - 190)
+		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
+	
+	def resizeWindow(self, tokens):
+		if len(tokens) == 0:
+			return
+		if isinstance(tokens[0], int):
+			size = tokens[0]
+		else:
+			if isinstance(tokens, list):
+				tokens = ' '.join(tokens)
+			size = w2n.word_to_num(tokens.lower())
+		self.root.geometry(str(size)+'x'+str(size))
+		self.root.update()
+		self.label.config(font=("Courier", int(size/18)))
+		self.label.config(width=30, height=10)
+		self.getPositions()
+		if self.right:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+		else:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
 		
+		config = settings.loadConfig()
+		config["SETTINGS"]["WINDOW_SIZE"] = size
+		settings.saveConfig(config)
+
 
 	#Returns a string formatted for use with the geometry function
 	def strCoordinate(self, x, y):
@@ -124,6 +115,8 @@ class GUI:
 	def updateCommands(self, cmd):
 		self.recent[2] = self.recent[1]
 		self.recent[1] = self.recent[0]
+		if len(cmd) > 15:
+			cmd = cmd[:15] + '...'
 		self.recent[0] = cmd
 		self.updateText()
 
@@ -153,15 +146,12 @@ class GUI:
 	#Displays an error and spawns a thread to restore the old mode later
 	def showError(self, error):
 		text = self.getText()
-		self.label.config(font=("Courier", 8))
 		self.setText(error)
 		t = Thread(target=self.restoreText, args=[text])
 		t.start()
 
 	#Display the help menu
-	def settingsMode(self, type="DEFAULT"):
-		if self.status != Status.READY:
-			raise AttributeError("Tried to open settings while busy")
+	def settingsMode(self, macros, type="DEFAULT"):
 		if hasattr(self, 'window'):
 			self.window.destroy()
 
@@ -174,17 +164,22 @@ class GUI:
 			file_in = "settings_alias.txt"
 		with open(file_in, 'r') as text_file:
 			help_text = text_file.read()
-
+		
+		help_text += "\n\n\tcurrent macros:"
+		for macro in macros:
+			m = "\n\t" + macro + ": " + ', '.join(macros[macro])
+			help_text += m
 		self.status = Status.SETTINGS
 		self.window = Toplevel()
+		self.window.attributes("-topmost", True)
 		canvas = Canvas(master=self.window, height=600, width=1000)
 		canvas.grid()
 		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
 		self.window.geometry(self.LEFT + self.TOP)
 	
 	def closeSettings(self):
-		if self.status != self.SETTINGS:
-			raise AttributeError("Tried to close settings that doesn't exist!")
+		self.window.destroy()
+		pass
 
 	#Called upon closing the help menu
 	def closeHelpMenu(self):
@@ -226,7 +221,8 @@ class GUI:
 
 	#Handles when the mouse enters the window
 	#Will move the GUI out of the way
-	def enter(self, event):
+	def enter(self, event=None):
+		log.info("Mouse entered the GUI!")
 		if self.right:
 			loc = self.LEFT + self.BOTTOM
 			self.right = False
@@ -271,7 +267,11 @@ class GUI:
 		back = Frame(master=self.root,bg='black')
 		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 		back.pack(fill=BOTH, expand=1) #Expand the frame to fill the root window
-		self.root.geometry("100x100")
+
+		config = settings.loadConfig()
+		s = config["SETTINGS"]["WINDOW_SIZE"]
+		self.root.geometry(str(s) + "x" + str(s))
+		self.root.update()
 		self.text = StringVar()
 		self.label = Label(back, textvariable=self.text)
 		self.label.pack()
@@ -279,7 +279,7 @@ class GUI:
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
 		self.label.config(width=30, height=10)
-		self.label.config(font=("Courier", 8))
+		self.label.config(font=("Courier", int(s/18)))
 		self.label.config(bg=READY)
 
 		#Calculate screen size and move the window to the bottom right
