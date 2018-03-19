@@ -1,9 +1,13 @@
 import json
 
 def loadConfig():
-    with open("config.cfg", "r") as f:
-        s = f.read()
-        config = json.loads(s)
+    try:
+        with open("config.cfg", "r") as f:
+            s = f.read()
+            config = json.loads(s)
+    except:
+        config = {"MACROS": {}, "SETTINGS": {"TIMEOUT": 0.5, "WINDOW_SIZE": 100}}
+        saveConfig(config)
     return config 
 
 def saveConfig(config):
