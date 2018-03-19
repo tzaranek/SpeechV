@@ -114,7 +114,8 @@ class Parser:
             "MAXIMIZE":  commands.exeMaximize,
             "TERMINATE": commands.exeTerminate,
             "COPY":      commands.exeCopy,
-            "PASTE":     commands.exePaste
+            "PASTE":     commands.exePaste,
+            "SLEEP":     commands.exeSleep
         }
 
         # to keep track of follow in MS Word
@@ -124,6 +125,17 @@ class Parser:
         self.ready = False
         log.debug("parsing command: '{}'".format(command))
         command = command.strip().upper()
+        if command == 'WAKE':
+            if self.mode == GlobalMode.SLEEPING:
+                self.mode = GlobalMode.NAVIGATE
+                return
+            else:
+                gui.showError("Cannot wake\n while awake")
+                log.warn("wake command attempted while not sleeping")
+                return
+        elif self.mode == GlobalMode.SLEEPING:
+            return # do not execute commands while sleeping
+
 
         isFullyHandled = self.macroManager.interceptCommand(command)
         if isFullyHandled:
@@ -222,7 +234,7 @@ class Parser:
         if self.mode == GlobalMode.FOLLOW and currentApp() == 'Firefox':
             # handle switch specially so that alt-tabbing works with the prompt
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
-                self.parseSwitch(tokens[1:])
+                commands.exeSwitch(tokens[1:], self.mode)
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
                 commands.exeCancel([], self.mode)
@@ -245,7 +257,7 @@ class Parser:
 
         if self.mode == GlobalMode.FOLLOW and currentApp() == 'Microsoft Word':
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
-                self.parseSwitch(tokens[1:])
+                commands.exeSwitch(tokens[1:], self.mode)
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
                 log.info("wordFollow: ", self.wordFollow)

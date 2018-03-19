@@ -126,7 +126,7 @@ def voiceLoop():
                 gui.processing()
 
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
-                    p.parse('switch')
+                    keyboard.press_and_release("alt+tab")
                 if raw_command == -1:
                     raise ValueError("Failed to recognize speech")
                 p.parse(raw_command)
@@ -136,7 +136,7 @@ def voiceLoop():
                     win32file.WriteFile(pipe, 'ACK'.encode())
                 elif in_debug_mode:
                     time.sleep(1) # give the user time to see the result
-                    p.parse('switch')
+                    keyboard.press_and_release("alt+tab")
 
                 gui.updateCommands(raw_command)
             except Exception as e:
