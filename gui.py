@@ -29,6 +29,7 @@ class Status(Enum):
 	RECORDING = 3
 	SETTINGS = 4
 	INITIALIZING = 5
+	HELP = 6
 
 
 #Color codings for different modes
@@ -198,10 +199,11 @@ class GUI:
 			help_text = text_file.read()
 
 		self.status = Status.HELP
+		log.info("Help file opened: ", file_in)
 		self.window = Toplevel()
-		canvas = Canvas(master=self.window, height=600, width=1000)
+		canvas = Canvas(master=self.window, height=900, width=800, background="#303030")
 		canvas.grid()
-		canvas.create_text((5,5), anchor="nw", text=help_text, width=900)
+		canvas.create_text((5,5), anchor="nw", text=help_text, width=700, font=("Arial", 14), fill="#FFFFFF")
 		self.window.geometry(self.LEFT + self.TOP)
 
 	#Returns the current GUI mode

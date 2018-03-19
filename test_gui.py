@@ -12,14 +12,18 @@ from time import sleep
 #You can hit enter to start an interactive session
 def runTests(gui):
     sleep(1)
-    gui.helpMode("general")
-    sleep(2)
+    gui.helpMode("firefoxNAVIGATE")
+    sleep(3)
     gui.closeHelpMenu()
     sleep(1)
-    gui.helpMode("general")
-    sleep(1)
-    gui.helpMode("browser")
-    sleep(10)
+    gui.helpMode("wordNAVIGATE")
+    sleep(3)
+    gui.helpMode("INSERT")
+    sleep(3)
+    gui.helpMode("wordFOLLOW")
+    sleep(3)
+    gui.helpMode("firefoxFOLLOW")
+    sleep(3)
     gui.closeHelpMenu()
     
 #The GUI library does NOT like it if you run the GUI from anything
