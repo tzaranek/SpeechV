@@ -18,18 +18,39 @@ const isOverflowed = (element) => {
     element.scrollHeight > element.clientHeight;
 };
 
+const atScrollTop = (element) => {
+  return element.scrollTop == 0;
+};
+const atScrollBottom = (element) => {
+  return element.scrollTop + element.clientHeight == element.scrollHeight;
+};
+const atScrollLeft = (element) => {
+  return element.scrollLeft == 0;
+};
+const atScrollRight = (element) => {
+  return element.scrollLeft + element.clientWidth == element.scrollWidth;
+};
+
+const canScroll = (element, scrollX, scrollY) => {
+  return isOverflowed(element)
+    && (scrollX == 0 || (scrollX < 0 && !atScrollLeft(element))
+                     || (scrollX > 0 && !atScrollRight(element)))
+    && (scrollY == 0 || (scrollY < 0 && !atScrollTop(element))
+                     || (scrollY > 0 && !atScrollBottom(element)))
+};
+
 // Find a visiable and scrollable element by depth-first search.  Currently
 // this method is called by each scrolling, and the returned value of this
 // method is not cached.  That does not cause performance issue because in the
 // most pages, the window is root element i,e, documentElement.
-const findScrollable = (element) => {
-  if (isScrollableStyle(element) && isOverflowed(element)) {
+const findScrollable = (element, scrollX, scrollY) => {
+  if (isScrollableStyle(element) && canScroll(element, scrollX, scrollY)) {
     return element;
   }
 
   let children = Array.from(element.children).filter(doms.isVisible);
   for (let child of children) {
-    let scrollable = findScrollable(child);
+    let scrollable = findScrollable(child, scrollX, scrollY);
     if (scrollable) {
       return scrollable;
     }
@@ -37,18 +58,16 @@ const findScrollable = (element) => {
   return null;
 };
 
-const scrollTarget = () => {
-  if (isOverflowed(window.document.documentElement)) {
+const scrollTarget = (scrollX, scrollY) => {
+  if (canScroll(window.document.documentElement, scrollX, scrollY)) {
     return window.document.documentElement;
   }
-  if (isOverflowed(window.document.body)) {
+  if (canScroll(window.document.body, scrollX, scrollY)) {
     return window.document.body;
   }
-  let target = findScrollable(window.document.documentElement);
-  if (target) {
-    return target;
-  }
-  return window.document.documentElement;
+  let target = findScrollable(window.document.documentElement,
+                              scrollX, scrollY);
+  return target ? target : window.document.documentElement;
 };
 
 class SmoothScroller {
@@ -131,7 +150,7 @@ const scroller = (element, smooth, repeat) => {
 };
 
 const scrollVertically = (count, smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(0, count);
   let x = target.scrollLeft;
   let y = target.scrollTop + SCROLL_DELTA_Y * count;
   if (repeat && smooth) {
@@ -141,7 +160,7 @@ const scrollVertically = (count, smooth, repeat) => {
 };
 
 const scrollHorizonally = (count, smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(count, 0);
   let x = target.scrollLeft + SCROLL_DELTA_X * count;
   let y = target.scrollTop;
   if (repeat && smooth) {
@@ -151,7 +170,7 @@ const scrollHorizonally = (count, smooth, repeat) => {
 };
 
 const scrollPages = (count, smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(0, count);
   let height = target.clientHeight;
   let x = target.scrollLeft;
   let y = target.scrollTop + height * count;
@@ -159,28 +178,28 @@ const scrollPages = (count, smooth, repeat) => {
 };
 
 const scrollTop = (smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(0, -1);
   let x = target.scrollLeft;
   let y = 0;
   scroller(target, smooth, repeat).scroll(x, y);
 };
 
 const scrollBottom = (smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(0, 1);
   let x = target.scrollLeft;
   let y = target.scrollHeight;
   scroller(target, smooth, repeat).scroll(x, y);
 };
 
 const scrollHome = (smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(-1, 0);
   let x = 0;
   let y = target.scrollTop;
   scroller(target, smooth, repeat).scroll(x, y);
 };
 
 const scrollEnd = (smooth, repeat) => {
-  let target = scrollTarget();
+  let target = scrollTarget(1, 0);
   let x = target.scrollWidth;
   let y = target.scrollTop;
   scroller(target, smooth, repeat).scroll(x, y);
