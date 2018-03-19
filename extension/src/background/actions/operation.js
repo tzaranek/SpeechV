@@ -62,7 +62,7 @@ const exec = (operation, tab) => {
     return bookmarks.createBookmarkFromCurrent();
   case operations.BOOKMARKS_GET:
     console.log("GETTING BOOKMARKS");
-    let bookmark_page = "C:\\Users\\Lawrence Wu\\Documents\\SpeechV\\extension\\src\\background\\bookmarks.html";
+    let bookmark_page = "/src/background/bookmarks.html";
     return browser.tabs.create({ url: bookmark_page })
       .then(sleep(bookmarks.retrieveBookmarks));
   case operations.COMMAND_SHOW:
