@@ -403,11 +403,13 @@ class WordForwarder:
         log.debug("Received tokens: " + ' '.join(tokens))
         tokenStr = ' '.join(tokens)
         if tokenStr == 'FOLLOW':
+            log.debug("Entered if 1")
             pyautogui.press('alt')
             self.followLayers = self.followLayers + 1
             mode = GlobalMode.FOLLOW
             return ([], mode)
         if tokenStr in WordMode.__members__:
+            log.debug("Entered if 2")
             self.mode = WordMode[tokenStr]
             return ([], globalMode)
 
@@ -422,19 +424,23 @@ class WordForwarder:
         #    return ([], globalMode)
 
         if tokenStr in wordCmds[self.mode.name]:
+            log.debug("Entered if 3")
             keyboard.press_and_release(wordCmds[self.mode.name][tokenStr])
             return ([], globalMode)
 
         #This is because we support "down X" where x is arbitrary
         elif tokens[0] in ["UP", "DOWN", "LEFT", "RIGHT"]:
+            log.debug("Entered if 4")
             try:
-                num = w2n.word_to_num(tokens[1:])
+                num = w2n.word_to_num(' '.join(tokens[1:]))
             except Exception as e:
-                #raise Exception("Navigate (U/D/L/R) did not receive a number arg")
+                log.error(e)
                 return
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
+        
+        log.debug("Done!")
 
     def followWord(self, tokens):
         if tokens[0] == 'CANCEL' and len(tokens) == 1:
