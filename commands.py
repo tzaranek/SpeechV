@@ -464,14 +464,19 @@ class WordForwarder:
             return ([], GlobalMode.NAVIGATE)
 
         # handle follow tokens
-        for tok in tokens:
-            if len(tok) != 1:
+        newlist = []
+        for token in tokens:
+            if token in ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'ZERO']:
+                newlist.append(str(w2n.word_to_num(token)))
+            elif len(token) != 1:
                 log.warn("cannot handle follow token size greater than 1")
                 return
+            else:
+                newlist.append(token)
 
         # send keystrokes to word
         self.followLayers = self.followLayers + 1
-        command = ''.join(tokens)
+        command = ''.join(newlist)
         pyautogui.typewrite(command)
         return ([], GlobalMode.FOLLOW)
 
