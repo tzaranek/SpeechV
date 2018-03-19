@@ -28,8 +28,9 @@ import settings
 
 try:
     import voice
-except ImportError:
+except ImportError as e:
     log.error("FAILED TO IMPORT VOICE")
+    log.error(str(e))
     pass # FIXME: ignore circular import 
 
 class KeyboardMessage():
@@ -169,14 +170,16 @@ def exeFocus(tokens, mode):
 
     try:
         win32gui.SetForegroundWindow(handle)
-    except Exception:
+    except Exception as e:
+        log.error(str(e))
         try:
             # SetForegroundWindow is unreliable
             # workarounds: https://stackoverflow.com/questions/3772233/
             win32gui.ShowWindow(handle, win32con.SW_MINIMIZE)
             win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
             win32gui.SetForegroundWindow(handle)
-        except Exception:
+        except Exception as e:
+            log.error(str(e))
             log.error("couldn't focus app '{}'".format(tokens[0]))
             gui.showError("Couldn't focus app")
             return ([], mode)
@@ -257,7 +260,8 @@ def exeKeystroke(tokens, mode):
     if len(tokens) == 1:
         try:
             keyboard.press_and_release(tokens[0])
-        except ValueError:
+        except ValueError as e:
+            log.error(str(e))
             log.error("bad keystroke '{}'".format(tokens[0]))
             gui.showError('Invalid usage')
     else:
@@ -434,7 +438,7 @@ class WordForwarder:
             try:
                 num = w2n.word_to_num(' '.join(tokens[1:]))
             except Exception as e:
-                log.error(e)
+                log.error(str(e))
                 return
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
