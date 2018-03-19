@@ -513,7 +513,7 @@ def forwardHelp(tokens):
     if len(tokens) == 0:
         return ([], GlobalMode.HELP)
     if tokens[0] == "CLOSE":
-        gui.closeHelp()
+        gui.closeHelpMenu()
         return ([], GlobalMode.NAVIGATE)
     log.debug("No match in forwardHelp!")
     return ([], GlobalMode.HELP)
