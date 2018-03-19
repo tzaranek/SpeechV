@@ -11,6 +11,11 @@ export default {
   COMMAND_SHOW_WINOPEN: 'command.show.winopen',
   COMMAND_SHOW_BUFFER: 'command.show.buffer',
 
+  // Bookmarks
+  BOOKMARKS_CREATE: 'bookmarks.create',
+  BOOKMARKS_GET: 'bookmarks.get',
+  BOOKMARKS_SHOW: 'bookmarks.show',
+
   // Scrolls
   SCROLL_VERTICALLY: 'scroll.vertically',
   SCROLL_HORIZONALLY: 'scroll.horizonally',
