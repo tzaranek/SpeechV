@@ -180,8 +180,9 @@ def exeFocus(tokens, mode):
             gui.showError("Couldn't focus app")
             return ([], mode)
 
-    # Display the window normally (i.e. not minimized/maximized)
-    win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
+    # De-minimize window if necessary
+    if win32gui.IsIconic(handle):
+        win32gui.ShowWindow(handle, win32con.SW_SHOWNORMAL)
 
 def processNameOf(app_name):
     """Translate the name a user says to the associated process name"""

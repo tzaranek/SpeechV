@@ -17,9 +17,13 @@ import time
 import traceback
 import sys
 import keyboard
-from globs import gui, r, mic
 from word2number import w2n
 import settings
+
+
+from mode import *
+from globs import gui, r, mic
+import commands
 
 def adjustTimeout(tokens):
     if len(tokens) != 3 or tokens[1] != "POINT":
@@ -125,6 +129,7 @@ def voiceLoop():
 
                 gui.processing()
 
+                cmdPromptHandle = None
                 if in_debug_mode and not os.path.exists('BATCH_FLAG'):
                     keyboard.press_and_release("alt+tab")
                     time.sleep(1) # give OS time to alt-tab
@@ -137,7 +142,7 @@ def voiceLoop():
                     win32file.WriteFile(pipe, 'ACK'.encode())
                 elif in_debug_mode:
                     time.sleep(1) # give the user time to see the result
-                    keyboard.press_and_release("alt+tab")
+                    commands.exeFocus(['CMD'], GlobalMode.NAVIGATE)
 
                 gui.updateCommands(raw_command)
             except Exception as e:
