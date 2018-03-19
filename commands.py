@@ -139,6 +139,13 @@ def exeLaunch(tokens, mode):
 def exeSwitch(tokens, mode):
     keyboard.press_and_release("alt+tab")
 
+def exeSleep(tokens, mode):
+    if mode == GlobalMode.FOLLOW:
+        # exit follow mode in firefox or word
+        pyautogui.hotkey('escape') 
+    mode = GlobalMode.SLEEPING
+    return ([], mode)
+
 def exeFocus(tokens, mode):
     # https://stackoverflow.com/questions/44735798/pywin32-how-to-get-window-handle-from-process-handle-and-vice-versa
 

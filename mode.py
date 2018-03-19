@@ -6,9 +6,10 @@ from enum import Enum
 
 class GlobalMode(Enum):
     NAVIGATE = 0
-    INSERT = 1 # forward text directly to topmost application through OS
-    FOLLOW = 2 # expecting text for following a link in the browser
+    INSERT   = 1 # forward text directly to topmost application through OS
+    FOLLOW   = 2 # expecting text for following a link in the browser
     SETTINGS = 3
+    SLEEPING = 4
 
 
 class WordMode(Enum):
