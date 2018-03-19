@@ -6,6 +6,7 @@ __pycache__/
 *.egg-info/
 log.txt
 manifest.json
+config.cfg
 
 DEBUG_FLAG
 BATCH_FLAG

@@ -7,6 +7,7 @@ import platform
 import os
 import signal
 import sys
+import math
 from time import sleep
 from threading import Thread
 from mode import *
@@ -65,8 +66,9 @@ class GUI:
 			size = w2n.word_to_num(tokens.lower())
 		self.root.geometry(str(size)+'x'+str(size))
 		self.root.update()
-		self.label.config(font=("Courier", int(size/18)))
-		self.label.config(width=30, height=10)
+		#148 is the minimum width we can have
+		self.label.config(font=("Courier", int(max(148, size)/20)))
+		self.label.config(width=50, height=50)
 		self.getPositions()
 		if self.right:
 			self.root.geometry(self.RIGHT + self.BOTTOM)
@@ -271,8 +273,9 @@ class GUI:
 
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
-		self.label.config(width=30, height=10)
-		self.label.config(font=("Courier", int(s/18)))
+		self.label.config(width=50, height=50)
+		#148 is the minimum width we can have
+		self.label.config(font=("Courier", int(max(148, s)/20)))
 		self.label.config(bg=READY)
 
 		#Calculate screen size and move the window to the bottom right
