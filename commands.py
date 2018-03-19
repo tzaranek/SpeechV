@@ -392,6 +392,10 @@ class WordForwarder:
         log.debug("In word, current mode: " + self.mode.name)
         log.debug("Received tokens: " + ' '.join(tokens))
         tokenStr = ' '.join(tokens)
+        if tokenStr == 'FOLLOW':
+            pyautogui.press('alt')
+            mode = GlobalMode.FOLLOW
+            return ([], mode)
         if tokenStr in WordMode.__members__:
             self.mode = WordMode[tokenStr]
             return ([], globalMode)

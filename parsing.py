@@ -211,6 +211,7 @@ class Parser:
         time.sleep(0.5)
 
     def parseImpl(self, tokens, levelDict = None):
+        log.info("current mode: ", self.mode.name)
         if not tokens:
             return
 
@@ -247,6 +248,7 @@ class Parser:
                 self.parseSwitch(tokens[1:])
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
+                log.info("wordFollow: ", self.wordFollow)
                 for i in range(self.wordFollow + 1):
                     pyautogui.hotkey('escape') # press escape to exit follow mode
                 self.mode = GlobalMode.NAVIGATE # put user back in navigate
@@ -255,6 +257,8 @@ class Parser:
             elif tokens[0] == 'BACK' and len(tokens) == 1:
                 pyautogui.hotkey('escape')
                 self.wordFollow = self.wordFollow - 1
+                if self.wordFollow == 0:
+                    self.mode = GlobalMode.NAVIGATE
                 return
             elif tokens[0] in ['UP','DOWN','LEFT','RIGHT','ENTER'] and len(tokens) == 1:
                 key = tokens[0].lower()
@@ -262,12 +266,14 @@ class Parser:
                 return
 
             for tok in tokens:
-                if len(token) != 1:
+                if len(tok) != 1:
                     log.warn("cannot handle follow token size greater than 1")
                     return
 
             # send keystrokes to word
             # does not automatically switch to navigate/insert mode
+            self.wordFollow = self.wordFollow + 1
+            log.info("Word follow layers: ", self.wordFollow)
             command = ''.join(tokens)
             pyautogui.typewrite(command)
 
