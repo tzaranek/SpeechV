@@ -111,7 +111,7 @@ Commands for Microsoft Word are broken up into three categories: Navigate, Highl
 **Undo**: Undoes the previous text entry        
 **Re do**: Redoes an undone text entry      
 **Indent**: Indents at the cursor position      
-**Remove indent**: Removes an indent at the cursor position
+**Remove indent**: Removes an indent at the cursor position          
 **New line**: Makes a new line at the cursor position 
 
 
@@ -139,13 +139,11 @@ Use your voice to enter in text. Ending a voice sample with "period" will end yo
 **Record end**: Finish recording a macro    
     - **<label>** After ending a recording, a prompt to name the macro and a confirmation prompt will appear to complete the process.   
 
-### Adjusting microphone settings (coming soon)
+### Adjusting microphone settings
 If speech recognition is not performing well, you are likely experiencing one of two problems:   
-1. SpeechV cuts you off while you're still speaking   
-2. SpeechV can't hear you or processes commands when you're not speaking
+1. SpeechV cuts you off while you're still speaking     
+2. SpeechV processes cannot recognize your voice or processes audio when you're not speaking
 
-These can be fixed by accessing the **settings** panel.
+Problem one can be fixed by accessing the **settings** panel. From there, increase the voice timeout setting. This is the amount of silence that signals the end of a command. Increasing audio timeout allows for longer pauses when speaking, but slows down overall performance. 
 
-To address problem 1, increase the audio timeout setting. This is the amount of silence that signals the end of a command. Increasing audio timeout allows for longer pauses when speaking, but slows down overall performance. 
-
-To address problem 2, recalibrate the microphone. SpeechV will listen to your surroundings and automatically adjust to distinguish background noise from voice input.
+Problem two is likely an issue with your environment. SpeechV tries to automatically detect and adjust for ambient noise, but consider using SpeechV in a quiet environment for optimal performance.
