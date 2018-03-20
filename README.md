@@ -42,13 +42,13 @@ Instructions on how to use SpeechV can be accessed when you are using the applic
 
 Besides the functionality afforded by the keyboard shortcuts, actions such as resizing and moving windows can be executed using SpeechV.
 
-**Resize left/right**: Move current app into the left/right half of the screen
-**Resize up/down**: Move current app into top/bottom half of the screen
+**Resize left/right**: Move current app into the left/right half of the screen      
+**Resize up/down**: Move current app into top/bottom half of the screen    
 **Resize full**: Make current app fullscreen    
-**Move**: Moves the SpeechV GUI to the opposite corner
-**Launch <application>**: Attempts to launch the given application X. A limited number of applications are supported because of limited Windows support. "Firefox" and "Word" are officially supported.
-**Focus <application>**: Focuses on the given open applciation X
-**Terminate: Closes the current application without saving or confirming
+**Move**: Moves the SpeechV GUI to the opposite corner  
+**Launch `<application>`**: Attempts to launch the given application. A limited number of applications are supported because of limited Windows support. "Firefox" and "Word" are officially supported.     
+**Focus `<application>`**: Focuses on the given open application    
+**Terminate**: Closes the current application without saving or confirming  
 **Copy**: Copy the highlighted data     
 **Paste**: Paste the data in the clipboard      
 
@@ -96,9 +96,9 @@ web pages by finding and labelling all links/input fields on the page. You can t
 ### Microsoft Word actions
 Commands for Microsoft Word are broken up into three categories: Navigate, Highlight, and Insert. To enter each mode, simply say its name, allowing access to that categories' command set until another mode is switched to.
 ### Navigate: Allows navigation around the document 
-**Up <number>**: Moves the cursor up one line, or a number of lines if followed by an optional number argument 
-**Down <number>**: Moves the cursor down one line, or a number of lines if followed by an optional number argument 
-**Left <number>**: Moves the cursor left one word, or a number of words if followed by an optional number argument 
+**Up <number>**: Moves the cursor up one line, or a number of lines if followed by an optional number argument  
+**Down <number>**: Moves the cursor down one line, or a number of lines if followed by an optional number argument  
+**Left <number>**: Moves the cursor left one word, or a number of words if followed by an optional number argument  
 **Right <number>**: Moves the cursor right one word, or a number of words if followed by an optional number argument     
 **Paragraph up**: Moves the cursor up one paragraph     
 **Paragraph down**: Moves the cursor down one paragraph     
