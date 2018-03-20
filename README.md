@@ -30,7 +30,7 @@ SpeechV serves as an interface between the user and existing computer applicatio
 
 3. Run `web-ext run`
 
-## Using SpeechV for common tasks
+## Tutorial: Using SpeechV for common tasks
 
 These are instructions on how specific actions can be done in SpeechV. For a complete list of actions, see below.
 
