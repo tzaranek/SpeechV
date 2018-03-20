@@ -170,7 +170,7 @@ class Parser:
         if self.mode == GlobalMode.FOLLOW:
             # handle switch specially so that alt-tabbing works with the prompt
             if tokens[0] == 'SWITCH' and len(tokens) == 1:
-                self.parseSwitch(tokens[1:])
+                commands.exeSwitch(tokens[1:], self.mode)
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
                 commands.exeCancel([], self.mode)

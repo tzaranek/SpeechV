@@ -194,7 +194,8 @@ def exeCancel(tokens, mode):
 
     # NOTE: this could be extended to exit insert mode, etc.
     pyautogui.hotkey('escape')
-    self.mode &= ~self.FOLLOW
+    mode = GlobalMode.FOLLOW
+    return ([], mode)
 
 def exeRecord(tokens, mode):
     """TODO:
@@ -258,6 +259,10 @@ browserKeywords = {
     'OPEN'           : [KeyboardMessage('F', shiftKey=True)],
     'BACK'           : [KeyboardMessage('H', shiftKey=True)],
     'FORWARD'        : [KeyboardMessage('L', shiftKey=True)],
+
+
+    'BOOKMARK SAVE'  : [KeyboardMessage('D', shiftKey=True)],
+    'BOOKMARK SHOW'  : [KeyboardMessage('A', shiftKey=True)],
 
     'ZOOM IN'        : [KeyboardMessage('z'), KeyboardMessage('i')],
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
