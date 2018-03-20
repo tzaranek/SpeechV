@@ -1,6 +1,7 @@
 FOCUS <application>: Switch focus to open application
 RESIZE UP/DOWN/LEFT/RIGHT: Move current app into left/right/bottom/top half of screen
 RESIZE FULL: Full screen current app
+LAUNCH <application>: Launch application e.g. Microsoft Word 
 
 SETTINGS: Adjust SpeechV settings
 SLEEP/WAKE: Pause/resume operation of SpeechV

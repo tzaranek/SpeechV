@@ -39,6 +39,17 @@ RECOGNIZED = "#3972CE"	#Blue
 HELP = "#E5E7E9"		#Off-white
 READY = "#52BE80"		#Green
 
+HELP_HEIGHT = 300
+
+HELP_TEXT = {
+	"INSERT":"\nEnd phrases with PERIOD/COMMA to insert punctuation\nENTER to go to the next line\nNEW PARAGRAPH to insert an empty line\n\nNAVIGATE to stop text entry",
+	"wordFOLLOW":"\n<LABEL> to enter toolbar section or select option\nBACK to go up one level toolbar\nCANCEL to escape toolbar with no selection",
+	"firefoxFOLLOW":"\n<LABEL> to open matching link in current/new tab\nor select matching input field",
+	"NAVIGATE":"\nFOCUS <application>\nINSERT\nFOLLOW",
+	"wordNAVIGATE": "\nPARAGRAPH UP/DOWN\nPUNCTUATION\nLEFT/CENTER ALIGN\nHIGHLIGHT",
+	"firefoxNAVIGATE":"\nOPEN\nBACK/FORWARD\nNEW TAB\nSEARCH <query>\nPREVIOUS/NEXT\nDELETE"
+}
+
 class GUI:
 	#These positions were hard-coded for CAEN windows 10
 	#TODO:  Find a better way to get the positions
@@ -52,7 +63,8 @@ class GUI:
 
 		#Set locations for different GUI positions
 		self.TOP = "+0"
-		self.BOTTOM = "+" + str(s_height - (90 + self.root.winfo_height()))
+		bottom_pos = s_height - (90 + self.root.winfo_height())
+		self.BOTTOM = "+" + str(bottom_pos)
 		self.LEFT = "+0"
 		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
 	
@@ -65,7 +77,8 @@ class GUI:
 			if isinstance(tokens, list):
 				tokens = ' '.join(tokens)
 			size = w2n.word_to_num(tokens.lower())
-		self.root.geometry(str(size)+'x'+str(size))
+		height = size + HELP_HEIGHT
+		self.root.geometry(str(size)+'x'+str(height))
 		self.root.update()
 		#148 is the minimum width we can have
 		self.label.config(font=("Courier", int(max(148, size)/20)))
@@ -115,16 +128,17 @@ class GUI:
 		self.updateText()
 
 	#Updates the last 3 used commands to display
-	def updateCommands(self, cmd):
+	def updateCommands(self, cmd, curr_app):
 		self.recent[2] = self.recent[1]
 		self.recent[1] = self.recent[0]
 		if len(cmd) > 15:
 			cmd = cmd[:15] + '...'
 		self.recent[0] = cmd
+		self.curr_app = curr_app
 		self.updateText()
 
 	#set the GUI to the given mode
-	def setMode(self, m):		
+	def setMode(self, m, curr_app):		
 		self.mode = m
 		self.updateText()
 		self.label.bind("<Enter>", self.enter)
@@ -132,6 +146,7 @@ class GUI:
 
 	#Update the text in the GUI
 	def updateText(self):
+		app= self.curr_app
 		s = ("Status: " + statusStr(self.status) + \
 			  "\nMode: " + self.mode.name.lower().capitalize())
 		
@@ -139,6 +154,23 @@ class GUI:
 		for cmd in self.recent:
 			s += "\n"
 			s += cmd
+
+		s+= "\n\nHELP for a full\nlist of commands"
+		if self.mode.name == "INSERT":
+			s+= HELP_TEXT['INSERT']
+		elif self.mode.name == "NAVIGATE":
+			s+= HELP_TEXT['NAVIGATE']
+			log.info("GUI current app: ", app)
+			if app == "Microsoft Word":
+				s += HELP_TEXT["word"+self.mode.name]
+			elif app == "Firefox":
+				s += HELP_TEXT["firefox"+self.mode.name]
+		else:
+			log.info("GUI current app: ", app)
+			if app == "Microsoft Word":
+				s += HELP_TEXT["word"+self.mode.name]
+			elif app == "Firefox":
+				s += HELP_TEXT["firefox"+self.mode.name]
 		self.setText(s)
 
 	#Restores the last mode before the unrecognized command
@@ -255,6 +287,7 @@ class GUI:
 		#Create member variables first to populate strings
 		self.recent = ["None", "None", "None"]
 		self.mode = GlobalMode.NAVIGATE
+		self.curr_app = "Firefox"
 		self.textLock = False
 		self.status = Status.INITIALIZING
 
@@ -268,7 +301,8 @@ class GUI:
 
 		config = settings.loadConfig()
 		s = config["SETTINGS"]["WINDOW_SIZE"]
-		self.root.geometry(str(s) + "x" + str(s))
+		height = s + HELP_HEIGHT
+		self.root.geometry(str(s) + "x" + str(height))
 		self.root.update()
 		self.text = StringVar()
 		self.label = Label(back, textvariable=self.text)

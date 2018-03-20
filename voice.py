@@ -19,6 +19,7 @@ import sys
 import keyboard
 from word2number import w2n
 import settings
+from window_properties import currentApp
 
 
 from mode import *
@@ -136,6 +137,8 @@ def voiceLoop():
                 if raw_command == -1:
                     raise ValueError("Failed to recognize speech")
                 p.parse(raw_command)
+                curr_app = currentApp()
+                gui.updateCommands(raw_command, curr_app)
 
                 if os.path.exists('BATCH_FLAG'):
                     # send an ACK to tell them we're ready for more input
@@ -144,13 +147,12 @@ def voiceLoop():
                     time.sleep(1) # give the user time to see the result
                     commands.exeFocus(['CMD'], GlobalMode.NAVIGATE)
 
-                gui.updateCommands(raw_command)
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())
                 gui.showError("Error parsing\nTry again.")
             
-            gui.setMode(p.mode)
+            gui.setMode(p.mode,curr_app)
 
 if __name__ == "__main__":
     voiceLoop()
