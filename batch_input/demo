@@ -1,7 +1,8 @@
 focus firefox
+resize left
 search patent
 follow
-p
+v
 control down
 control down
 launch word
@@ -15,16 +16,11 @@ to protect intellectual property period
 navigate
 up two
 center align
-highlight
-left two
-bold
-navigate
 down two
 highlight
 left
 delete
 navigate
-exclamation
 new line
 follow
 h
@@ -33,7 +29,5 @@ right
 enter
 insert
 license
-enter
-patent
 navigate
 focus cmd
