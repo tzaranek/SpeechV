@@ -2,27 +2,25 @@
 
 SpeechV serves as an interface between the user and existing computer applications. Specifically, SpeechV enables users to do research online and compose documents using only their voice. It is designed to work with Mozilla Firefox and Microsoft Word in a Windows environment.
 
-## Prerequisites
-
-Install Firefox, Python3, npm, and portaudio (http://portaudio.com/docs/v19-doxydocs/tutorial_start.html)
-
 ## Installation
 
-1. Open Administrator command prompt
+1. Install Firefox, Python3 and npm
 
-2. Goto SpeechV directory
+2. Open Administrator command prompt
 
-3. Run `python config.py`
+3. Goto SpeechV directory
 
-4. Restart command prompt
+4. Run `python config.py`
 
-5. Goto SpeechV/extension directory
+5. Restart command prompt
 
-6. Run `npm install`
+6. Goto SpeechV/extension directory
 
-7. Run `npm install -g web-ext`
+7. Run `npm install`
 
-8. Run `npm start`
+8. Run `npm install -g web-ext`
+
+9. Run `npm start`
 
 ## How to start SpeechV
 
@@ -32,9 +30,59 @@ Install Firefox, Python3, npm, and portaudio (http://portaudio.com/docs/v19-doxy
 
 3. Run `web-ext run`
 
-## How to use SpeechV
+## Using SpeechV for common tasks
 
-SpeechV recognizes voice commands and translates them to actions executed by your computer. SpeechV can execute a few types of actions: keyboard shortcuts, Windows actions, browser actions and Microsoft Word actions. In addition, you can create custom commands (macros) as well as aliases for existing commands to suit your needs. The microphone can also be adjusted for your individual speech patterns.
+These are instructions on how specific actions can be done in SpeechV. For a complete list of actions, see below.
+
+### Navigating the web
+
+1. Execute a Google search    
+`Search puppies`
+
+2. Open the images tab  
+`Follow` to populate the screen with labels corresponding to links and input fields. Give the corresponding label for the images tab.
+
+3. Scrolling    
+`Down` for more puppies!
+
+4. Working with multiple tabs    
+`New tab` to search for kittens!    
+`Previous tab` to go back to the puppies.
+
+### Editing word documents
+
+1. Inserting text    
+```
+Insert
+Puppies
+New paragraph
+Puppies are cute period
+```
+SpeechV replaces phrases that end with 'period' or 'comma' with the corresponding punctuation. New lines and line breaks are also supported.   
+`Navigate` to end text insertion
+
+2. Moving your cursor around    
+Use `up/down/left/right` to move your cursor around the document.
+
+3. Punctuation, indentation and formatting    
+You can also insert punctuation as necessary, such as `exclamation` and `open parenthesis`.    
+Adjust alignment using `center/left/right align`.
+
+4. Formatting regions of text   
+To delete, bold or format regions of text, use `highlight` to enter the highlighting mode. When in highlight, `up/down/left/right` expands the selected region of text. `Bold/italics/underline` formats the selected region as desired.
+
+5. Advanced formatting   
+SpeechV allows you to access the toolbar in Microsoft Word using the command `follow`.    
+For example, to make a bulleted list:
+```
+Follow
+H
+U
+Cancel
+```    
+Every follow must end with a cancel! This is a known limitation that we are currently working on.
+
+## Full list of commands in SpeechV
 
 Instructions on how to use SpeechV can be accessed when you are using the application via the **help** command.
 
@@ -147,3 +195,4 @@ If speech recognition is not performing well, you are likely experiencing one of
 Problem one can be fixed by accessing the **settings** panel. From there, increase the voice timeout setting. This is the amount of silence that signals the end of a command. Increasing audio timeout allows for longer pauses when speaking, but slows down overall performance. 
 
 Problem two is likely an issue with your environment. SpeechV tries to automatically detect and adjust for ambient noise, but consider using SpeechV in a quiet environment for optimal performance.
+
