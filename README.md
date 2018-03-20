@@ -6,7 +6,7 @@ SpeechV serves as an interface between the user and existing computer applicatio
 
 1. Install Firefox, Python3 and npm
 
-2. Open Administrator command prompt
+2. Open Administrator command prompt (SpeechV must be run on windows 10 with administrator privileges)
 
 3. Goto SpeechV directory
 
@@ -28,7 +28,7 @@ SpeechV serves as an interface between the user and existing computer applicatio
 
 2. Goto SpeechV/extension directory
 
-3. Run `web-ext run`
+3. Run `web-ext run`. This starts a special firefox, which will start up SpeechV
 
 ## Tutorial: Using SpeechV for common tasks
 
