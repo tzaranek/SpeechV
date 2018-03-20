@@ -240,12 +240,8 @@ def exeCancel(tokens, mode):
 
     # NOTE: this could be extended to exit insert mode, etc.
     pyautogui.hotkey('escape')
-<<<<<<< Updated upstream
     mode = GlobalMode.NAVIGATE
     return ([], mode)
-=======
-    return ([], GlobalMode.NAVIGATE)
->>>>>>> Stashed changes
 
 def exeCopy(tokens, mode):
     keyboard.press_and_release("ctrl+c")
