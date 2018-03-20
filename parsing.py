@@ -241,7 +241,8 @@ class Parser:
                 commands.exeSwitch(tokens[1:], self.mode)
                 return
             elif tokens[0] == 'CANCEL' and len(tokens) == 1:
-                commands.exeCancel([], self.mode)
+                _, mode = commands.exeCancel([], self.mode)
+                self.mode = mode
                 return
 
             self.mode = GlobalMode.NAVIGATE
