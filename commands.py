@@ -455,6 +455,11 @@ class WordForwarder:
                 pyautogui.hotkey('escape')
             self.followLayers = 0
             return ([], GlobalMode.NAVIGATE)
+        elif tokens[0] == 'INSERT' and len(tokens) == 1:
+            for i in range(self.followLayers + 1):
+                pyautogui.hotkey('escape')
+            self.followLayers = 0
+            return ([], GlobalMode.INSERT)
         elif tokens[0] == 'BACK' and len(tokens) == 1:
             pyautogui.hotkey('escape')
             self.followLayers = self.followLayers - 1
