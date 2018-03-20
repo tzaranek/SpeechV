@@ -2,6 +2,6 @@ record start
 focus firefox
 search hello world
 record end
-test
+test search
 yes
 focus cmd
