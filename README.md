@@ -109,7 +109,7 @@ web pages by finding and labelling all links/input fields on the page. You can t
 #### Navigating web pages
 
 **Follow**: Label links and input fields    
-    - **<label>** Open link in current tab, enter text into input field, or click button.   
+    - **<label>** Open link in current tab, enter text into input field, or click button.       
 **Open**: Label links and input fields   
     - **<label>** Open link in new tab. Invalid entry if input field is selected.
 
@@ -153,7 +153,8 @@ Commands for Microsoft Word are broken up into three categories: Navigate, Highl
 **Page up**: Moves the cursor up one page       
 **Page down**: Moves the cursor down one page       
 **Period**: Enters a period at the cursor's position        
-    - **<label>** Replacing period with any of the following will enter the corresponding symbol: comma, exclamation, question, slash, colon, semicolon, apostrophe, quote, open parenthesis, close parenthesis, ampersand, dollar, star    
+    - **<label>** Replacing period with any of the following will enter the corresponding symbol: comma, exclamation, question, slash, colon, semicolon, apostrophe, quote, open parenthesis, close parenthesis, ampersand, dollar, star   
+**Follow**: Label buttons to navigate the word GUI      
     
 **Left/Right/Center align**: Align the text at your cursor      
 **Undo**: Undoes the previous text entry        
