@@ -245,18 +245,17 @@ class Parser:
                 self.mode = mode
                 return
 
-            self.mode = GlobalMode.NAVIGATE
+            if all(len(tok) == 1 for tok in tokens):
+                # Take a page out of WordForwarder and send it as long as we're
+                # still following and it's a letter. Trust that the user won't
+                # say arbitrary letters outside of this.
 
-            if len(tokens) > 3:
-                log.warn("cannot handle more than 3 follow characters")
-                return
-            for token in tokens:
-                if len(token) != 1:
-                    log.warn("cannot handle follow token size greater than 1")
-                    return
-
-            enumerated_keys = [commands.KeyboardMessage(tok.lower()) for tok in tokens]
-            send_message(encode_message(enumerated_keys))
+                enumerated_keys = [commands.KeyboardMessage(tok.lower()) for tok in tokens]
+                send_message(encode_message(enumerated_keys))
+            else:
+                # Some other command so go back to navigate mode and retry parsing
+                self.mode = GlobalMode.NAVIGATE
+                self.parseImpl(tokens, levelDict)
 
             return
 
