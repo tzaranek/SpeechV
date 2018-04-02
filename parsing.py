@@ -255,7 +255,7 @@ class Parser:
                     log.warn("cannot handle follow token size greater than 1")
                     return
 
-            enumerated_keys = [commands.KeyboardMessage(tok) for tok in tokens]
+            enumerated_keys = [commands.KeyboardMessage(tok.lower()) for tok in tokens]
             send_message(encode_message(enumerated_keys))
 
             return
