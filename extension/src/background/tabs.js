@@ -134,7 +134,8 @@ const toggleTabPinned = (current) => {
 };
 
 const duplicate = (id) => {
-  return browser.tabs.duplicate(id);
+  let home_page = "https://google.com";
+  return browser.tabs.create({ url: home_page });
 };
 
 export {
