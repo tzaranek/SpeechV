@@ -1,30 +1,36 @@
-const replaceAt = (str, index, replacement) => {
-    return str.substr(0, index)
-        + replacement
-        + str.substr(index + replacement.length);
-};
-
-function* sequenceGenerator (charset) {
-  if (charset.length === 0) {
-    throw new TypeError('charset is empty');
-  }
-
-  let seq = "";
-  let seqIdx = 0;
-  while (true) {
-    let curCharIdx = charset.indexOf(seq[seqIdx]);
-    if (seqIdx !== -1 && curCharIdx === charset.length - 1) {
-      seq = replaceAt(seq, seqIdx, charset[0]);
-      seqIdx -= 1;
-    } else {
-      seq = seqIdx === -1
-            ? charset[0] + seq
-            : replaceAt(seq, seqIdx, charset[curCharIdx+1]);
-      seqIdx = seq.length - 1;
-      yield seq;
+class AllKeyProducer {
+  constructor(charset) {
+    if (charset.length === 0) {
+      throw new TypeError('charset is empty');
     }
+
+    this.charset = charset;
+    this.counter = [];
   }
-};
+
+  produce() {
+    this.increment();
+
+    return this.counter.map(x => this.charset[x]).join('');
+  }
+
+  increment() {
+    let max = this.charset.length - 1;
+    if (this.counter.every(x => x === max)) {
+      this.counter = new Array(this.counter.length + 1).fill(0);
+      return;
+    }
+
+    this.counter.reverse();
+    let len = this.charset.length;
+    let num = this.counter.reduce((x, y, index) => x + y * len ** index) + 1;
+    for (let i = 0; i < this.counter.length; ++i) {
+      this.counter[i] = num % len;
+      num = ~~(num / len);
+    }
+    this.counter.reverse();
+  }
+}
 
 class HintTree {
   // each tree holds it's top-level nodes and pointers to subtrees
@@ -77,10 +83,10 @@ export default class HintKeyProducer {
 
   produce(count) {
     let tree = new HintTree("");
-    let gen = sequenceGenerator(this.charset);
+    let gen = new AllKeyProducer(this.charset);
     while (tree.leaves < count) {
-      let nextSeq = gen.next();
-      tree.addHint(nextSeq.value);
+      let nextSeq = gen.produce();
+      tree.addHint(nextSeq);
     }
     return tree.getLeaves();
   }
