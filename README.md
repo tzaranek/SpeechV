@@ -40,13 +40,15 @@ SpeechV's philosophy is that common tasks should be doable with a small set of h
 (sidenote TODO: rename delete to close tab or something more intuitive)
 
 NOTE: recipes should be readable in any order. 
+
 NOTE: recipes should be shown in a two column format such that the left column
       lists each command in the recipe, while the right details what the command on
       the left does, as well as notes on the command and possibly similar commands
       users might want to know about
+
 NOTE: once we have an html format to work with, I'll write up these recipes in full from the outlines below
 
-### Web Recipes
+### Recipes for Web Browsing
 want to demonstrate:
  * following, opening
  * scrolling
@@ -66,7 +68,7 @@ Recipes to write
  * [Task: Compare two web pages] search for larceny and burglary and compare pages
     * satisfies 'open', tab switching, close tab, history navigation
 
-### Word Processing Recipes
+### Recipes for Word Processing
 want to demonstrate:
  * follow - how to navigate menus, esp. for saving
  * opening word and a document (must use follow)
@@ -92,18 +94,27 @@ Recipes to write
 
 ### Recipes for Managing Applications
 want to demonstrate
- * ...
+ * focus
+ * alt-tab
+ * resize
+ * terminate
+ * minimize
+ * launch
 
 Recipes to write
- * ...
+ * [Task: Working side-by-side] launch word, focus firefox, alt-tab between
+    * satisfies resize, focus, alt-tab, limitation of launch
+ * [Task: Hide applications] launch word, minimize, focus, terminate
+    * talk about why terminate sucks
 
 ### Recipes for Customization
 want to demonstrate
- * ...
+ * recording and using macros
+ * where to start for modifying settings
 
-Recipes to write
- * ...
-
+Recipes to write:
+ * [Task: Record a macro for side-by-side work] Put firefox on write, word on left
+ * [Task: Enlarge user interface] use resize command in settings
 
 ### Navigating the web
 
