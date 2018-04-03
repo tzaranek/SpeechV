@@ -68,8 +68,8 @@ class GUI:
 		self.root.geometry(str(size)+'x'+str(size))
 		self.root.update()
 		#148 is the minimum width we can have
-		self.label.config(font=("Courier", int(max(148, size)/20)))
-		self.label.config(width=50, height=50)
+		#self.label.config(font=("Courier", int(max(148, size)/20)))
+		#self.label.config(width=50, height=50)
 		self.getPositions()
 		if self.right:
 			self.root.geometry(self.RIGHT + self.BOTTOM)
@@ -90,68 +90,79 @@ class GUI:
 	#So that we don't have to manually call this every time
 	def startRecording(self):
 		self.status = Status.RECORDING
-		self.label.config(bg=RECORDING)
+		self.recording = True
+		#self.label.config(bg=RECORDING)
+		#TODO: GUI Update
 
 	def endRecording(self):
-		self.textLock = True
-		self.setText("Enter a\nmacro name", True)
+		self.namingMacro = True
+		self.modeText.set("Enter a macro name")
 
 	def macroNameEntered(self, name):
-		self.setText("Name: " + name + "\nSay yes to confirm\nSay no to retry", True)
+		self.modeText.set("Name: " + name + "\nSay yes to confirm\nSay no to retry")
 		
 	def macroNameConfirmed(self):
 		self.status = Status.READY
-		self.label.config(bg=READY)
-		self.textLock = False
-		self.updateText()
+		self.namingMacro = False
+		self.recording = False
+		self.modeText.set("Navigation")
+		#self.label.config(bg=READY)
+		#TODO: GUI UPDATE
+		#self.updateText()
 
 	#Update the GUI to "Ready"
 	def ready(self):
-		self.status = Status.READY
-		self.updateText()
+		if self.recording == False:
+			self.statusText.set("Ready")
+		else:
+			self.statusText.set("Recording")
 
 	def processing(self):
-		self.status = Status.PROCESSING
-		self.updateText()
+		self.statusText.set("Processing...")
 
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
-		self.recent[2] = self.recent[1]
-		self.recent[1] = self.recent[0]
+		self.recent[2].set(self.recent[1].get())
+		self.recent[1].set(self.recent[0].get())
 		if len(cmd) > 15:
 			cmd = cmd[:15] + '...'
-		self.recent[0] = cmd
-		self.updateText()
+		self.recent[0].set(cmd)
+
+		#self.updateText()
 
 	#set the GUI to the given mode
 	def setMode(self, m):		
 		self.mode = m
-		self.updateText()
-		self.label.bind("<Enter>", self.enter)
-		self.getPositions()
+		if self.namingMacro:
+			return
+		self.modeText.set(m.name.lower().capitalize())
+		#self.label.bind("<Enter>", self.enter)
+		# self.getPositions()
 
 	#Update the text in the GUI
-	def updateText(self):
-		s = ("Status: " + statusStr(self.status) + \
-			  "\nMode: " + self.mode.name.lower().capitalize())
+	# def updateText(self):
+
+
+	# 	s = ("Status: " + statusStr(self.status) + \
+	# 		  "\nMode: " + self.mode.name.lower().capitalize())
 		
-		s += "\nRecent Commands: "
-		for cmd in self.recent:
-			s += "\n"
-			s += cmd
-		self.setText(s)
+	# 	s += "\nRecent Commands: "
+	# 	for cmd in self.recent:
+	# 		s += "\n"
+	# 		s += cmd.get()
+	# 	self.setText(s)
 
 	#Restores the last mode before the unrecognized command
-	def restoreText(self, text):
-		sleep(2)
-		self.setText(text)
+	# def restoreText(self, text):
+	# 	sleep(2)
+	# 	self.statusText.set(text)
 
-	#Displays an error and spawns a thread to restore the old mode later
+	#Displays an error for a few seconds, then returns control to the user
 	def showError(self, error):
-		text = self.getText()
-		self.setText(error)
-		t = Thread(target=self.restoreText, args=[text])
-		t.start()
+		self.statusText.set(error)
+		sleep(3)
+		# t = Thread(target=self.restoreText, args=[text])
+		# t.start()
 
 	#Display the help menu
 	def settingsMode(self, macros, type="DEFAULT"):
@@ -232,9 +243,9 @@ class GUI:
 		self.root.geometry(loc)
 
 	#Sets the text on the GUI
-	def setText(self, s, override=False):
-		if self.textLock and not override:
-			return
+	# def setText(self, s, override=False):
+	# 	if self.textLock and not override:
+	# 		return
 		#self.text.set(s)
 
 	#Returns the currently displayed text
@@ -251,53 +262,58 @@ class GUI:
 	def __init__(self):
 		#Create the GUI object and set window properties
 		self.root = Tk()
+		self.root.title("SpeechV")
 
 		#Create member variables first to populate strings
 		self.recent = ["None", "None", "None"]
 		self.mode = GlobalMode.NAVIGATE
-		self.textLock = False
 		self.status = Status.INITIALIZING
+		self.recording = False
+		self.namingMacro = False
 
 		#Setup window properties
 		self.root.attributes("-topmost", True)
+		self.root.configure(background='#4C4C4C')
 
 		#Set up the frame and label properties
 		back = Frame(master=self.root,bg='#4C4C4C')
 		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
-		back.pack(fill=BOTH, expand=1) #Expand the frame to fill the root window
+		back.pack(fill=BOTH, expand=0) #Expand the frame to fill the root window
 
 		config = settings.loadConfig()
 		s = config["SETTINGS"]["WINDOW_SIZE"]
 		self.root.geometry(str(s) + "x" + str(s))
 		self.root.update()
 		self.modeText = StringVar()
-		self.recentText1 = StringVar()
-		self.recentText2 = StringVar()
-		self.recentText3 = StringVar()
+		self.recent = [StringVar(), StringVar(), StringVar()]
 		self.statusText = StringVar()
-		self.modeText.set("test1")
-		self.recentText1.set("test2")
-		self.recentText2.set("test3")
-		self.recentText3.set("test4")
+		self.modeText.set("Configuration")
+		self.recent[0].set("test2")
+		self.recent[1].set("test3")
+		self.recent[2].set("test4")
 		self.statusText.set("test5")
-		self.modeLabel = Label(back, textvariable=self.modeText)
-		self.modeLabel.config(width=15, font=("Courier", int(max(148, s)/20)))
-		self.recentLabel1 = Label(back, textvariable=self.recentText1, anchor='w')
-		self.recentLabel1.config(width=15, font=("Courier", int(max(148, s)/20)))
-		self.recentLabel2 = Label(back, textvariable=self.recentText2, anchor='w')
-		self.recentLabel2.config(width=15, font=("Courier", int(max(148, s)/20)))
-		self.recentLabel3 = Label(back, textvariable=self.recentText3, anchor='w')
-		self.recentLabel3.config(width=15, font=("Courier", int(max(148, s)/20)))
-		self.statusLabel = Label(back, textvariable=self.statusText)
-		self.statusLabel.config(width=15, )
+		modeLabel = Label(back, textvariable=self.modeText)
+		modeLabel.config(width=0, font=("Courier bold", int(max(148, s)/20)))
+		recentLabel1 = Label(back, textvariable=self.recent[0], anchor='w')
+		recentLabel1.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
+		recentLabel2 = Label(back, textvariable=self.recent[1], anchor='w')
+		recentLabel2.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
+		recentLabel3 = Label(back, textvariable=self.recent[2], anchor='w')
+		recentLabel3.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
+		statusLabel = Label(back, textvariable=self.statusText)
+		statusLabel.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
 
-		self.modeLabel.grid(row=0,pady=10, padx=10)
-		self.recentLabel1.grid(row=1,padx=0)
-		self.recentLabel2.grid(row=2)
-		self.recentLabel3.grid(row=3)
-		self.statusLabel.grid(row=5, pady=10)
-		self.root.columnconfigure(0, weight=1)
-		self.root.rowconfigure(0, weight=1)
+		modeLabel.grid(row=0,column=1,pady=10, padx=10)
+		recentLabel1.grid(row=1,column=1,padx=0)
+		recentLabel2.grid(row=2,column=1)
+		recentLabel3.grid(row=3,column=1)
+		statusLabel.grid(row=5, column=1, pady=10)
+		back.grid(row=1, column=1)
+		# self.root.grid_rowconfigure(0, weight=1)
+		# self.root.grid_rowconfigure(2, weight=1)
+		self.root.grid_columnconfigure(0, weight=1)
+		self.root.grid_columnconfigure(2, weight=1)
+
 
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
@@ -310,9 +326,6 @@ class GUI:
 		self.getPositions()
 		self.root.geometry(self.RIGHT + self.BOTTOM)
 		self.right = True
-
-		#Fill in the GUI text
-		self.updateText()
 
 
 if __name__ == "__main__":
