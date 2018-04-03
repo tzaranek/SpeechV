@@ -2,7 +2,10 @@ import * as dom from 'shared/utils/dom';
 import * as keys from 'shared/utils/keys';
 import * as messages from 'shared/messages';
 
-const ENABLE_KEYBOARD = true;
+
+// we must disable keyboard vim-vixen functionality so that saying extra 
+// characters after 'follow'ing doesn't do extra actions
+const ENABLE_KEYBOARD = false;
 
 export default class InputComponent {
   constructor(target) {
