@@ -7,6 +7,7 @@ __pycache__/
 log.txt
 manifest.json
 config.cfg
+extension/package*
 
 DEBUG_FLAG
 BATCH_FLAG

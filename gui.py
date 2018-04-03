@@ -235,7 +235,7 @@ class GUI:
 	def setText(self, s, override=False):
 		if self.textLock and not override:
 			return
-		self.text.set(s)
+		#self.text.set(s)
 
 	#Returns the currently displayed text
 	def getText(self):
@@ -262,7 +262,7 @@ class GUI:
 		self.root.attributes("-topmost", True)
 
 		#Set up the frame and label properties
-		back = Frame(master=self.root,bg='black')
+		back = Frame(master=self.root,bg='#4C4C4C')
 		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
 		back.pack(fill=BOTH, expand=1) #Expand the frame to fill the root window
 
@@ -270,16 +270,41 @@ class GUI:
 		s = config["SETTINGS"]["WINDOW_SIZE"]
 		self.root.geometry(str(s) + "x" + str(s))
 		self.root.update()
-		self.text = StringVar()
-		self.label = Label(back, textvariable=self.text)
-		self.label.pack()
+		self.modeText = StringVar()
+		self.recentText1 = StringVar()
+		self.recentText2 = StringVar()
+		self.recentText3 = StringVar()
+		self.statusText = StringVar()
+		self.modeText.set("test1")
+		self.recentText1.set("test2")
+		self.recentText2.set("test3")
+		self.recentText3.set("test4")
+		self.statusText.set("test5")
+		self.modeLabel = Label(back, textvariable=self.modeText)
+		self.modeLabel.config(width=15, font=("Courier", int(max(148, s)/20)))
+		self.recentLabel1 = Label(back, textvariable=self.recentText1, anchor='w')
+		self.recentLabel1.config(width=15, font=("Courier", int(max(148, s)/20)))
+		self.recentLabel2 = Label(back, textvariable=self.recentText2, anchor='w')
+		self.recentLabel2.config(width=15, font=("Courier", int(max(148, s)/20)))
+		self.recentLabel3 = Label(back, textvariable=self.recentText3, anchor='w')
+		self.recentLabel3.config(width=15, font=("Courier", int(max(148, s)/20)))
+		self.statusLabel = Label(back, textvariable=self.statusText)
+		self.statusLabel.config(width=15, )
+
+		self.modeLabel.grid(row=0,pady=10, padx=10)
+		self.recentLabel1.grid(row=1,padx=0)
+		self.recentLabel2.grid(row=2)
+		self.recentLabel3.grid(row=3)
+		self.statusLabel.grid(row=5, pady=10)
+		self.root.columnconfigure(0, weight=1)
+		self.root.rowconfigure(0, weight=1)
 
 		#These are way bigger than needed but it shouldn't matter
 		#As long as they're bigger than the frame and the text
-		self.label.config(width=50, height=50)
-		#148 is the minimum width we can have
-		self.label.config(font=("Courier", int(max(148, s)/20)))
-		self.label.config(bg=READY)
+		# self.label.config(width=10, height=3)
+		# #148 is the minimum width we can have
+		# self.label.config(font=("Courier", int(max(148, s)/20)))
+		# self.label.config(bg=READY)
 
 		#Calculate screen size and move the window to the bottom right
 		self.getPositions()
