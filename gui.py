@@ -56,6 +56,30 @@ class GUI:
 		self.LEFT = "+0"
 		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
 	
+	def resizeWindowHelper(self, size):
+		self.root.geometry(str(size)+'x'+str(size))
+		self.root.update()
+		self.modeLabel.config(width=15, font=("Courier bold", int(max(148, size)/20)), borderwidth=5, relief="raised")
+		self.recentLabel1.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="sunken")
+		self.recentLabel2.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="ridge")
+		self.recentLabel3.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="solid")
+		self.statusLabel.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="groove")
+		self.modeLabel.grid(row=0,column=1,pady=10, padx=10)
+		self.recentLabel1.grid(row=1,column=1,padx=0)
+		self.recentLabel2.grid(row=2,column=1)
+		self.recentLabel3.grid(row=3,column=1)
+		self.statusLabel.grid(row=5, column=1, pady=10)
+		self.back.grid(row=1, column=1)
+		self.root.grid_columnconfigure(0, weight=1)
+		self.root.grid_columnconfigure(2, weight=1)
+		#148 is the minimum width we can have
+		self.getPositions()
+		if self.right:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+		else:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+
+
 	def resizeWindow(self, tokens):
 		if len(tokens) == 0:
 			return
@@ -65,16 +89,8 @@ class GUI:
 			if isinstance(tokens, list):
 				tokens = ' '.join(tokens)
 			size = w2n.word_to_num(tokens.lower())
-		self.root.geometry(str(size)+'x'+str(size))
-		self.root.update()
-		#148 is the minimum width we can have
-		#self.label.config(font=("Courier", int(max(148, size)/20)))
-		#self.label.config(width=50, height=50)
-		self.getPositions()
-		if self.right:
-			self.root.geometry(self.RIGHT + self.BOTTOM)
-		else:
-			self.root.geometry(self.RIGHT + self.BOTTOM)
+
+		self.resizeWindowHelper(size)
 		
 		config = settings.loadConfig()
 		config["SETTINGS"]["WINDOW_SIZE"] = size
@@ -91,8 +107,7 @@ class GUI:
 	def startRecording(self):
 		self.status = Status.RECORDING
 		self.recording = True
-		#self.label.config(bg=RECORDING)
-		#TODO: GUI Update
+
 
 	def endRecording(self):
 		self.namingMacro = True
@@ -106,9 +121,6 @@ class GUI:
 		self.namingMacro = False
 		self.recording = False
 		self.modeText.set("Navigation")
-		#self.label.config(bg=READY)
-		#TODO: GUI UPDATE
-		#self.updateText()
 
 	#Update the GUI to "Ready"
 	def ready(self):
@@ -136,26 +148,7 @@ class GUI:
 		if self.namingMacro:
 			return
 		self.modeText.set(m.name.lower().capitalize())
-		#self.label.bind("<Enter>", self.enter)
-		# self.getPositions()
 
-	#Update the text in the GUI
-	# def updateText(self):
-
-
-	# 	s = ("Status: " + statusStr(self.status) + \
-	# 		  "\nMode: " + self.mode.name.lower().capitalize())
-		
-	# 	s += "\nRecent Commands: "
-	# 	for cmd in self.recent:
-	# 		s += "\n"
-	# 		s += cmd.get()
-	# 	self.setText(s)
-
-	#Restores the last mode before the unrecognized command
-	# def restoreText(self, text):
-	# 	sleep(2)
-	# 	self.statusText.set(text)
 
 	#Displays an error for a few seconds, then returns control to the user
 	def showError(self, error):
@@ -242,12 +235,6 @@ class GUI:
 		#Move window
 		self.root.geometry(loc)
 
-	#Sets the text on the GUI
-	# def setText(self, s, override=False):
-	# 	if self.textLock and not override:
-	# 		return
-		#self.text.set(s)
-
 	#Returns the currently displayed text
 	def getText(self):
 		return self.text.get()
@@ -276,9 +263,9 @@ class GUI:
 		self.root.configure(background='#4C4C4C')
 
 		#Set up the frame and label properties
-		back = Frame(master=self.root,bg='#4C4C4C')
-		back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
-		back.pack(fill=BOTH, expand=0) #Expand the frame to fill the root window
+		self.back = Frame(master=self.root,bg='#4C4C4C')
+		self.back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
+		self.back.pack(fill=BOTH, expand=0) #Expand the frame to fill the root window
 
 		config = settings.loadConfig()
 		s = config["SETTINGS"]["WINDOW_SIZE"]
@@ -292,40 +279,19 @@ class GUI:
 		self.recent[1].set("test3")
 		self.recent[2].set("test4")
 		self.statusText.set("test5")
-		modeLabel = Label(back, textvariable=self.modeText)
-		modeLabel.config(width=0, font=("Courier bold", int(max(148, s)/20)))
-		recentLabel1 = Label(back, textvariable=self.recent[0], anchor='w')
-		recentLabel1.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
-		recentLabel2 = Label(back, textvariable=self.recent[1], anchor='w')
-		recentLabel2.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
-		recentLabel3 = Label(back, textvariable=self.recent[2], anchor='w')
-		recentLabel3.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
-		statusLabel = Label(back, textvariable=self.statusText)
-		statusLabel.config(width=int(s/10), font=("Courier", int(max(148, s)/20)))
-
-		modeLabel.grid(row=0,column=1,pady=10, padx=10)
-		recentLabel1.grid(row=1,column=1,padx=0)
-		recentLabel2.grid(row=2,column=1)
-		recentLabel3.grid(row=3,column=1)
-		statusLabel.grid(row=5, column=1, pady=10)
-		back.grid(row=1, column=1)
-		# self.root.grid_rowconfigure(0, weight=1)
-		# self.root.grid_rowconfigure(2, weight=1)
-		self.root.grid_columnconfigure(0, weight=1)
-		self.root.grid_columnconfigure(2, weight=1)
-
-
-		#These are way bigger than needed but it shouldn't matter
-		#As long as they're bigger than the frame and the text
-		# self.label.config(width=10, height=3)
-		# #148 is the minimum width we can have
-		# self.label.config(font=("Courier", int(max(148, s)/20)))
-		# self.label.config(bg=READY)
+		
+		self.modeLabel = Label(self.back, textvariable=self.modeText)
+		self.recentLabel1 = Label(self.back, textvariable=self.recent[0], anchor='w')
+		self.recentLabel2 = Label(self.back, textvariable=self.recent[1], anchor='w')
+		self.recentLabel3 = Label(self.back, textvariable=self.recent[2], anchor='w')
+		self.statusLabel = Label(self.back, textvariable=self.statusText)
 
 		#Calculate screen size and move the window to the bottom right
 		self.getPositions()
 		self.root.geometry(self.RIGHT + self.BOTTOM)
 		self.right = True
+
+		self.resizeWindowHelper(s)
 
 
 if __name__ == "__main__":
