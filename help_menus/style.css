@@ -1,0 +1,41 @@
+body {
+    font-family: "Helvetica Neue", "Arial";
+    padding: 10px 50px;
+    font-size: 18px;
+}
+
+.subpage {
+    width:100%;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0px;
+}
+
+table {
+    flex-basis: 1000px;
+}
+
+.subpage > h1 {
+    font-size: 24px;
+    margin: 10px 0px;
+}
+
+.subpage > p {
+    margin: 0px 0px 10px 0px;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    padding: 2px;
+}
+
+.command {
+    width: 20%;
+}
+
+a {
+    display: block;
+    margin: 5px 0px;
+}

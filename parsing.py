@@ -254,7 +254,8 @@ class Parser:
                 send_message(encode_message(enumerated_keys))
             else:
                 # Some other command so go back to navigate mode and retry parsing
-                self.mode = GlobalMode.NAVIGATE
+                _, mode = commands.exeCancel([], self.mode)
+                self.mode = mode
                 self.parseImpl(tokens, levelDict)
 
             return
