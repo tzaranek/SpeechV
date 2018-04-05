@@ -12,13 +12,15 @@ describe('HintKeyProducer class', () => {
     it('produce incremented keys', () => {
       let charset = 'abc';
       let sequences = [
-        'a', 'b', 'c',
-        'aa', 'ab', 'ac', 'ba', 'bb', 'bc', 'ca', 'cb', 'cc',
-        'aaa', 'aab', 'aac', 'aba']
+          "aaa", "aab",
+          "ab", "ac",
+          "ba", "bb", "bc",
+          "ca", "cb", "cc"]
 
       let producer = new HintKeyProducer(charset);
+      let produced = producer.produce(sequences.length);
       for (let i = 0; i < sequences.length; ++i) {
-        expect(producer.produce()).to.equal(sequences[i]);
+        expect(produced[i]).to.equal(sequences[i]);
       }
     });
   });

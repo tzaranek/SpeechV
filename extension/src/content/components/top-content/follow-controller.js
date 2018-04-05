@@ -115,10 +115,7 @@ export default class FollowController {
   }
 
   create(count, sender) {
-    let produced = [];
-    for (let i = 0; i < count; ++i) {
-      produced.push(this.producer.produce());
-    }
+    let produced = this.producer.produce(count);
     this.keys = this.keys.concat(produced);
 
     sender.postMessage(JSON.stringify({
