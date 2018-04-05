@@ -25,9 +25,7 @@ const createBookmarkFromCurrent = () => {
 };
 
 const retrieveBookmarks = () => {
-  console.log("RETRIEVING");
   return browser.bookmarks.search({}).then((bs) => {
-      console.log("INSIDE THE THEN");
       let user_bs = bs.filter(x => x.parentId === "unfiled_____");
       browser.tabs.query({ currentWindow: true, active: true })
           .then((focusedTabs) =>
@@ -38,7 +36,6 @@ const retrieveBookmarks = () => {
                   keys: user_bs
               })
           );
-      console.log("SENT THE MESSAGE");
     });
 };
 

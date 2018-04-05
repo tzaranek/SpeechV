@@ -1,6 +1,5 @@
 
 const showBookmarks = (win, bs) => {
-  console.log("TRYING TO DISPLAY");
   let doc = win.document;
   let list = doc.createElement("ul");
 
@@ -10,12 +9,16 @@ const showBookmarks = (win, bs) => {
     link.textContent = b.title;
 
     let el = doc.createElement("li");
+    el.type = "circle";
     el.appendChild(link);
     list.appendChild(el);
   });
 
-  console.log(doc);
-  doc.body.append(list);
+  let wrapper = doc.createElement("div");
+  wrapper.id = "centered-list";
+  wrapper.appendChild(list);
+
+  doc.body.append(wrapper);
 };
 
 export {
