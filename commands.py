@@ -288,28 +288,24 @@ def exeMove(tokens, mode):
     gui.enter()
 
 browserKeywords = {
-    'UP'             : [KeyboardMessage('k')],
-    'DOWN'           : [KeyboardMessage('j')],
     'LEFT'           : [KeyboardMessage('h')],
     'RIGHT'          : [KeyboardMessage('l')],
-    'CONTROL UP'     : [KeyboardMessage('u', ctrlKey=True)],
-    'CONTROL DOWN'   : [KeyboardMessage('d', ctrlKey=True)],
-    'CONTROL UPPER'  : [KeyboardMessage('b', ctrlKey=True)],
-    'CONTROL DOWNER' : [KeyboardMessage('f', ctrlKey=True)],
+    'UP'     : [KeyboardMessage('u', ctrlKey=True)],
+    'DOWN'   : [KeyboardMessage('d', ctrlKey=True)],
+    'PAGE UP'  : [KeyboardMessage('b', ctrlKey=True)],
+    'PAGE DOWN' : [KeyboardMessage('f', ctrlKey=True)],
 
-    '0'              : [KeyboardMessage('0')],
-    'ZERO'           : [KeyboardMessage('0')],
-    'DOLLAR'         : [KeyboardMessage('$')],
+    'LEFTMOST'           : [KeyboardMessage('0')],
+    'RIGHTMOST'         : [KeyboardMessage('$')],
 
     'TOP'            : [KeyboardMessage('g'), KeyboardMessage('g')],
     'BOTTOM'         : [KeyboardMessage('G', shiftKey=True)],
 
-    'DELETE'         : [KeyboardMessage('d')],
-    'UNDO'           : [KeyboardMessage('u')],
-    'PREVIOUS'       : [KeyboardMessage('K', shiftKey=True)],
-    'NEXT'           : [KeyboardMessage('J', shiftKey=True)],
+    'CLOSE TAB'         : [KeyboardMessage('d')],
+    'REOPEN TAB'           : [KeyboardMessage('u')],
+    'TAB LEFT'       : [KeyboardMessage('K', shiftKey=True)],
+    'TAB RIGHT'           : [KeyboardMessage('J', shiftKey=True)],
     'REFRESH'        : [KeyboardMessage('r')],
-    'DUPLICATE'      : [KeyboardMessage('z'), KeyboardMessage('d')],
 
     'FOLLOW'         : [KeyboardMessage('f')],
     'OPEN'           : [KeyboardMessage('F', shiftKey=True)],
@@ -320,16 +316,12 @@ browserKeywords = {
     'ZOOM OUT'       : [KeyboardMessage('z'), KeyboardMessage('o')],
     'ZOOM DEFAULT'   : [KeyboardMessage('z'), KeyboardMessage('z')],
 
-    'BOOKMARK SAVE'  : [KeyboardMessage('D', shiftKey=True)],
-    'BOOKMARK SHOW'  : [KeyboardMessage('A', shiftKey=True)],
+    'SAVE BOOKMARK'  : [KeyboardMessage('D', shiftKey=True)],
+    'SHOW BOOKMARKS'  : [KeyboardMessage('A', shiftKey=True)],
 
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
     'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
-    'ADDRESS'        : [KeyboardMessage('l', ctrlKey=True)],
     'NEW TAB'        : [KeyboardMessage('z'), KeyboardMessage('d')],
-    'NEW WINDOW'     : [KeyboardMessage('n', ctrlKey=True)],
-    'PRINT'          : [KeyboardMessage('p', ctrlKey=True)],
-    'SAVE'           : [KeyboardMessage('s', ctrlKey=True)],
 
 }
 
