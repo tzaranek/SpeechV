@@ -2,6 +2,8 @@ body {
     font-family: "Helvetica Neue", "Arial";
     padding: 10px 50px;
     font-size: 18px;
+    background-color: #E8EBEE;
+    color: #484A4B;
 }
 
 .contents {
@@ -24,7 +26,7 @@ table {
     flex-basis: 1000px;
 }
 
-h1 {
+h1, h2 {
     font-size: 18px;
     margin: 10px 0px;
 }
@@ -46,7 +48,10 @@ th, td {
 a {
     display: block;
     margin: 5px 0px;
+    color: #71787D;
 }
+
+
 
 .recipe-set {
     width:100%;
@@ -74,10 +79,11 @@ a {
 }
 
 code {
-    background-color: #f6f8fa;
+    background-color: #484A4B;
     border-radius: 3px;
     padding: 3px;
-    font-family: "Andale Mono",Courier,monospace;;
+    font-family: "Andale Mono",Courier,monospace;
+    color: #F8EE18;
 }
 
 .r-text {
