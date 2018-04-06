@@ -5,29 +5,48 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>SpeechV Help</title>
   </head>
-  <body>
+  <body id="Top">
     <h1 style="font-size: 2em">SpeechV Help</h1>
-    <p>This is a complete list of commands in SpeechV. Use the links below to jump to the relevant sections, and say "up" or "down" to scroll.</p>
+    <p>This is a complete list of commands in SpeechV. You can say "up" or "down" to scroll, or use the links below. To use the links, say "follow" to assign a label to each link, then say the corresponding label. Say "top" to return to the top of the page.</p>
     <!-- Links for jumping around the page -->
     <div class="contents">
-        <a href="#windows">Windows commands</a>
-        <a href="#firefox">Firefox commands</a>
+        <a href="#Recipes">Recipes</a>
+        <div class="subcontents">
+            <a href="#Task1">Sample recipe</a>
+        </div>
+        <a href="#CommandList">Full list of commands</a>
+        <div class="subcontents">
+            <a href="#windows">Windows commands</a>
+            <a href="#firefox">Firefox commands</a>
+        </div>
     </div>
-    <!-- Defines one set of commands -->
-    <div class="subpage">
-        <h1 id="template">Template</h1>
-        <p>Short description of section.</p>
-        <table>
-            <tr>
-                <!-- table heading -->
-                <th>Command</th>
-                <th>Description</th>
-            <tr>
-                <td class="command">Focus &lt;application&gt;</td>
-                <td class="desc">Switch focus to the application</td>
-            </tr>
-        </table>
+    <!-- Defines one task -->
+    <h1 style="font-size: 24px" id="Recipes">Recipes</h1>
+    <div class="recipe-set" id="Task1">
+        <h1>Task: Sample recipe</h1>
+        <div class="recipe-step">
+            <div class="number">1.</div>
+            <div class="r-descript">
+                <code>command</code>
+                <div class="r-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula cursus. Ut.
+                </div>
+            </div>
+            <img src="https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg"/>
+        </div>
+        <div class="recipe-step">
+            <div class="number">2.</div>
+            <div class="r-descript">
+                <code>command</code>
+                <div class="r-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula cursus. Ut.
+                </div>
+            </div>
+        </div>
+        <br>
+        <a href="#Top">Return to top</a>
     </div>
+    <h1 style="font-size: 24px" id="CommandList">Full list of commands</h1>
     <div class="subpage">
         <h1 id="windows">Windows</h1>
         <p>These commands can be used in any application in Navigate mode.</p>
@@ -49,14 +68,6 @@
                 <td class="desc">Close the current application without saving or confirming</td>
             </tr>
             <tr>
-                <td class="command">Copy</td>
-                <td class="desc">Copy highlighted data</td>
-            </tr>
-            <tr>
-                <td class="command">Paste</td>
-                <td class="desc">Paste data in clipboard</td>
-            </tr>
-            <tr>
                 <td class="command">Move</td>
                 <td class="desc">Move the SpeechV window to the opposite corner</td>
             </tr>
@@ -73,6 +84,8 @@
                 <td class="desc">Make the current application fullscreen</td>
             </tr>
         </table>
+        <br>
+        <a href="#Top">Return to top</a>
     </div>
     <div class="subpage">
         <h1 id="firefox">Firefox</h1>
@@ -166,6 +179,8 @@
                 <td class="desc">Open a new window</td>
             </tr>
         </table>
+        <br>
+        <a href="#Top">Return to top</a>
     </div>
   </body>
 </html>

@@ -4,6 +4,14 @@ body {
     font-size: 18px;
 }
 
+.contents {
+    margin-bottom: 30px;
+}
+
+.subcontents {
+    padding-left: 30px;
+}
+
 .subpage {
     width:100%;
     font-size: 18px;
@@ -16,8 +24,8 @@ table {
     flex-basis: 1000px;
 }
 
-.subpage > h1 {
-    font-size: 24px;
+h1 {
+    font-size: 18px;
     margin: 10px 0px;
 }
 
@@ -38,4 +46,40 @@ th, td {
 a {
     display: block;
     margin: 5px 0px;
+}
+
+.recipe-set {
+    width:100%;
+    font-size: 18px;
+    margin: 20px 0px;
+}
+
+.recipe-step > img {
+    width: 250px;
+    height: 180px;
+}
+
+.r-descript {
+    flex-basis: 1000px;
+}
+
+.number {
+    flex-basis: 50px;
+}
+
+.recipe-step {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+code {
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    padding: 3px;
+    font-family: "Andale Mono",Courier,monospace;;
+}
+
+.r-text {
+    margin-top: 10px;
 }
