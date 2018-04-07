@@ -284,6 +284,20 @@ def exeSearch(tokens):
     time.sleep(1)
     keyboard.press_and_release('alt+enter')
 
+def exeFind(tokens):
+    """Finds text on the page."""
+
+    if len(tokens) > 0 and tokens[0] == "PHRASE":
+        send_message(encode_message([KeyboardMessage('/')]))
+        time.sleep(0.5)
+        keyboard.write(' '.join(tokens[1:]))
+        time.sleep(0.25)
+        keyboard.press_and_release('enter')
+    else:
+        gui.showError("Unrecognized\nFind sequence")
+
+    time.sleep(1)
+
 def exeMove(tokens, mode):
     gui.enter()
 
@@ -320,7 +334,9 @@ browserKeywords = {
     'SHOW BOOKMARKS'  : [KeyboardMessage('A', shiftKey=True)],
 
     'SEARCH'         : [KeyboardMessage('k', ctrlKey=True)],
-    'FIND'           : [KeyboardMessage('f', ctrlKey=True)],
+    # 'FIND PHRASE' is slightly complicated so has it's own function next to search
+    'FIND NEXT'      : [KeyboardMessage('n')],
+    'FIND PREVIOUS'  : [KeyboardMessage('N', shiftKey=True)],
     'NEW TAB'        : [KeyboardMessage('z'), KeyboardMessage('d')],
 
 }
@@ -335,6 +351,8 @@ def forwardBrowser(tokens, mode):
 
     elif tokens[0] == 'SEARCH':
         exeSearch(tokens[1:])
+    elif tokens[0] == 'FIND':
+        exeFind(tokens[1:])
     elif len(tokens) > 1 and tokens[0] == "NEW" and tokens[1] == "TAB":
         keyboard.press_and_release("ctrl+t")
     else:
