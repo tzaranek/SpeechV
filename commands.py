@@ -274,7 +274,7 @@ def exeSearch(tokens):
         This effectively accomplishes:
             ctrl+k (go to search bar),
             entering tokens as text,
-            alt+enter (open in new tab),
+            enter (open in current tab),
     """
     keyboard.press_and_release('ctrl+k')
     time.sleep(1)
@@ -282,7 +282,7 @@ def exeSearch(tokens):
     time.sleep(0.25)
 
     time.sleep(1)
-    keyboard.press_and_release('alt+enter')
+    keyboard.press_and_release('enter')
 
 def exeFind(tokens):
     """Finds text on the page."""
