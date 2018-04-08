@@ -9,7 +9,7 @@ import signal
 import sys
 import math
 from time import sleep
-from threading import Thread
+from threading import Thread, Lock
 from mode import *
 from word2number import w2n
 
@@ -52,9 +52,9 @@ class GUI:
 
 		#Set locations for different GUI positions
 		self.TOP = "+0"
-		self.BOTTOM = "+" + str(s_height - (90 + self.root.winfo_height()))
+		self.BOTTOM = "+" + str(s_height - (80 + self.root.winfo_height()))
 		self.LEFT = "+0"
-		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
+		self.RIGHT = "+" + str(s_width - (15 + self.root.winfo_width()))
 
 
 	def resizeWindow(self, tokens):
@@ -109,20 +109,32 @@ class GUI:
 
 	#Update the GUI to "Ready"
 	def ready(self):
+		with self.processingLock:
+			self.inProcessing = False
 		if self.recording == False:
 			self.statusText.set("Ready")
 		else:
 			self.statusText.set("Recording")
 
 	def processing(self):
-		self.statusText.set("Processing...")
+		with self.processingLock:
+			self.inProcessing = True
+		t = Thread(target=self.displayProcessing)
+		t.start()
+
+	def displayProcessing(self):
+		count = 0
+		while self.inProcessing == True:
+			self.statusText.set("Processing"+(count%4)*'.')
+			count += 1
+			sleep(0.5)
 
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
 		self.recentText[2].set(self.recentText[1].get())
 		self.recentText[1].set(self.recentText[0].get())
-		if len(cmd) > 15:
-			cmd = cmd[:15] + '...'
+		if len(cmd) > 18:
+			cmd = cmd[:18] + '...'
 		self.recentText[0].set(cmd)
 
 		#self.updateText()
@@ -272,10 +284,10 @@ class GUI:
 		#Setup the grid if this is the first time we are running this function
 		#Otherwise, we are using this to resize the window, so just change the label configs
 		if init:
-			self.modeFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=2, pady_bg=2)
+			self.modeFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=4, pady_bg=4)
 			self.modeText = StringVar()
 			self.modeLabel = Label(self.modeFrame, textvariable=self.modeText)
-			self.modeText.set("Mode")
+			self.modeText.set("Navigate")
 			self.modeLabel.grid(row=2, column=2)
 			self.modeFrame.grid(sticky=W+E)
 
@@ -285,10 +297,11 @@ class GUI:
 			self.recentLabels = [None, None, None]
 
 			for i in range(3):
-				self.recentLabels[i] = Label(self.recentWrapper, textvariable=self.recentText[i])
-				self.recentText[i].set("Recent cmd " + str(i))
+				self.recentLabels[i] = Label(self.recentWrapper, textvariable=self.recentText[i], anchor="w")
+				self.recentText[i].set("")
 				self.recentLabels[i].grid(row=i)
 
+			self.recentText[0].set("Recent Commands")
 			self.recentFrame.grid(row=1, sticky=W+E)
 			self.recentWrapper.grid(row=2, column=2)
 
@@ -296,7 +309,7 @@ class GUI:
 
 			self.statusText = StringVar()
 			self.statusLabel = Label(self.statusFrame, textvariable=self.statusText)
-			self.statusText.set("Processing...")
+			self.statusText.set("Status")
 			self.statusLabel.grid(row=2, column=2)
 			self.statusFrame.grid(row=2, sticky=W+E)
 
@@ -304,7 +317,7 @@ class GUI:
 
 		self.modeLabel.config(width=18, font=("Courier bold", int(max(148, size)/20)))
 		for i in range(3):
-			self.recentLabels[i].config(width=17, font=("Courier bold", int(max(148, size)/20)))
+			self.recentLabels[i].config(width=18, font=("Courier bold", int(max(148, size)/20)))
 		self.statusLabel.config(width=18, font=("Courier bold", int(max(148, size)/20)))
 
 
@@ -321,6 +334,8 @@ class GUI:
 		self.status = Status.INITIALIZING
 		self.recording = False
 		self.namingMacro = False
+		self.inProcessing = True
+		self.processingLock = Lock()
 
 		# #Setup window properties
 		self.root.attributes("-topmost", True)
