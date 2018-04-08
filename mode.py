@@ -22,3 +22,9 @@ class RecordMode(Enum):
     RECORDING  = 1
     NAMING     = 2
     CONFIRMING = 3
+
+#Color codings for different modes
+NAVIGATION = "#76FF00"		#Green
+INSERTION = "#FFD700"		#Yellow
+STANDBY = "#FF0000"			#Red
+CONFIGURATION = "#0071FF"	#Blue

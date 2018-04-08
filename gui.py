@@ -19,10 +19,10 @@ def statusStr(s):
 	return s.name.title()
 
 #Mode definitions
-class Mode(Enum):
-	COMMAND = 1
-	TEXT = 2
-	HELP = 3
+# class Mode(Enum):
+# 	COMMAND = 1
+# 	TEXT = 2
+# 	HELP = 3
 
 class Status(Enum):
 	READY = 1
@@ -31,13 +31,6 @@ class Status(Enum):
 	SETTINGS = 4
 	INITIALIZING = 5
 	HELP = 6
-
-
-#Color codings for different modes
-RECORDING = "#EC7063"	#Red
-RECOGNIZED = "#3972CE"	#Blue
-HELP = "#E5E7E9"		#Off-white
-READY = "#52BE80"		#Green
 
 class GUI:
 	#These positions were hard-coded for CAEN windows 10
@@ -114,7 +107,7 @@ class GUI:
 		if self.recording == False:
 			self.statusText.set("Ready")
 		else:
-			self.statusText.set("Recording")
+			self.statusText.set("Recording: Ready")
 
 	def processing(self):
 		with self.processingLock:
@@ -125,12 +118,15 @@ class GUI:
 	def displayProcessing(self):
 		count = 0
 		while self.inProcessing == True:
-			self.statusText.set("Processing"+(count%4)*'.')
-			count += 1
+			with self.processingLock:
+				self.statusText.set("Processing"+(count%4)*'.')
+				count += 1
 			sleep(0.5)
 
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
+		if self.recentText[0].get() == "Recent Commands":
+			self.recentText[0].set("")
 		self.recentText[2].set(self.recentText[1].get())
 		self.recentText[1].set(self.recentText[0].get())
 		if len(cmd) > 18:
@@ -144,13 +140,26 @@ class GUI:
 		self.mode = m
 		if self.namingMacro:
 			return
-		self.modeText.set(m.name.lower().capitalize())
+		name = m.name.capitalize()
+		self.modeText.set(name)
+		if name == "Navigate":
+			self.modeLabel.config(bg=NAVIGATION)
+		elif name == "Insert":
+			self.modeLabel.config(bg=INSERTION)
+		elif name == "Sleeping":
+			self.modeLabel.config(bg=STANDBY)
+		elif name == "Help":
+			self.modeLabel.config(bg=CONFIGURATION)
 
 
 	#Displays an error for a few seconds, then returns control to the user
 	def showError(self, error):
-		self.statusText.set(error)
-		sleep(3)
+		#Grab the processingLock to prevent the processing text to overwrite this
+		with self.processingLock:
+			self.statusText.set(error)
+			self.statusLabel.config(fg=STANDBY)
+			sleep(3)
+			self.statusLabel.config(fg="#000000")
 		# t = Thread(target=self.restoreText, args=[text])
 		# t.start()
 
@@ -287,7 +296,7 @@ class GUI:
 			self.modeFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=4, pady_bg=4)
 			self.modeText = StringVar()
 			self.modeLabel = Label(self.modeFrame, textvariable=self.modeText)
-			self.modeText.set("Navigate")
+			self.modeText.set("")
 			self.modeLabel.grid(row=2, column=2)
 			self.modeFrame.grid(sticky=W+E)
 
@@ -309,7 +318,7 @@ class GUI:
 
 			self.statusText = StringVar()
 			self.statusLabel = Label(self.statusFrame, textvariable=self.statusText)
-			self.statusText.set("Status")
+			self.statusText.set(self.status.name.capitalize())
 			self.statusLabel.grid(row=2, column=2)
 			self.statusFrame.grid(row=2, sticky=W+E)
 
@@ -330,18 +339,20 @@ class GUI:
 		self.root = Tk()
 		self.root.title("SpeechV")
 
-		self.mode = GlobalMode.NAVIGATE
-		self.status = Status.INITIALIZING
 		self.recording = False
 		self.namingMacro = False
 		self.inProcessing = True
 		self.processingLock = Lock()
+		self.status = Status.INITIALIZING
 
 		# #Setup window properties
 		self.root.attributes("-topmost", True)
 		config = settings.loadConfig()
 		s = config["SETTINGS"]["WINDOW_SIZE"]
 		self.setupWindow(True, s)
+
+		#This has to go after setupWindow so the labels are declared
+		self.setMode(GlobalMode.NAVIGATE)
 		self.root.update()
 		
 		# #Calculate screen size and move the window to the bottom right
