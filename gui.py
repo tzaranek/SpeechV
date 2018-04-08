@@ -55,29 +55,6 @@ class GUI:
 		self.BOTTOM = "+" + str(s_height - (90 + self.root.winfo_height()))
 		self.LEFT = "+0"
 		self.RIGHT = "+" + str(s_width - (self.root.winfo_width()))
-	
-	def resizeWindowHelper(self, size):
-		self.root.geometry(str(size)+'x'+str(size))
-		self.root.update()
-		self.modeLabel.config(width=15, font=("Courier bold", int(max(148, size)/20)), borderwidth=5, relief="raised")
-		self.recentLabel1.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="sunken")
-		self.recentLabel2.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="ridge")
-		self.recentLabel3.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="solid")
-		self.statusLabel.config(width=15, font=("Courier", int(max(148, size)/20)), borderwidth=5, relief="groove")
-		self.modeLabel.grid(row=0,column=1,pady=10, padx=10)
-		self.recentLabel1.grid(row=1,column=1,padx=0)
-		self.recentLabel2.grid(row=2,column=1)
-		self.recentLabel3.grid(row=3,column=1)
-		self.statusLabel.grid(row=5, column=1, pady=10)
-		self.back.grid(row=1, column=1)
-		self.root.grid_columnconfigure(0, weight=1)
-		self.root.grid_columnconfigure(2, weight=1)
-		#148 is the minimum width we can have
-		self.getPositions()
-		if self.right:
-			self.root.geometry(self.RIGHT + self.BOTTOM)
-		else:
-			self.root.geometry(self.RIGHT + self.BOTTOM)
 
 
 	def resizeWindow(self, tokens):
@@ -90,8 +67,16 @@ class GUI:
 				tokens = ' '.join(tokens)
 			size = w2n.word_to_num(tokens.lower())
 
-		self.resizeWindowHelper(size)
+		# self.resizeWindowHelper(size)
+		self.setupWindow(False, size)
+
+		self.getPositions()
+		if self.right:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
+		else:
+			self.root.geometry(self.RIGHT + self.BOTTOM)
 		
+		self.root.update()
 		config = settings.loadConfig()
 		config["SETTINGS"]["WINDOW_SIZE"] = size
 		settings.saveConfig(config)
@@ -134,11 +119,11 @@ class GUI:
 
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
-		self.recent[2].set(self.recent[1].get())
-		self.recent[1].set(self.recent[0].get())
+		self.recentText[2].set(self.recentText[1].get())
+		self.recentText[1].set(self.recentText[0].get())
 		if len(cmd) > 15:
 			cmd = cmd[:15] + '...'
-		self.recent[0].set(cmd)
+		self.recentText[0].set(cmd)
 
 		#self.updateText()
 
@@ -243,6 +228,87 @@ class GUI:
 	def start(self):
 		self.root.mainloop()
 
+	def borderFrame(self, parent, bg='#ff4095', border='#66cdaa', 
+		padx_bg=5, pady_bg=5, padx_b=0.2, pady_b=0.2):
+		"""When creating a subframe, center it with frame.grid(row=2, column=2)"""
+
+		canvas = Frame(parent, bg=bg)
+
+		# fill border sides
+		blank_frame1 = Frame(canvas, bg=border)
+		blank_frame2 = Frame(canvas, bg=border)
+		blank_frame3 = Frame(canvas, bg=border)
+		blank_frame4 = Frame(canvas, bg=border)
+		blank_frame1.grid(row=2, column=1, ipadx=padx_b, sticky=N+S)
+		blank_frame2.grid(row=2, column=3, ipadx=padx_b, sticky=N+S)
+		blank_frame3.grid(row=1, column=2, ipady=pady_b, sticky=W+E)
+		blank_frame4.grid(row=3, column=2, ipady=pady_b, sticky=W+E)
+
+
+		# fill background sides
+		blank_frame5 = Frame(canvas, bg=bg)
+		blank_frame6 = Frame(canvas, bg=bg)
+		blank_frame7 = Frame(canvas, bg=bg)
+		blank_frame8 = Frame(canvas, bg=bg)
+		blank_frame5.grid(row=2, column=0, padx=padx_bg)
+		blank_frame6.grid(row=2, column=4, padx=padx_bg)
+		blank_frame7.grid(row=0, column=2, pady=pady_bg)
+		blank_frame8.grid(row=4, column=2, pady=pady_bg)
+
+		# fill border corners
+		blank_frame9 = Frame(canvas, bg=border)
+		blank_frame10 = Frame(canvas, bg=border)
+		blank_frame11 = Frame(canvas, bg=border)
+		blank_frame12 = Frame(canvas, bg=border)
+		blank_frame9.grid(row=1, column=1, ipadx=padx_b/3, ipady=pady_b/3, sticky=S+E)
+		blank_frame10.grid(row=1, column=3, ipadx=padx_b/3, ipady=pady_b/3, sticky=S+W)
+		blank_frame11.grid(row=3, column=1, ipadx=padx_b/3, ipady=pady_b/3, sticky=N+E)
+		blank_frame12.grid(row=3, column=3, ipadx=padx_b/3, ipady=pady_b/3, sticky=N+W)
+
+		return canvas
+
+	def setupWindow(self, init=False, size=0):
+		# have self.borderFrame do all the work of maintaining a border and background
+		#Setup the grid if this is the first time we are running this function
+		#Otherwise, we are using this to resize the window, so just change the label configs
+		if init:
+			self.modeFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=2, pady_bg=2)
+			self.modeText = StringVar()
+			self.modeLabel = Label(self.modeFrame, textvariable=self.modeText)
+			self.modeText.set("Mode")
+			self.modeLabel.grid(row=2, column=2)
+			self.modeFrame.grid(sticky=W+E)
+
+			self.recentFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=4, pady_bg=4)
+			self.recentWrapper = Frame(self.recentFrame)
+			self.recentText = [StringVar(), StringVar(), StringVar()]
+			self.recentLabels = [None, None, None]
+
+			for i in range(3):
+				self.recentLabels[i] = Label(self.recentWrapper, textvariable=self.recentText[i])
+				self.recentText[i].set("Recent cmd " + str(i))
+				self.recentLabels[i].grid(row=i)
+
+			self.recentFrame.grid(row=1, sticky=W+E)
+			self.recentWrapper.grid(row=2, column=2)
+
+			self.statusFrame = self.borderFrame(self.root, bg="#4C4C4C", border='#C9C9C9', padx_bg=4, pady_bg=4)
+
+			self.statusText = StringVar()
+			self.statusLabel = Label(self.statusFrame, textvariable=self.statusText)
+			self.statusText.set("Processing...")
+			self.statusLabel.grid(row=2, column=2)
+			self.statusFrame.grid(row=2, sticky=W+E)
+
+
+
+		self.modeLabel.config(width=18, font=("Courier bold", int(max(148, size)/20)))
+		for i in range(3):
+			self.recentLabels[i].config(width=17, font=("Courier bold", int(max(148, size)/20)))
+		self.statusLabel.config(width=18, font=("Courier bold", int(max(148, size)/20)))
+
+
+
 	#Constructor for the GUI class
 	#Initializes the Tkinter GUI object, binds the mouse hover event
 	#and sets the object's properties
@@ -251,47 +317,22 @@ class GUI:
 		self.root = Tk()
 		self.root.title("SpeechV")
 
-		#Create member variables first to populate strings
-		self.recent = ["None", "None", "None"]
 		self.mode = GlobalMode.NAVIGATE
 		self.status = Status.INITIALIZING
 		self.recording = False
 		self.namingMacro = False
 
-		#Setup window properties
+		# #Setup window properties
 		self.root.attributes("-topmost", True)
-		self.root.configure(background='#4C4C4C')
-
-		#Set up the frame and label properties
-		self.back = Frame(master=self.root,bg='#4C4C4C')
-		self.back.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
-		self.back.pack(fill=BOTH, expand=0) #Expand the frame to fill the root window
-
 		config = settings.loadConfig()
 		s = config["SETTINGS"]["WINDOW_SIZE"]
-		self.root.geometry(str(s) + "x" + str(s))
+		self.setupWindow(True, s)
 		self.root.update()
-		self.modeText = StringVar()
-		self.recent = [StringVar(), StringVar(), StringVar()]
-		self.statusText = StringVar()
-		self.modeText.set("Configuration")
-		self.recent[0].set("test2")
-		self.recent[1].set("test3")
-		self.recent[2].set("test4")
-		self.statusText.set("test5")
 		
-		self.modeLabel = Label(self.back, textvariable=self.modeText)
-		self.recentLabel1 = Label(self.back, textvariable=self.recent[0], anchor='w')
-		self.recentLabel2 = Label(self.back, textvariable=self.recent[1], anchor='w')
-		self.recentLabel3 = Label(self.back, textvariable=self.recent[2], anchor='w')
-		self.statusLabel = Label(self.back, textvariable=self.statusText)
-
-		#Calculate screen size and move the window to the bottom right
+		# #Calculate screen size and move the window to the bottom right
 		self.getPositions()
 		self.root.geometry(self.RIGHT + self.BOTTOM)
 		self.right = True
-
-		self.resizeWindowHelper(s)
 
 
 if __name__ == "__main__":
