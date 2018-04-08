@@ -123,6 +123,14 @@ class GUI:
 				count += 1
 			sleep(0.5)
 
+	def fadeInCommand(self):
+		colorHex = 0x90
+		while colorHex != 0xf0:
+			self.recentLabels[0].config(bg="#" + hex(colorHex)[2:]*3)
+			colorHex += 0x1
+			sleep(0.01)
+
+
 	#Updates the last 3 used commands to display
 	def updateCommands(self, cmd):
 		if self.recentText[0].get() == "Recent Commands":
@@ -132,8 +140,9 @@ class GUI:
 		if len(cmd) > 18:
 			cmd = cmd[:18] + '...'
 		self.recentText[0].set(cmd)
+		t = Thread(target=self.fadeInCommand)
+		t.start()
 
-		#self.updateText()
 
 	#set the GUI to the given mode
 	def setMode(self, m):		
@@ -160,8 +169,6 @@ class GUI:
 			self.statusLabel.config(fg=STANDBY)
 			sleep(3)
 			self.statusLabel.config(fg="#000000")
-		# t = Thread(target=self.restoreText, args=[text])
-		# t.start()
 
 	#Display the help menu
 	def settingsMode(self, macros, type="DEFAULT"):
@@ -240,10 +247,6 @@ class GUI:
 
 		#Move window
 		self.root.geometry(loc)
-
-	#Returns the currently displayed text
-	def getText(self):
-		return self.text.get()
 
 	#Launch the GUI
 	def start(self):

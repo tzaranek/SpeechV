@@ -145,9 +145,11 @@ def voiceLoop():
                     commands.exeFocus(['CMD'], GlobalMode.NAVIGATE)
 
                 gui.updateCommands(raw_command)
+                
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())
+                gui.updateCommands("ERROR: " + raw_command)
                 gui.showError("Error parsing\nTry again.")
             
             gui.setMode(p.mode)

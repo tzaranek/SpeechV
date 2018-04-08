@@ -308,7 +308,7 @@ class Parser:
             else:
                 gui.showError("Unrecognized\nCommand")
                 log.warn("Command not found")
-
+                raise ValueError("Unrecognized Command")
 
     def exeMacro(commands):
         for cmd in commands:
