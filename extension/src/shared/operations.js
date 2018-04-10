@@ -16,6 +16,9 @@ export default {
   BOOKMARKS_GET: 'bookmarks.get',
   BOOKMARKS_SHOW: 'bookmarks.show',
 
+  // SpeechV Help
+  SPEECHV_HELP: 'speechv.help',
+
   // Scrolls
   SCROLL_VERTICALLY: 'scroll.vertically',
   SCROLL_HORIZONALLY: 'scroll.horizonally',

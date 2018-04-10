@@ -65,6 +65,9 @@ const exec = (operation, tab) => {
     let bookmark_page = "/src/background/bookmarks.html";
     return browser.tabs.create({ url: bookmark_page })
       .then(sleep(bookmarks.retrieveBookmarks));
+  case operations.SPEECHV_HELP:
+    let help_page = "/help_menus/help.html";
+    return browser.tabs.create({ url: help_page });
   case operations.COMMAND_SHOW:
     return sendConsoleShowCommand(tab, '');
   case operations.COMMAND_SHOW_OPEN:

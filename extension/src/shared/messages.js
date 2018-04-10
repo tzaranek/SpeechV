@@ -45,6 +45,7 @@ export default {
   BOOKMARKS_GET: 'bookmarks.get',
   BOOKMARKS_SHOW: 'bookmarks.show',
 
+  SPEECHV_HELP: 'speechv.help',
   SPEECHV_VIRTUAL_KEYSTROKE: 'speechv.virtual.keystroke',
 
   FIND_NEXT: 'find.next',
