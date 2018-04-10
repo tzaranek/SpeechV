@@ -27,61 +27,26 @@
     </div>
     <!-- Defines one task -->
     <h1 style="font-size: 24px" id="Recipes">Recipes</h1>
-    
-    <h2 style="font-size: 22px" id="WebBrowsing">Web Browsing</h2>
+    {% for domain in domains %}
+    <h2 style="font-size: 22px" id="WebBrowsing">{{domain.category}}</h2>
     <div class="recipe-set">
-        
-        <h1>Task: ExampleTask</h1>
-        
+        {% for recipe in domain['recipes'] %}
+        <h1>Task: {{ recipe.task }}</h1>
+        {% for step in recipe.steps %}
         <div class="recipe-step">
-            <div class="number">1.</div>
+            <div class="number">{{loop.index}}.</div>
             <div class="r-descript">
-                <code>command</code>
+                <code>{{ step.command }}</code>
                 <div class="r-text">
-                    description
+                    {{step.description}}
                 </div>
             </div>
-            
-            <img src="https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg" /> 
+            {% if 'reference' in step %}
+            <img src="{{step.reference}}" /> {% endif %}
         </div>
-        
-        <div class="recipe-step">
-            <div class="number">2.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    description
-                </div>
-            </div>
-            
-        </div>
-         
-        <h1>Task: ExampleTask2</h1>
-        
-        <div class="recipe-step">
-            <div class="number">1.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    description
-                </div>
-            </div>
-            
-        </div>
-        
-        <div class="recipe-step">
-            <div class="number">2.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    description
-                </div>
-            </div>
-            
-        </div>
-         
+        {% endfor %} {% endfor %}
     </div>
-    
+    {% endfor %}
 
     <h2 style="font-size: 22px" id="WebBrowsing">Web browsing</h2>
     <div class="recipe-set">

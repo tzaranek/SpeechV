@@ -1,0 +1,68 @@
+{
+    "domains": [
+        {
+            "category": "Web Browsing",
+            "recipes": [
+                {
+                    "task": "ExampleTask",
+                    "steps": [
+                        {
+                            "command": "command",
+                            "description": "description",
+                            "reference": "https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg"
+                        },
+                        {
+                            "command": "command",
+                            "description": "description"
+                        }
+                    ]
+                },
+                {
+                    "task": "ExampleTask2",
+                    "steps": [
+                        {
+                            "command": "command",
+                            "description": "description"
+                        },
+                        {
+                            "command": "command",
+                            "description": "description"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "Web Browsing",
+            "recipes": [
+                {
+                    "task": "ExampleTask",
+                    "steps": [
+                        {
+                            "command": "command",
+                            "description": "description",
+                            "reference": "https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg"
+                        },
+                        {
+                            "command": "command",
+                            "description": "description"
+                        }
+                    ]
+                },
+                {
+                    "task": "ExampleTask2",
+                    "steps": [
+                        {
+                            "command": "command",
+                            "description": "description"
+                        },
+                        {
+                            "command": "command",
+                            "description": "description"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
