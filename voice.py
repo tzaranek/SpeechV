@@ -152,6 +152,8 @@ def voiceLoop():
                 gui.updateCommands("ERROR: " + raw_command)
                 gui.showError("Error parsing\nTry again.")
             
+            if p.mode == GlobalMode.FOLLOW:
+                continue
             gui.setMode(p.mode)
 
 if __name__ == "__main__":
