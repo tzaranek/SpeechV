@@ -370,6 +370,7 @@ wordCmds = {
         'PAGE DOWN': 'ctrl+page down',
         'LEFT'  : 'ctrl+left',
         'RIGHT' : 'ctrl+right',
+        'SPACE': 'space',
         'PERIOD': '.',
         'COMMA': ',',
         'EXCLAMATION': 'shift+!',
@@ -393,21 +394,25 @@ wordCmds = {
         'REMOVE INDENT': 'shift+tab',
         'NEW LINE': 'enter',
         'NEWLINE': 'enter',
-    },
-
-    "HIGHLIGHT" : {
-        'DOWN': 'ctrl+shift+down',
-        'UP': 'ctrl+shift+up',
-        'RIGHT': 'ctrl+shift+right',
-        'LEFT': 'ctrl+shift+left',
+        'CUT': 'ctrl+x',
+        'COPY': 'ctrl+c',
+        'PASTE': 'ctrl+v',
         'BOLD': 'ctrl+b',
         'ITALICS': 'ctrl+i',
         'UNDERLINE': 'ctrl+u',
         'DELETE': 'backspace',
-        'ALL': 'ctrl+a',
         'INCREASE SIZE': 'ctrl+]',
         'DECREASE SIZE': 'ctrl+[',
         'CAPS': 'shift+F3', # rotates between 'this', 'This' and 'THIS'
+        'UNHIGHLIGHT': 'right',
+    },
+
+    "HIGHLIGHT" : {
+        'DOWN': 'shift+down',
+        'UP': 'shift+up',
+        'RIGHT': 'ctrl+shift+right',
+        'LEFT': 'ctrl+shift+left',
+        'ALL': 'ctrl+a',
     }
 }
 
@@ -457,6 +462,11 @@ class WordForwarder:
             for i in range(num):
                 keyboard.press_and_release(wordCmds[self.mode.name][tokens[0]])
                 time.sleep(.1)
+
+        elif self.mode.name=="HIGHLIGHT" and tokenStr in wordCmds["NAVIGATE"]:
+            keyboard.press_and_release(wordCmds["NAVIGATE"][tokenStr])
+            self.mode = WordMode.NAVIGATE
+            return ([], globalMode)
         
         log.debug("Done!")
 
