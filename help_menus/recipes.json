@@ -177,6 +177,38 @@
                             "description": "Use follow again to click on the save button and complete this task. Note that saving without specifying a new name is far simpler: \"follow '1'\""
                         }
                     ]
+                },
+                {
+                    "task": "Edit a document",
+                    "steps": [
+                        {
+                            "command": "launch word"
+                        },
+                        {
+                            "command": "follow 'Y' '1'",
+                            "description": "Open the document you wish to edit. In this recipe, we open the most recently opened document"
+                        },
+                        {
+                            "command": "insert; Title to edit; navigate",
+                            "description": "Enter some text to manipulate for this example. Semicolons separate commands here"
+                        },
+                        {
+                            "command": "highlight",
+                            "description": "This tells SpeechV to interpret following 'left', 'right', 'up', and 'all' commands as verbs intended to highlight portions of the document. "
+                        },
+                        {
+                            "command": "left; left; left",
+                            "description": "Highlight the title words. Left is said once for each word."
+                        },
+                        {
+                            "commmand": "bold",
+                            "description": "Bold the highlighted text. 'Italics', 'Underline', and 'Delete' are other useful verbs"
+                        },
+                        {
+                            "command": "unhighlight",
+                            "description": "Deselects any highlighted text and places the cursor to the right of the previously highlighted text"
+                        }
+                    ]
                 }
             ]
         }
