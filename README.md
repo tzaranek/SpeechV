@@ -166,109 +166,11 @@ Every follow must end with a cancel! This is a known limitation that we are curr
 
 ## Full list of commands in SpeechV
 
-Instructions on how to use SpeechV can be accessed when you are using the application via the **help** command.
-
-### Windows actions
-
-Besides the functionality afforded by the keyboard shortcuts, actions such as resizing and moving windows can be executed using SpeechV.
-
-**Resize left/right**: Move current app into the left/right half of the screen      
-**Resize up/down**: Move current app into top/bottom half of the screen    
-**Resize full**: Make current app fullscreen    
-**Move**: Moves the SpeechV GUI to the opposite corner  
-**Launch `<application>`**: Attempts to launch the given application. A limited number of applications are supported because of limited Windows support. "Firefox" and "Word" are officially supported.     
-**Focus `<application>`**: Focuses on the given open application    
-**Terminate**: Closes the current application without saving or confirming  
-**Copy**: Copy the highlighted data     
-**Paste**: Paste the data in the clipboard      
-
-
-### Browser actions
-
-SpeechV supports navigating 
-web pages by finding and labelling all links/input fields on the page. You can then select an input field or follow a link using the label. Commands for viewing web pages, opening tabs and other browser functions are supported.
-
-#### Navigating web pages
-
-**Follow**: Label links and input fields    
-    - **<label>** Open link in current tab, enter text into input field, or click button.       
-**Open**: Label links and input fields   
-    - **<label>** Open link in new tab. Invalid entry if input field is selected.
-
-**Back**: Go back in history   
-**Forward**: Go forward in history
-
-#### Viewing pages
-**Up/down**: Scroll vertically   
-**Left/right**: Scroll horizontally   
-**Control up/down**: Scroll vertically by half of a screen   
-**Control upper/downer**: Scroll pages by a screen   
-**Top/bottom**: Scroll to top/bottom of page   
-**Zero/dollar**: Scroll a page to leftmost/rightmost   
-**Zoom in/out**: Zoom in/out   
-**Zoom default**: Set default zoom level   
-
-#### Browser commands
-**Delete**: Close current tab   
-**Undo**: Reopen closed tab   
-**Previous/next**: Select previous/next tab   
-**Refresh**: Reload current tab   
-**Duplicate**: Duplicate current tab   
-**Search <query>**: Executes a google search for the given query   
-**Find**: Search for text on a page   
-**Address**: Select address box   
-**New tab**: Open a new tab   
-**New window**: Open a new window   
-**Print**: Print current page   
-**Save**: Save current page   
-
-
-### Microsoft Word actions
-Commands for Microsoft Word are broken up into three categories: Navigate, Highlight, and Insert. To enter each mode, simply say its name, allowing access to that categories' command set until another mode is switched to.
-### Navigate: Allows navigation around the document 
-**Up <number>**: Moves the cursor up one line, or a number of lines if followed by an optional number argument  
-**Down <number>**: Moves the cursor down one line, or a number of lines if followed by an optional number argument  
-**Left <number>**: Moves the cursor left one word, or a number of words if followed by an optional number argument  
-**Right <number>**: Moves the cursor right one word, or a number of words if followed by an optional number argument     
-**Paragraph up**: Moves the cursor up one paragraph     
-**Paragraph down**: Moves the cursor down one paragraph     
-**Page up**: Moves the cursor up one page       
-**Page down**: Moves the cursor down one page       
-**Period**: Enters a period at the cursor's position        
-    - **<label>** Replacing period with any of the following will enter the corresponding symbol: comma, exclamation, question, slash, colon, semicolon, apostrophe, quote, open parenthesis, close parenthesis, ampersand, dollar, star   
-**Follow**: Label buttons to navigate the word GUI      
-    
-**Left/Right/Center align**: Align the text at your cursor      
-**Undo**: Undoes the previous text entry        
-**Re do**: Redoes an undone text entry      
-**Indent**: Indents at the cursor position      
-**Remove indent**: Removes an indent at the cursor position          
-**New line**: Makes a new line at the cursor position 
-
-
-### Highlight: Allows highlighting of text while navigating
-**Down <number>**: Moves the cursor and highlights down one line, or a number of lines if followed by an optional number argument   
-**Up <number>**: Moves the cursor up and highlights one line, or a number of lines if followed by an optional number argument   
-**Right <number>**: Moves the cursor right and highlights one word, or a number of words if followed by an optional number argument     
-**Left <number>**: Moves the cursor left and highlights one word, or a number of words if followed by an optional number argument  
-**Bold**: Bolds the highlighted text    
-**Italics**: Italicizes the highlighted text    
-**Underline**: Underlines the highlighted text  
-**Delete**: Deletes the highlighted text    
-**All**: Highlights the entire document     
-**Increase size**: Increases the size of the highlighted text   
-**Decrease size**: Decreases the size of the highlighted text   
-**Caps**: Cycles the highlighted text between UPPER CASE, lower case, and Title Case    
+Instructions on how to use SpeechV can be accessed when you are using the application via the **help** command.   
 
 ### Insert: Allows insertion of voice commands to text within the document
 Use your voice to enter in text. Ending a voice sample with "period" will end your sentence with a period and begin to format your next sentence.
 
-
-### Creating macros and aliases
-**Record start**: Begin recording a macro   
-    - **<label>** Between these two commands, any commands issued will be recorded  
-**Record end**: Finish recording a macro    
-    - **<label>** After ending a recording, a prompt to name the macro and a confirmation prompt will appear to complete the process.   
 
 ### Adjusting microphone settings
 If speech recognition is not performing well, you are likely experiencing one of two problems:   
