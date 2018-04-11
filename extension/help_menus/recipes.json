@@ -1,0 +1,265 @@
+{
+    "domains": [
+        {
+            "category": "Web Browsing Recipes",
+            "recipes": [
+                {
+                    "task": "Google a term and read up on it",
+                    "steps": [
+                        {
+                            "command": "focus firefox",
+                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous"
+                        },
+                        {
+                            "command": "search patent",
+                            "description": "Googles 'patent' from the current tab. 'patent' could be replaced with anything"
+                        },
+                        {
+                            "command": "follow 'b'",
+                            "description": "This command pops up a unique letter combination in front of all clickable links. Dictating those letters out loud will click on the associated link. In this case, 'b' should be said to click on the wikipedia link, but the correct letter may vary search to search",
+                            "reference": "follow-patent.png"
+                        },
+                        {
+                            "command": "down",
+                            "description": "Scrolls down. Similarly, 'up' scrolls up"
+                        },
+                        {
+                            "command": "find modern",
+                            "description": "Finds and highlights 'modern' on the current web page. Use 'find next' and 'find previous' to explore other occurrences"
+                        }
+                    ]
+                },
+                {
+                    "task": "Create and use a bookmark",
+                    "steps": [
+                        {
+                            "command": "focus firefox",
+                            "description": "Don't forget to place firefox in the foreground"
+                        },
+                        {
+                            "command": "search patent",
+                            "description": "Find a page to bookmark"
+                        },
+                        {
+                            "command": "save bookmark"
+                        },
+                        {
+                            "command": "show bookmarks",
+                            "description": "Display ALL bookmarks"
+                        },
+                        {
+                            "command": "follow 'a'",
+                            "description": "Choose a bookmark to open just as you would with a google search using 'follow'",
+                            "reference": "follow-bookmark.png"
+                        }
+                    ]
+                },
+                {
+                    "task": "Compare two web pages",
+                    "steps": [
+                        {
+                            "command": "focus firefox"
+                        },
+                        {
+                            "command": "search larceny"
+                        },
+                        {
+                            "command": "open 'a' 'e'",
+                            "description": "This is like the 'follow' command where unique letters pop up next to each link. Here, though, the link is opened in a new tab"
+                        },
+                        {
+                            "command": "search burglary"
+                        },
+                        {
+                            "command": "tab left",
+                            "description": "Switch one tab to the left. 'tab right' works similarly"
+                        },
+                        {
+                            "command": "back",
+                            "description": "Go back in page history. Similarly, 'forward' would return to the wikipedia page if used after this command"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "Word Processing Recipes",
+            "recipes": [
+                {
+                    "task": "Write in a Word document",
+                    "steps": [
+                        {
+                            "command": "launch word",
+                            "description": "Launch word if it's not already open. Otherwise, use 'focus' instead"
+                        },
+                        {
+                            "command": "follow 'L'",
+                            "description": "'follow' enumerates all clickable buttons with letters, just like 'follow' does with Firefox. In this case, 'L' will open a new document",
+                            "reference": "open-word.png"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that the following text should be written into the document and not interpreted as voice commands. SpeechV will continue to interpret all voice in this way until we say 'navigate' again"
+                        },
+                        {
+                            "command": "Title",
+                            "description": "Say what you want to be the title"
+                        },
+                        {
+                            "command": "Enter",
+                            "description": "If said alone, 'enter' will move the cursor onto the next line"
+                        },
+                        {
+                            "command": "This is an example period",
+                            "description": "Saying 'period' at the end of a chunk of speech will end the text inserted with a '.'"
+                        },
+                        {
+                            "command": "period",
+                            "description": "Like 'enter', saying 'period' alone will input a '.'"
+                        },
+                        {
+                            "command": "navigate",
+                            "description": "Tell SpeechV that any speech should be interpreted as a SpeechV command, effectively taking us out of 'Insertion mode'"
+                        },
+                        {
+                            "command": "bold",
+                            "description": "This will make it so any text entered will be bolded. Use 'bold' again to unbold any new text to be added. Note that 'bold' can only be used from 'Navigation mode'"
+                        },
+                        {
+                            "command": "insert"
+                        },
+                        {
+                            "command": "done",
+                            "description": "type 'done' into the doc to show how bold works"
+                        }
+                    ]
+                },
+                {
+                    "task": "Save a document with a new name",
+                    "steps": [
+                        {
+                            "command": "launch word",
+                            "description": "Launch word if it's not already open. Otherwise, use 'focus' instead"
+                        },
+                        {
+                            "command": "follow 'L'",
+                            "description": "'follow' enumerates all clickable buttons with letters, just like 'follow' does with Firefox. In this case, 'L' will open a new document"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that the following text should be written into the document and not interpreted as voice commands. SpeechV will continue to interpret all voice in this way until we say 'navigate' again"
+                        },
+                        {
+                            "command": "Example text",
+                            "description": "Insert some text into the doc so that we can demonstrate saving"
+                        },
+                        {
+                            "command": "navigate",
+                            "description": "Tell SpeechV that any speech should be interpreted as a SpeechV command, effectively taking us out of 'Insertion mode'"
+                        },
+                        {
+                            "command": "follow 'F' 'A' 'Y' '3'",
+                            "description": "Saving a document with a new name can be a bit clunky, but the general idea is to repeatedly follow clickable objects with 'follow'. The string of characters will place the cursor into a spot where the file may be named"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that we want to enter text into word, so that we can name the file"
+                        },
+                        {
+                            "command": "filename",
+                            "description": "Provide a filename for the document we're saving"
+                        },
+                        {
+                            "command": "navigate"
+                        },
+                        {
+                            "command": "follow 'A' 'Y' '5'",
+                            "description": "Use follow again to click on the save button and complete this task. Note that saving without specifying a new name is far simpler: \"follow '1'\""
+                        }
+                    ]
+                },
+                {
+                    "task": "Edit a document",
+                    "steps": [
+                        {
+                            "command": "launch word"
+                        },
+                        {
+                            "command": "follow 'Y' '1'",
+                            "description": "Open the document you wish to edit. In this recipe, we open the most recently opened document"
+                        },
+                        {
+                            "command": "insert; Title to edit; navigate",
+                            "description": "Enter some text to manipulate for this example. Semicolons separate commands here"
+                        },
+                        {
+                            "command": "highlight",
+                            "description": "This tells SpeechV to interpret following 'left', 'right', 'up', and 'all' commands as verbs intended to highlight portions of the document. "
+                        },
+                        {
+                            "command": "left; left; left",
+                            "description": "Highlight the title words. Left is said once for each word."
+                        },
+                        {
+                            "command": "bold",
+                            "description": "Bold the highlighted text. 'Italics', 'Underline', and 'Delete' are other useful verbs"
+                        },
+                        {
+                            "command": "unhighlight",
+                            "description": "Deselects any highlighted text and places the cursor to the right of the previously highlighted text"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "App management Recipes",
+            "recipes": [
+                {
+                    "task": "Work with Word and Firefox side by side",
+                    "steps": [
+                        {
+                            "command": "focus firefox",
+                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous"
+                        },
+                        {
+                            "command": "resize left",
+                            "description": "Orient firefox such that it takes up the left half of the screen"
+                        },
+                        {
+                            "command": "launch word",
+                            "description": "Opens Word if it's not already started. Otherwise, this will make Word the frontmost window"
+                        },
+                        {
+                            "command": "resize right",
+                            "description": "Like 'resize left', except it Word will take the right half of the screen"
+                        },
+                        {
+                            "command": "switch",
+                            "description": "Alt-tab once to switch to the most recently used application. There isn't a generalized alt-tab because we believe that 'focus' is far more attractive in the general case of switching between applications"
+                        }
+                    ]
+                },
+                {
+                    "task": "Hide applications",
+                    "steps": [
+                        {
+                            "command": "focus firefox"
+                        },
+                        {
+                            "command": "minimize",
+                            "description": "Hide but don't close the top application (in this case firefox)"
+                        },
+                        {
+                            "command": "launch word"
+                        },
+                        {
+                            "command": "terminate",
+                            "description": "Close Word WITHOUT saving changes. You MUST save changes before using this command. 'terminate' will not work for firefox because of (currently unsolvable) technical issues"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

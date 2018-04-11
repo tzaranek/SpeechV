@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>SpeechV Help</title>
+</head>
+
+<body id="Top">
+    <h1 style="font-size: 2em">SpeechV Help</h1>
+    <p>This is a complete list of commands in SpeechV. You can say "up" or "down" to scroll, or use the links below. To use
+        the links, say "follow" to assign a label to each link, then say the corresponding label. Say "top" to return to
+        the top of the page.</p>
+    <!-- Links for jumping around the page -->
+    <div class="contents">
+        <a href="#Recipes">Recipes</a>
+        <div class="subcontents">
+            <a href="#WebBrowsing">Web browsing</a>
+            <a href="#WordProcessing">Word Processing</a>
+        </div>
+        <a href="#CommandList">Full list of commands</a>
+        <div class="subcontents">
+            <a href="#windows">Windows commands</a>
+            <a href="#firefox">Firefox commands</a>
+        </div>
+    </div>
+    {% for domain in domains %}
+    <h2 style="font-size: 22px">{{domain.category}}</h2>
+    <div class="recipe-set">
+        {% for recipe in domain['recipes'] %}
+        <h1>Task: {{ recipe.task }}</h1>
+        {% for step in recipe.steps %}
+        <div class="recipe-step">
+            <div class="number">{{loop.index}}.</div>
+            <div class="r-descript">
+                <code>{{ step.command }}</code>
+                <div class="r-text">
+                    {{step.description}}
+                </div>
+            </div>
+            {% if 'reference' in step %}
+            <img src="{{step.reference}}" /> {% endif %}
+        </div>
+        <br />
+        <br /> {% endfor %} {% endfor %}
+    </div>
+    {% endfor %}
+
+    <h1 style="font-size: 24px" id="CommandList">Full list of commands</h1>
+    <div class="subpage">
+        <h1 id="windows">Windows</h1>
+        <p>These commands can be used in any application in Navigate mode.</p>
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Description</th>
+            <tr>
+                <td class="command">Focus &lt;application&gt;</td>
+                <td class="desc">Switch focus to the application<br>Note: The application must be open</td>
+            </tr>
+            <tr>
+                <td class="command">Launch &lt;application&gt;</td>
+                <td class="desc">Launch the application<br>
+                    Note: "Firefox" and "Word" are officially supported</td>
+            </tr>
+            <tr>
+                <td class="command">Terminate</td>
+                <td class="desc">Close the current application without saving or confirming</td>
+            </tr>
+            <tr>
+                <td class="command">Move</td>
+                <td class="desc">Move the SpeechV window to the opposite corner</td>
+            </tr>
+            <tr>
+                <td class="command">Resize left/right</td>
+                <td class="desc">Move the current application into the left/right half of the screen</td>
+            </tr>
+            <tr>
+                <td class="command">Resize up/down</td>
+                <td class="desc">Move the current application into the top/bottom half of the screen</td>
+            </tr>
+            <tr>
+                <td class="command">Resize full</td>
+                <td class="desc">Make the current application fullscreen</td>
+            </tr>
+            <tr>
+                <td class="command">Settings</td>
+                <td class="desc">Configure SpeechV</td>
+            </tr>
+            <tr>
+                <td class="command">Record start</td>
+                <td class="desc">Begin recording a macro</td>
+            </tr>
+            <tr>
+                <td class="command">Record end</td>
+                <td class="desc">Finish recording a macro<br>After ending a recording, a prompt to name the macro and a confirmation prompt will appear to complete the process</td>
+            </tr>
+        </table>
+        <br>
+        <a href="#Top">Return to top</a>
+    </div>
+    <div class="subpage">
+        <h1 id="firefox">Firefox</h1>
+        <p>These commands can be used in Firefox when you are in Navigate mode.</p>
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Description</th>
+            <tr>
+                <td class="command">Up/Down</td>
+                <td class="desc">Scroll vertically</td>
+            </tr>
+            <tr>
+                <td class="command">Page up/down</td>
+                <td class="desc">Scroll vertically by one page</td>
+            </tr>
+            <tr>
+                <td class="command">Left/right</td>
+                <td class="desc">Scroll horizontally</td>
+            </tr>
+            <tr>
+                <td class="command">Top/bottom</td>
+                <td class="desc">Scroll to top/bottom of the page</td>
+            </tr>
+            <tr>
+                <td class="command">Leftmost/rightmost</td>
+                <td class="desc">Scroll to the extreme left/right of the screen</td>
+            </tr>
+            <tr>
+                <td class="command">Search &lt;query&gt;</td>
+                <td class="desc">Execute a Google search</td>
+            </tr>
+            <tr>
+                <td class="command">Follow</td>
+                <td class="desc">This is a 2-part command to follow links in the current tab/click on buttons/select input fields:<br>1. "Follow" displays labels corresponding to links and buttons/input fields<br>2. Say the label corresponding to the desired field to select it</td>
+            </tr>
+            <tr>
+                <td class="command">Open</td>
+                <td class="desc">This is a 2-part command to open links in a new tab:<br>1. "Open" displays labels corresponding to links<br>2. Say the label corresponding to the desired link to open it</td>
+            </tr>
+            <tr>
+                <td class="command">Back/forward</td>
+                <td class="desc">Go back/forward in history</td>
+            </tr>
+            <tr>
+                <td class="command">New tab</td>
+                <td class="desc">Open a new tab</td>
+            </tr>
+            <tr>
+                <td class="command">Close tab</td>
+                <td class="desc">Close tab</td>
+            </tr>
+            <tr>
+                <td class="command">Reopen tab</td>
+                <td class="desc">Reopen recently closed tab</td>
+            </tr>
+            <tr>
+                <td class="command">Tab left/right</td>
+                <td class="desc">Select left/right tab</td>
+            </tr>
+            
+            <tr>
+                <td class="command">Zoom in/out</td>
+                <td class="desc">Zoom in/out</td>
+            </tr>
+            <tr>
+                <td class="command">Zoom default</td>
+                <td class="desc">Set default zoom</td>
+            </tr>
+            <tr>
+                <td class="command">Refresh</td>
+                <td class="desc">Reload current tab</td>
+            </tr>
+            <tr>
+                <td class="command">Find &lt;phrase&gt;</td>
+                <td class="desc">Search page for phrase</td>
+            </tr>
+            <tr>
+                <td class="command">Find next</td>
+                <td class="desc">Jump to next 'find' result<br>Note: this command is only valid after executing "Find &lt;phrase&gt;"</td>
+            </tr>
+            <tr>
+                <td class="command">Find previous</td>
+                <td class="desc">Jump to previous 'find' result<br>Note: this command is only valid after executing "Find &lt;phrase&gt;"</td>
+            </tr>
+            <tr>
+                <td class="command">Save bookmark</td>
+                <td class="desc">Save current page to bookmarks</td>
+            </tr>
+            <tr>
+                <td class="command">Show bookmarks</td>
+                <td class="desc">Show all bookmarks</td>
+            </tr>
+        </table>
+        <br>
+        <a href="#Top">Return to top</a>
+    </div>
+    <div class="subpage">
+        <h1 id="word">Microsoft Word</h1>
+        <p>These commands can be used in Microsoft Word when you are in Navigate mode.</p>
+        <table>
+            <tr>
+                <th>Command</th>
+                <th>Description</th>
+            <tr>
+                <td class="command">Up/down [X]</td>
+                <td class="desc">Move the cursor up/down X lines<br>If X is not provided, default to 1</td>
+            </tr>
+            <tr>
+                <td class="command">Left/right [X]</td>
+                <td class="desc">Move the cursor right/left X words<br>If X is not provided, default to 1</td>
+            </tr>
+            <tr>
+                <td class="command">Paragraph up/down</td>
+                <td class="desc">Move the cursor to the beginning/end of paragraph, or to the paragraph above/below</td>
+            </tr>
+            <tr>
+                <td class="command">Page up/down</td>
+                <td class="desc">Move the cursor to the beginning/end of the page, or to the page above/below</td>
+            </tr>
+            <tr>
+                <td class="command">Follow</td>
+                <td class="desc">This is a multi-part command that allows you to access the toolbar:<br>1. "Follow" labels buttons in the toolbar<br>2. Say the label corresponding to the desired action<br>"Cancel" to exit the toolbar without selecting anything<br>"Back" to go back one layer</td>
+            </tr>
+            <tr>
+                <td class="command">Highlight</td>
+                <td class="desc">This is a multi-part command to highlight regions of text:<br>1. "Highlight" begins highlighting text.<br>2. "Up/down/left/right" [X] extends the highlighted region by X lines/words. If X is not provided, default is 1.<br>Alternatively, "all" selects all the text.</td>
+            </tr>
+            <tr>
+                <td class="command">Unhighlight</td>
+                <td class="desc">Unselect highlighted text</td>
+            </tr>
+            <tr>
+                <td class="command">Cut</td>
+                <td class="desc">Remove highlighted text from original position and copy to clipboard</td>
+            </tr>
+            <tr>
+                <td class="command">Copy</td>
+                <td class="desc">Duplicate highlighted text</td>
+            </tr>
+            <tr>
+                <td class="command">Paste</td>
+                <td class="desc">Paste cut/copied text</td>
+            </tr>
+            <tr>
+                <td class="command">Undo/redo</td>
+                <td class="desc">Undo/redo action</td>
+            </tr>
+            <tr>
+                <td class="command">Bold/italics/underline</td>
+                <td class="desc">Toggle on/off formatting</td>
+            </tr>
+            <tr>
+                <td class="command">Left/center/right align</td>
+                <td class="desc">Adjust alignment of text</td>
+            </tr>
+            <tr>
+                <td class="command">Indent</td>
+                <td class="desc">Insert indentation at cursor position</td>
+            </tr>
+            <tr>
+                <td class="command">Remove indent</td>
+                <td class="desc">Remove indentation at cursor position</td>
+            </tr>
+            <tr>
+                <td class="command">Increase/decrease size</td>
+                <td class="desc">Increase/decrease font size</td>
+            </tr>
+            <tr>
+                <td class="command">Caps</td>
+                <td class="desc">Cycles the highlighted text between UPPER CASE, lower case, and Title Case</td>
+            </tr>
+            <tr>
+                <td class="command">Delete</td>
+                <td class="desc">Delete character to the left of cursor</td>
+            </tr>
+            <tr>
+                <td class="command">&lt;punctuation&gt;</td>
+                <td class="desc">Insert punctuation at cursor position<br>Supported punctuation types: space, new line, period, comma, exclamation, question, slash, colon, semicolon, apostrophe, quote, open parenthesis, close parenthesis, ampersand, dollar, star</td>
+            </tr>
+        </table>
+        <br>
+        <a href="#Top">Return to top</a>
+    </div>
+    <script src="../../build/content.js"></script>
+  </body>
+</html>
