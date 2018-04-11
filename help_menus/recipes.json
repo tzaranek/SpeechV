@@ -29,47 +29,52 @@
                     ]
                 },
                 {
-                    "task": "ExampleTask2",
+                    "task": "Create and use a bookmark",
                     "steps": [
                         {
-                            "command": "command",
-                            "description": "description"
+                            "command": "focus firefox",
+                            "description": "Don't forget to place firefox in the foreground"
                         },
                         {
-                            "command": "command",
-                            "description": "description"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "category": "Web Browsing",
-            "recipes": [
-                {
-                    "task": "ExampleTask",
-                    "steps": [
-                        {
-                            "command": "command",
-                            "description": "description",
-                            "reference": "https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg"
+                            "command": "search patent",
+                            "description": "Find a page to bookmark"
                         },
                         {
-                            "command": "command",
-                            "description": "description"
+                            "command": "save bookmark"
+                        },
+                        {
+                            "command": "show bookmarks",
+                            "description": "Display ALL bookmarks"
+                        },
+                        {
+                            "command": "follow 'a'",
+                            "description": "Choose a bookmark to open just as you would with a google search using 'follow'"
                         }
                     ]
                 },
                 {
-                    "task": "ExampleTask2",
+                    "task": "Compare two web pages",
                     "steps": [
                         {
-                            "command": "command",
-                            "description": "description"
+                            "command": "focus firefox"
                         },
                         {
-                            "command": "command",
-                            "description": "description"
+                            "command": "search larceny"
+                        },
+                        {
+                            "command": "open 'a' 'e'",
+                            "description": "This is like the 'follow' command where unique letters pop up next to each link. Here, though, the link is opened in a new tab"
+                        },
+                        {
+                            "command": "search burglary"
+                        },
+                        {
+                            "command": "tab left",
+                            "description": "Switch one tab to the left. 'tab right' works similarly"
+                        },
+                        {
+                            "command": "back",
+                            "description": "Go back in page history. Similarly, 'forward' would return to the wikipedia page if used after this command"
                         }
                     ]
                 }
