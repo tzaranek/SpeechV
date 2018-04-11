@@ -118,6 +118,7 @@ export default class Follow {
   }
 
   removeHints() {
+    console.log("REMOVING HINTS");
     Object.keys(this.hints).forEach((key) => {
       this.hints[key].remove();
     });

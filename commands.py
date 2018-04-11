@@ -241,7 +241,8 @@ def exeCancel(tokens, mode):
     """Remove all follow pop-ups and leave follow mode"""
 
     # NOTE: this could be extended to exit insert mode, etc.
-    pyautogui.hotkey('escape')
+    send_message(encode_message([KeyboardMessage('Enter')]))
+    # pyautogui.hotkey('escape')
     mode = GlobalMode.NAVIGATE
     return ([], mode)
 

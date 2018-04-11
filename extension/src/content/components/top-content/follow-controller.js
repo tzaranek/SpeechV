@@ -72,7 +72,8 @@ export default class FollowController {
   keyPress(key) {
     switch (key) {
     case 'Enter':
-      this.activate();
+      console.log("RECEIVED ENTER");
+      // this.activate();
       this.store.dispatch(followControllerActions.disable());
       break;
     case 'Esc':
