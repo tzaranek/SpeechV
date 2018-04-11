@@ -86,16 +86,64 @@
             "category": "Word Processing",
             "recipes": [
                 {
-                    "task": "Save a document with a new name",
+                    "task": "Write in a Word document",
                     "steps": [
                         {
                             "command": "launch word",
-                            "description": "Launch word if it's not already open. Otherwise use 'focus' instead"
+                            "description": "Launch word if it's not already open. Otherwise, use 'focus' instead"
                         },
                         {
                             "command": "follow 'L'",
                             "description": "'follow' enumerates all clickable buttons with letters, just like 'follow' does with Firefox. In this case, 'L' will open a new document",
                             "reference": "open-word.png"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that the following text should be written into the document and not interpreted as voice commands. SpeechV will continue to interpret all voice in this way until we say 'navigate' again"
+                        },
+                        {
+                            "command": "Title",
+                            "description": "Say what you want to be the title"
+                        },
+                        {
+                            "command": "Enter",
+                            "description": "If said alone, 'enter' will move the cursor onto the next line"
+                        },
+                        {
+                            "command": "This is an example period",
+                            "description": "Saying 'period' at the end of a chunk of speech will end the text inserted with a '.'"
+                        },
+                        {
+                            "command": "period",
+                            "description": "Like 'enter', saying 'period' alone will input a '.'"
+                        },
+                        {
+                            "command": "navigate",
+                            "description": "Tell SpeechV that any speech should be interpreted as a SpeechV command, effectively taking us out of 'Insertion mode'"
+                        },
+                        {
+                            "command": "bold",
+                            "description": "This will make it so any text entered will be bolded. Use 'bold' again to unbold any new text to be added. Note that 'bold' can only be used from 'Navigation mode'"
+                        },
+                        {
+                            "command": "insert"
+                        },
+                        {
+                            "command": "done",
+                            "description": "type 'done' into the doc to show how bold works"
+                        }
+                    ]
+                },
+                {
+                    "task": "Save a document with a new name",
+                    "steps": [
+                        {
+                            "command": "launch word",
+                            "description": "Launch word if it's not already open. Otherwise, use 'focus' instead"
+                        },
+                        {
+                            "command": "follow 'L'",
+                            "description": "'follow' enumerates all clickable buttons with letters, just like 'follow' does with Firefox. In this case, 'L' will open a new document"
                         },
                         {
                             "command": "insert",
