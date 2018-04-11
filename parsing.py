@@ -208,11 +208,11 @@ class Parser:
             ret = commands.forwardSettings(text)
             handleCmdRet(ret)
 
-        elif self.mode == GlobalMode.HELP:
-            command = re.sub('[!@#$\']', '', command)
-            text = re.findall(r"[a-zA-Z]+", command)
-            ret = commands.forwardHelp(text)
-            handleCmdRet(ret)
+        # elif self.mode == GlobalMode.HELP:
+        #     command = re.sub('[!@#$\']', '', command)
+        #     text = re.findall(r"[a-zA-Z]+", command)
+        #     ret = commands.forwardHelp(text)
+        #     handleCmdRet(ret)
 
         else:
             # Oh no! We have a bad mode. Hopefully going back to NAVIGATE saves us

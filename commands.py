@@ -88,15 +88,17 @@ def exeResize(tokens, mode):
     return (tokens[1:], mode)
 
 def exeHelp(tokens, mode):
-    if len(tokens) == 0:
-        if currentApp() == "Microsoft Word":
-            helpType = "word" + mode.name
-        elif currentApp() == "Firefox":
-            helpType = "firefox" + mode.name
-        gui.helpMode(helpType)
-        return ([], GlobalMode.HELP)
-    else:
-        log.parse_error(log.ParseError.HELP, tokens[0])
+    exeFocus(['FIREFOX'], mode)
+    send_message(encode_message([KeyboardMessage('E', shiftKey=True)]))
+    # if len(tokens) == 0:
+    #     if currentApp() == "Microsoft Word":
+    #         helpType = "word" + mode.name
+    #     elif currentApp() == "Firefox":
+    #         helpType = "firefox" + mode.name
+    #     gui.helpMode(helpType)
+    #     return ([], GlobalMode.HELP)
+    # else:
+    #     log.parse_error(log.ParseError.HELP, tokens[0])
 
 def exeSettings(tokens, mode):
     if len(tokens) == 0:
@@ -553,14 +555,14 @@ def forwardSettings(tokens):
     log.debug("No match in forwardSettings!")
     return ([], GlobalMode.SETTINGS)
 
-def forwardHelp(tokens):
-    if len(tokens) == 0:
-        return ([], GlobalMode.HELP)
-    if tokens[0] == "CLOSE":
-        gui.closeHelpMenu()
-        return ([], GlobalMode.NAVIGATE)
-    log.debug("No match in forwardHelp!")
-    return ([], GlobalMode.HELP)
+# def forwardHelp(tokens):
+#     if len(tokens) == 0:
+#         return ([], GlobalMode.HELP)
+#     if tokens[0] == "CLOSE":
+#         gui.closeHelpMenu()
+#         return ([], GlobalMode.NAVIGATE)
+#     log.debug("No match in forwardHelp!")
+#     return ([], GlobalMode.HELP)
 
 '''================
 SpeechV Settings
