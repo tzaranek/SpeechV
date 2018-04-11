@@ -25,10 +25,8 @@
             <a href="#firefox">Firefox commands</a>
         </div>
     </div>
-    <!-- Defines one task -->
-    <h1 style="font-size: 24px" id="Recipes">Recipes</h1>
     
-    <h2 style="font-size: 22px">Web Browsing</h2>
+    <h2 style="font-size: 22px">Web Browsing Recipes</h2>
     <div class="recipe-set">
         
         <h1>Task: Google a term and read up on it</h1>
@@ -38,7 +36,7 @@
             <div class="r-descript">
                 <code>focus firefox</code>
                 <div class="r-text">
-                    Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command is usage is unambiguous
+                    Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous
                 </div>
             </div>
             
@@ -233,7 +231,7 @@
         <br />  
     </div>
     
-    <h2 style="font-size: 22px">Word Processing</h2>
+    <h2 style="font-size: 22px">Word Processing Recipes</h2>
     <div class="recipe-set">
         
         <h1>Task: Write in a Word document</h1>
@@ -487,6 +485,209 @@
                 <code>follow &#39;A&#39; &#39;Y&#39; &#39;5&#39;</code>
                 <div class="r-text">
                     Use follow again to click on the save button and complete this task. Note that saving without specifying a new name is far simpler: &#34;follow &#39;1&#39;&#34;
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br />  
+        <h1>Task: Edit a document</h1>
+        
+        <div class="recipe-step">
+            <div class="number">1.</div>
+            <div class="r-descript">
+                <code>launch word</code>
+                <div class="r-text">
+                    
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">2.</div>
+            <div class="r-descript">
+                <code>follow &#39;Y&#39; &#39;1&#39;</code>
+                <div class="r-text">
+                    Open the document you wish to edit. In this recipe, we open the most recently opened document
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">3.</div>
+            <div class="r-descript">
+                <code>insert; Title to edit; navigate</code>
+                <div class="r-text">
+                    Enter some text to manipulate for this example. Semicolons separate commands here
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">4.</div>
+            <div class="r-descript">
+                <code>highlight</code>
+                <div class="r-text">
+                    This tells SpeechV to interpret following &#39;left&#39;, &#39;right&#39;, &#39;up&#39;, and &#39;all&#39; commands as verbs intended to highlight portions of the document. 
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">5.</div>
+            <div class="r-descript">
+                <code>left; left; left</code>
+                <div class="r-text">
+                    Highlight the title words. Left is said once for each word.
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">6.</div>
+            <div class="r-descript">
+                <code>bold</code>
+                <div class="r-text">
+                    Bold the highlighted text. &#39;Italics&#39;, &#39;Underline&#39;, and &#39;Delete&#39; are other useful verbs
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">7.</div>
+            <div class="r-descript">
+                <code>unhighlight</code>
+                <div class="r-text">
+                    Deselects any highlighted text and places the cursor to the right of the previously highlighted text
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br />  
+    </div>
+    
+    <h2 style="font-size: 22px">App management Recipes</h2>
+    <div class="recipe-set">
+        
+        <h1>Task: Work with Word and Firefox side by side</h1>
+        
+        <div class="recipe-step">
+            <div class="number">1.</div>
+            <div class="r-descript">
+                <code>focus firefox</code>
+                <div class="r-text">
+                    Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">2.</div>
+            <div class="r-descript">
+                <code>resize left</code>
+                <div class="r-text">
+                    Orient firefox such that it takes up the left half of the screen
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">3.</div>
+            <div class="r-descript">
+                <code>launch word</code>
+                <div class="r-text">
+                    Opens Word if it&#39;s not already started. Otherwise, this will make Word the frontmost window
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">4.</div>
+            <div class="r-descript">
+                <code>resize right</code>
+                <div class="r-text">
+                    Like &#39;resize left&#39;, except it Word will take the right half of the screen
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">5.</div>
+            <div class="r-descript">
+                <code>switch</code>
+                <div class="r-text">
+                    Alt-tab once to switch to the most recently used application. There isn&#39;t a generalized alt-tab because we believe that &#39;focus&#39; is far more attractive in the general case of switching between applications
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br />  
+        <h1>Task: Hide applications</h1>
+        
+        <div class="recipe-step">
+            <div class="number">1.</div>
+            <div class="r-descript">
+                <code>focus firefox</code>
+                <div class="r-text">
+                    
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">2.</div>
+            <div class="r-descript">
+                <code>minimize</code>
+                <div class="r-text">
+                    Hide but don&#39;t close the top application (in this case firefox)
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">3.</div>
+            <div class="r-descript">
+                <code>launch word</code>
+                <div class="r-text">
+                    
+                </div>
+            </div>
+            
+        </div>
+        <br />
+        <br /> 
+        <div class="recipe-step">
+            <div class="number">4.</div>
+            <div class="r-descript">
+                <code>terminate</code>
+                <div class="r-text">
+                    Close Word WITHOUT saving changes. You MUST save changes before using this command. &#39;terminate&#39; will not work for firefox because of (currently unsolvable) technical issues
                 </div>
             </div>
             

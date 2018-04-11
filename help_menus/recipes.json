@@ -1,14 +1,14 @@
 {
     "domains": [
         {
-            "category": "Web Browsing",
+            "category": "Web Browsing Recipes",
             "recipes": [
                 {
                     "task": "Google a term and read up on it",
                     "steps": [
                         {
                             "command": "focus firefox",
-                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command is usage is unambiguous"
+                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous"
                         },
                         {
                             "command": "search patent",
@@ -83,7 +83,7 @@
             ]
         },
         {
-            "category": "Word Processing",
+            "category": "Word Processing Recipes",
             "recipes": [
                 {
                     "task": "Write in a Word document",
@@ -201,12 +201,61 @@
                             "description": "Highlight the title words. Left is said once for each word."
                         },
                         {
-                            "commmand": "bold",
+                            "command": "bold",
                             "description": "Bold the highlighted text. 'Italics', 'Underline', and 'Delete' are other useful verbs"
                         },
                         {
                             "command": "unhighlight",
                             "description": "Deselects any highlighted text and places the cursor to the right of the previously highlighted text"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "App management Recipes",
+            "recipes": [
+                {
+                    "task": "Work with Word and Firefox side by side",
+                    "steps": [
+                        {
+                            "command": "focus firefox",
+                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command usage is unambiguous"
+                        },
+                        {
+                            "command": "resize left",
+                            "description": "Orient firefox such that it takes up the left half of the screen"
+                        },
+                        {
+                            "command": "launch word",
+                            "description": "Opens Word if it's not already started. Otherwise, this will make Word the frontmost window"
+                        },
+                        {
+                            "command": "resize right",
+                            "description": "Like 'resize left', except it Word will take the right half of the screen"
+                        },
+                        {
+                            "command": "switch",
+                            "description": "Alt-tab once to switch to the most recently used application. There isn't a generalized alt-tab because we believe that 'focus' is far more attractive in the general case of switching between applications"
+                        }
+                    ]
+                },
+                {
+                    "task": "Hide applications",
+                    "steps": [
+                        {
+                            "command": "focus firefox"
+                        },
+                        {
+                            "command": "minimize",
+                            "description": "Hide but don't close the top application (in this case firefox)"
+                        },
+                        {
+                            "command": "launch word"
+                        },
+                        {
+                            "command": "terminate",
+                            "description": "Close Word WITHOUT saving changes. You MUST save changes before using this command. 'terminate' will not work for firefox because of (currently unsolvable) technical issues"
                         }
                     ]
                 }
