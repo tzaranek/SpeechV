@@ -150,6 +150,11 @@ class GUI:
 		if self.namingMacro:
 			return
 		name = m.name.capitalize()
+
+		#Handle Settings in settingsMode()
+		if name == "Settings":
+			return
+		
 		self.modeText.set(name)
 		if name == "Navigate":
 			self.modeLabel.config(bg=NAVIGATION)
@@ -157,8 +162,6 @@ class GUI:
 			self.modeLabel.config(bg=INSERTION)
 		elif name == "Sleeping":
 			self.modeLabel.config(bg=STANDBY)
-		elif name == "Help":
-			self.modeLabel.config(bg=CONFIGURATION)
 
 
 	#Displays an error for a few seconds, then returns control to the user
@@ -175,7 +178,8 @@ class GUI:
 		if hasattr(self, 'window'):
 			self.window.destroy()
 
-		self.setText("Settings\nMenu!")
+		self.modeText.set("Configuration")
+		self.modeLabel.config(bg=CONFIGURATION)
 		if type=='DEFAULT':
 			file_in = "settings_root.txt"
 		elif type=='MACRO':
@@ -211,7 +215,6 @@ class GUI:
 		if hasattr(self, 'window'):
 		    self.window.destroy()
 
-		self.setText("Help\nMenu!")
 		file_in = "help_menus/"+ type + ".txt"
 		
 		with open(file_in, 'r') as text_file:

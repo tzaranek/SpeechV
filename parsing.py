@@ -310,7 +310,7 @@ class Parser:
                 log.warn("Command not found")
                 raise ValueError("Unrecognized Command")
 
-    def exeMacro(commands):
+    def exeMacro(self, commands):
         for cmd in commands:
             self.parse(cmd)
             time.sleep(1.0)
