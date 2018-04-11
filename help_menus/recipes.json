@@ -4,16 +4,27 @@
             "category": "Web Browsing",
             "recipes": [
                 {
-                    "task": "ExampleTask",
+                    "task": "Google a term and read up on it",
                     "steps": [
                         {
-                            "command": "command",
-                            "description": "description",
-                            "reference": "https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg"
+                            "command": "focus firefox",
+                            "description": "Places firefox in front of all other applications. SpeechV will only accept we browsing commands if firefox is in front, so that command is usage is unambiguous"
                         },
                         {
-                            "command": "command",
-                            "description": "description"
+                            "command": "search patent",
+                            "description": "Googles 'patent' from the current tab. 'patent' could be replaced with anything"
+                        },
+                        {
+                            "command": "follow 'a' 'e'",
+                            "description": "This command pops up a unique letter combination in front of all clickable links. Dictating those letters out loud will click on the associated link."
+                        },
+                        {
+                            "command": "down",
+                            "description": "Scrolls down. Similarly, 'up' scrolls up"
+                        },
+                        {
+                            "command": "find modern",
+                            "description": "Finds and highlights 'modern' on the current web page. Use 'find next' and 'find previous' to explore other occurrences"
                         }
                     ]
                 },
