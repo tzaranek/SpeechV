@@ -28,7 +28,7 @@
     <!-- Defines one task -->
     <h1 style="font-size: 24px" id="Recipes">Recipes</h1>
     {% for domain in domains %}
-    <h2 style="font-size: 22px" id="WebBrowsing">{{domain.category}}</h2>
+    <h2 style="font-size: 22px">{{domain.category}}</h2>
     <div class="recipe-set">
         {% for recipe in domain['recipes'] %}
         <h1>Task: {{ recipe.task }}</h1>
@@ -45,66 +45,10 @@
             <img src="{{step.reference}}" /> {% endif %}
         </div>
         <br />
-        <br />
-        {% endfor %} 
-        {% endfor %}
+        <br /> {% endfor %} {% endfor %}
     </div>
     {% endfor %}
 
-    <h2 style="font-size: 22px" id="WebBrowsing">Web browsing</h2>
-    <div class="recipe-set">
-        <h1>Task: Sample recipe</h1>
-        <div class="recipe-step">
-            <div class="number">1.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula
-                    cursus. Ut.
-                </div>
-            </div>
-            <img src="https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg" />
-        </div>
-        <div class="recipe-step">
-            <div class="number">2.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula
-                    cursus. Ut.
-                </div>
-            </div>
-        </div>
-        <br>
-        <a href="#Top">Return to top</a>
-    </div>
-    <h2 style="font-size: 22px" id="WordProcessing">Word Processing</h2>
-    <div class="recipe-set">
-        <h1>Task: Sample recipe</h1>
-        <div class="recipe-step">
-            <div class="number">1.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula
-                    cursus. Ut.
-                </div>
-            </div>
-            <img src="https://i.pinimg.com/originals/e8/b3/a0/e8b3a0244b14d5563b3868da15bec8f7.jpg" />
-        </div>
-        <div class="recipe-step">
-            <div class="number">2.</div>
-            <div class="r-descript">
-                <code>command</code>
-                <div class="r-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at volutpat metus. Phasellus ac augue vitae dolor vehicula
-                    cursus. Ut.
-                </div>
-            </div>
-        </div>
-        <br>
-        <a href="#Top">Return to top</a>
-    </div>
     <h1 style="font-size: 24px" id="CommandList">Full list of commands</h1>
     <div class="subpage">
         <h1 id="windows">Windows</h1>

@@ -15,8 +15,9 @@
                             "description": "Googles 'patent' from the current tab. 'patent' could be replaced with anything"
                         },
                         {
-                            "command": "follow 'a' 'e'",
-                            "description": "This command pops up a unique letter combination in front of all clickable links. Dictating those letters out loud will click on the associated link."
+                            "command": "follow 'b'",
+                            "description": "This command pops up a unique letter combination in front of all clickable links. Dictating those letters out loud will click on the associated link. In this case, 'b' should be said to click on the wikipedia link, but the correct letter may vary search to search",
+                            "reference": "follow-patent.png"
                         },
                         {
                             "command": "down",
@@ -48,7 +49,8 @@
                         },
                         {
                             "command": "follow 'a'",
-                            "description": "Choose a bookmark to open just as you would with a google search using 'follow'"
+                            "description": "Choose a bookmark to open just as you would with a google search using 'follow'",
+                            "reference": "follow-bookmark.png"
                         }
                     ]
                 },
@@ -75,6 +77,56 @@
                         {
                             "command": "back",
                             "description": "Go back in page history. Similarly, 'forward' would return to the wikipedia page if used after this command"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "category": "Word Processing",
+            "recipes": [
+                {
+                    "task": "Save a document with a new name",
+                    "steps": [
+                        {
+                            "command": "launch word",
+                            "description": "Launch word if it's not already open. Otherwise use 'focus' instead"
+                        },
+                        {
+                            "command": "follow 'L'",
+                            "description": "'follow' enumerates all clickable buttons with letters, just like 'follow' does with Firefox. In this case, 'L' will open a new document",
+                            "reference": "open-word.png"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that the following text should be written into the document and not interpreted as voice commands. SpeechV will continue to interpret all voice in this way until we say 'navigate' again"
+                        },
+                        {
+                            "command": "Example text",
+                            "description": "Insert some text into the doc so that we can demonstrate saving"
+                        },
+                        {
+                            "command": "navigate",
+                            "description": "Tell SpeechV that any speech should be interpreted as a SpeechV command, effectively taking us out of 'Insertion mode'"
+                        },
+                        {
+                            "command": "follow 'F' 'A' 'Y' '3'",
+                            "description": "Saving a document with a new name can be a bit clunky, but the general idea is to repeatedly follow clickable objects with 'follow'. The string of characters will place the cursor into a spot where the file may be named"
+                        },
+                        {
+                            "command": "insert",
+                            "description": "Tell SpeechV that we want to enter text into word, so that we can name the file"
+                        },
+                        {
+                            "command": "filename",
+                            "description": "Provide a filename for the document we're saving"
+                        },
+                        {
+                            "command": "navigate"
+                        },
+                        {
+                            "command": "follow 'A' 'Y' '5'",
+                            "description": "Use follow again to click on the save button and complete this task. Note that saving without specifying a new name is far simpler: \"follow '1'\""
                         }
                     ]
                 }
