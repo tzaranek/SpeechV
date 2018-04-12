@@ -9,7 +9,7 @@
 
 <body id="Top">
     <h1 style="font-size: 2em">SpeechV Help</h1>
-    <p>This is a complete list of commands in SpeechV. You can say "up" or "down" to scroll, or use the links below. To use
+    <p>This is a the help guide for SpeechV. You can find recipes on how to perform common tasks, an explanation of the different modes in SpeechV and how to switch between them, instructions on troubleshooting voice recognition and a complete list of commands.<br>To navigate the page, you can say "up" or "down" to scroll, or use the links below. To use
         the links, say "follow" to assign a label to each link, then say the corresponding label. Say "top" to return to
         the top of the page.</p>
     <!-- Links for jumping around the page -->
@@ -46,7 +46,25 @@
         <br /> {% endfor %} {% endfor %}
     </div>
     {% endfor %}
-
+    <h1 style="font-size: 24px" id="Modes">Modes of operation in SpeechV</h1>
+    <div class="subpage">
+        <p>There are 4 modes of operation in SpeechV: navigation, insertion, standby and configuration.</p>
+        <p style="font-weight: bold">Navigation</p>
+        <p>This is the main mode of operation in which SpeechV listens for and executes commands.</p>
+        <p style="font-weight: bold">Insertion</p>
+        <p>In this mode, SpeechV performs dictation, and enters your speech as text in the application currently open. End phrases with 'period' or 'comma' to insert punctuation. Saying "enter" on its own will insert a new line, while saying "new paragraph" inserts two new lines.</p>
+        <p>To enter this mode from navigation, say "insert". To end insertion and return to navigation, say "navigate".</p> 
+        <p style="font-weight: bold">Standby</p>
+        <p>In this mode, SpeechV does not process your speech.</p>
+        <p>To enter this mode from navigation, say "sleep". To return to navigation, say "navigate".</p>
+        <p style="font-weight: bold">Configuration</p>
+        <p>In this mode, SpeechV opens the settings panel and allows you to adjust your settings.</p>
+        <p> To enter this mode from navigation, say "settings". To close the panel and resume regular usage, say "close".</p>
+    </div>
+    <h1 style="font-size: 24px" id="Troubleshoot">Troubleshooting voice recognition</h1>
+    <div class="subpage">
+        <p>If SpeechV is not working well, you are likely experiencing one of two problems:<br><br>1. SpeechV cuts you off while you're still speaking<br>2. SpeechV cannot recognize your voice or processes audio when you aren't speaking<br><br>Problem 1 can be fixed by accessing the settings panel. From there, increase the voice timeout setting. This is the amount of silence that signals the end of a command. Increasing audio timeout allows for longer pauses when speaking, but slows down overall performance.<br><br>Problem 2 is likely an issue with you environment. SpeechV tries to automatically detect and adjust for ambient noise, but consider using SpeechV in a quiet environment for optimal performance.</p>
+    </div>
     <h1 style="font-size: 24px" id="CommandList">Full list of commands</h1>
     <div class="subpage">
         <h1 id="windows">Windows</h1>
@@ -96,9 +114,24 @@
                 <td class="command">Record end</td>
                 <td class="desc">Finish recording a macro<br>After ending a recording, a prompt to name the macro and a confirmation prompt will appear to complete the process</td>
             </tr>
+            <tr>
+                <td class="command">Copy</td>
+                <td class="desc">Copy selected data</td>
+            </tr>
+            <tr>
+                <td class="command">Paste</td>
+                <td class="desc">Paste copied data</td>
+            </tr>
+            <tr>
+                <td class="command">Switch</td>
+                <td class="desc">Alt-tabs once, switching to the second most recently opened application</td>
+            </tr>
+            <tr>
+                <td class="command">Minimize/maximize</td>
+                <td class="desc">Minimizes/maximizes currently open application</td>
+            </tr>
         </table>
         <br>
-        <a href="#Top">Return to top</a>
     </div>
     <div class="subpage">
         <h1 id="firefox">Firefox</h1>
@@ -194,7 +227,6 @@
             </tr>
         </table>
         <br>
-        <a href="#Top">Return to top</a>
     </div>
     <div class="subpage">
         <h1 id="word">Microsoft Word</h1>
@@ -281,7 +313,6 @@
             </tr>
         </table>
         <br>
-        <a href="#Top">Return to top</a>
     </div>
     <script src="../../build/content.js"></script>
   </body>
