@@ -1,6 +1,7 @@
 {
     "domains": [
         {
+            "id": "WebBrowsing",
             "category": "Web Browsing Recipes",
             "recipes": [
                 {
@@ -83,6 +84,7 @@
             ]
         },
         {
+            "id": "WordProcessing",
             "category": "Word Processing Recipes",
             "recipes": [
                 {
@@ -213,6 +215,7 @@
             ]
         },
         {
+            "id": "App",
             "category": "App management Recipes",
             "recipes": [
                 {

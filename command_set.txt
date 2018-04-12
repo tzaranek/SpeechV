@@ -1,48 +1,88 @@
-hold alt
-hold control
-hold shift
-tab
-escape
-meta
-up
-down
-left
-right
-control up
-control down
-control upper
-control downer
-zero
-dollar
-top
-bottom
-delete
-undo
-previous
-next
-refresh
-duplicate
-follow
-open
-back
-forward
-zoom in
-zoom out
-zoom default
-find
-address
-new tab
-new window
-print
-save
+focus
+launch
+terminate
+move
 resize left
 resize right
 resize up
 resize down
-resize file
+resize full
 help
-help browser
-help close
+settings
+record start
+record end
+copy
+paste
+switch
+minimize
+maximize
+up
+down
+page up
+page down
+left
+right
+top
+bottom
+leftmost
+rightmost
+search
+follow
+open
+back
+forward
+new tab
+close tab
+reopen tab
+tab left
+tab right
+zoom in
+zoom out
+zoom default
+refresh
+find next
+find previous
+find phrase
+save bookmark
+show bookmarks
+paragraph up
+paragraph down
+highlight
+cancel
+back
+unhighlight
+cut
+undo
+redo
+bold
+italics
+underline
+left align
+center align
+right align
+indent
+remove indent
+increase size
+decrease size
+caps
+delete
+space
+new line
+period
+comma
+exclamation
+question
+slash
+colon
+semicolon
+apostrophe
+quote
+open parenthesis
+close parenthesis
+ampersand
+dollar
+star
+enter
 a
 b
 c
