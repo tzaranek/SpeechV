@@ -32,7 +32,7 @@ SpeechV serves as an interface between the user and existing computer applicatio
 
 ## Getting familiar with SpeechV
 
-### The tutorial and command list can be found [here](tzaranek.github.io "SpeechV Documentation") or by saying "help" while using SpeechV.
+### The tutorial and command list can be found [here](https://tzaranek.github.io "SpeechV Documentation") or by saying "help" while using SpeechV.
 
 
 
