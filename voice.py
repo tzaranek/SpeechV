@@ -61,7 +61,7 @@ def recognize(audio_data, command_set):
             phrases=command_set,)]
         )
 
-    response = client.recognize(config, audio)
+    response = client.recognize(config, audio, timeout=10.0)
     
     transcript = ""
     for result in response.results:
