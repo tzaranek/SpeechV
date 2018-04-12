@@ -16,7 +16,7 @@
                         },
                         {
                             "command": "follow 'b'",
-                            "description": "This command pops up a unique letter combination in front of all clickable links. Dictating those letters out loud will click on the associated link. In this case, 'b' should be said to click on the wikipedia link, but the correct letter may vary search to search",
+                            "description": "\"Follow\" pops up a unique letter combination in front of all clickable links. After the labels pop up, dictating those letters out loud will click on the associated link. In this case, 'b' should be said to click on the wikipedia link, but the correct letter may vary search to search",
                             "reference": "follow-patent.png"
                         },
                         {
