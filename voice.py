@@ -109,6 +109,7 @@ def voiceLoop():
         #Automatically adjust for ambient noise instead of calling calibrate
         r.dynamic_energy_threshold = True
         r.pause_threshold = AUDIO_TIMEOUT
+        r.non_speaking_duration = AUDIO_TIMEOUT
 
 
         while True:                
@@ -121,6 +122,7 @@ def voiceLoop():
                     log.debug('pipe message: ', message[1].decode())
                     raw_command = message[1].decode()
                 else:
+                    log.debug("Pre listen")
                     audio = r.listen(source)
 
                     # recognize speech using Google Cloud Speech API            
@@ -147,10 +149,13 @@ def voiceLoop():
                 gui.updateCommands(raw_command)
                 
             except Exception as e:
-                log.error(str(e))
+                log.error("GOT AN EXCEPTION MAIN LOOP", str(e))
                 log.error(traceback.format_exc())
-                gui.updateCommands("ERROR: " + raw_command)
+                log.error("FOFOFO")
+                gui.updateCommands("ERROR: " + str(raw_command))
+                log.error("FEWA")
                 gui.showError("Error parsing\nTry again.")
+                log.error("AWEF")
             
             if p.mode == GlobalMode.FOLLOW:
                 continue
