@@ -169,7 +169,7 @@ class GUI:
 		#Grab the processingLock to prevent the processing text to overwrite this
 		with self.processingLock:
 			self.statusText.set(error)
-			self.statusLabel.config(fg=STANDBY)
+			self.statusLabel.config(fg="#FF0000")
 			sleep(3)
 			self.statusLabel.config(fg="#000000")
 
