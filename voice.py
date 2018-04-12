@@ -135,7 +135,8 @@ def voiceLoop():
                     time.sleep(1) # give OS time to alt-tab
                 if raw_command == -1:
                     raise ValueError("Failed to recognize speech")
-                p.parse(raw_command)
+                else:
+                    p.parse(raw_command)
 
                 if os.path.exists('BATCH_FLAG'):
                     # send an ACK to tell them we're ready for more input
@@ -149,7 +150,21 @@ def voiceLoop():
             except Exception as e:
                 log.error(str(e))
                 log.error(traceback.format_exc())
-                gui.updateCommands("ERROR: " + raw_command)
+                errorMsg = None
+                try:
+                    log.debug('type(raw_command) = {}'.format(type(raw_command)))
+
+                    # this looks incredibly dumb, but there's a reason: we really
+                    # just want to check if raw_command is an integer. This could be
+                    # refactored but #timepressure
+                    if raw_command == -1:
+                        errorMsg = '(google api failed!)'
+                    else:
+                        errorMsg = '(google api failed!)'
+                except ValueError:
+                    errorMsg = 'error: ' + str(raw_command)
+                
+                gui.updateCommands(errorMsg)
                 gui.showError("Error parsing\nTry again.")
             
             if p.mode == GlobalMode.FOLLOW:
