@@ -117,8 +117,15 @@ class GUI:
 
 	def displayProcessing(self):
 		count = 0
-		while self.inProcessing == True:
+		#I think the bug is when showError holds the processingLock
+		#If this function and ready both try to grab it while showError has it
+		#Then we could end up with the case where ready executes
+		#and then this function still continues since the inProcessing check
+		#Occurs before the wait for the lock. Chen would be disappoint.
+		while True:
 			with self.processingLock:
+				if self.inProcessing == False:
+					return
 				self.statusText.set("Processing"+(count%4)*'.')
 				count += 1
 			sleep(0.5)
