@@ -1,6 +1,7 @@
 # SpeechV
 
-SpeechV serves as an interface between the user and existing computer applications. Specifically, SpeechV enables users to do research online and compose documents using only their voice. It is designed to work with Mozilla Firefox and Microsoft Word in a Windows environment.
+
+SpeechV is a speech-only computer interface that enables quick, intuitive computer usage, specifically targeting research workflows. Web browsing, word processing, and application management (e.g. switching between firefox and word) are the three key features, all of which work towards supporting research workflows. 
 
 ## Installation
 
@@ -30,39 +31,34 @@ SpeechV serves as an interface between the user and existing computer applicatio
 
 3. Run `web-ext run`. This starts a special firefox, which will start up SpeechV
 
-## Getting familiar with SpeechV
-
-### The tutorial and command list can be found [here](https://tzaranek.github.io "SpeechV Documentation") or by saying "help" while using SpeechV.
-
-
+4. Say "help" to open a tutorial page. You can also visit speechv/extension/help_menus/help.html instead
 
 # Developer Information
 
-## Running release version
+A more technical explanation is appropriate for developers. However, if you're a user, you should instead look at the tutorial (say "help" on SpeechV startup)
 
-Following launch steps entitled "How to start SpeechV" in README.md launches the application as intended for the end-user. It will launch a GUI that displays the state of the application. The possible states are:
+## Design Approach
 
-    NAVIGATE - "Normal" command mode. The majority of commands are issued through here
-    INSERT - Sends raw text to the top application. Used for voice to text typing.
-    FOLLOW - Awaiting letters to follow a button in Firefox or Word.
-    SETTINGS - Displays the settings menu and permits abbreviated settings commands.
-    SLEEPING - Ignores any spoken commands until woken by a wake word.
-    HELP - Displays the help menu.
+Like Vim, SpeechV provides enhanced navigation by interpreting input through the lens of the "current mode." This mode-based approach pervades all aspects of SpeechV's design. For example, some commands like "follow" are shown to the user in the guise of a multi-part command, yet the implementation leverages an internal mode, which is abstracted away from the user (in this case "follow mode"). To understand SpeechV, you must understand the modes:
 
-Firefox will also launch, and due to issues that we encountered with Firefox native messaging, this is the only instance of firefox that we can control using SpeechV (but new tabs are okay!)
+* *NAVIGATE* - Input is handled according to the first "word" in the chunk of speech being processed. This first "word", called the *command*, is then compared with a dictionary of known commands. Externally visible
+* *INSERT* - Input is sent directly to the top application, unless it is a command to switch modes. Externally visible
+* *FOLLOW* - Input is expected to be an argument for the "follow" command. Internally visible
+* *SETTINGS* - Displays the settings menu and permits abbreviated settings commands. Externally visible
+* *STANDBY* - Ignores any spoken commands until woken by a wake word. Externally Visible
+* *SETTINGS* - Input is used to navigate the settings menus
+
 
 ## Using the debugger
 
-Debugging SpeechV using voice commands is time consuming and cumbersome, and so running SpeechV by running debug.py will open up a debugging shell in addition to the GUI and Firefox. By using the debugger, you have the ability to type commands instead of speaking them. The debugger works as follows:
+For developers, the voice interface is inherently cumbersome. The debugging interface cuts out speech processing and replaces it with a textual, terminal-based interface that significantly streamlines development, both in terms of time and ease.
 
-- The debugger issues one alt-tab to focus on another window
-    - In order to ensure subsequent commands are directed at a specific application (e.g. Word) use "Focus word" first.
-- The debugger issues the typed command to the switched to application.
-- The debugger focuses back on the command prompt to await the next command.
+However, there is one quirk to the debugging interface: SpeechV commands operate on the foremost application, but when using the debugging interface, the command line must be on top. To work around this limitation, the following steps are executed on each command:
+1. The debugger issues one alt-tab, placing the most second most recently used application on top
+2. The command is executed in full
+3. The debugger issues a "focus" onto the command prompt, placing control back on the debugging interface
 
 The debugger also has the ability to run "test cases" which are files consisting of series of commands in the batch_input folder. To run a test case, use "debug batch `<file>`" When running a test, the debugger will not do any alt-tabbing or focusing back to the command prompt between individual commands in the test case.
-
-While the debugger is running, a temporary DEBUG_FLAG file will be created in the root folder. While a batch input is running, a temporary BATCH_FLAG will be created in the root folder.
 
 ## Settings
 
@@ -72,10 +68,14 @@ Settings are stored as JSON in config.cfg in the root SpeechV folder. A default 
 
 Normal print statement output will likely be lost. All error logging and debugging output is and should be displayed using the included log module, which prints to log.txt in the root of the SpeechV folder. Log.txt is overwritten on each launch of SpeechV, so be careful to save any important output. The convention we have been using is as follows:
 
-    log.error - Used to display stack traces and caught exceptions
-    log.warn - Used to display when potentially unsafe conditions are present
-    log.info - Used to display informative text about the current state
-    log.debug - Used to display miscellaneous output in the spirit of print statement debugging
-    log.blank - Used to display a blank line
+* `log.error` - Used to display stack traces and caught exceptions
+* `log.warn` - Used to display when potentially unsafe conditions are present
+* `log.info` - Used to display informative text about the current state
+* `log.debug` - Used to display miscellaneous output in the spirit of print statement debugging
+* `log.blank` - Used to display a blank line
 
-Use these functions as you would print.
+Use these functions as you would print
+
+## Weird Behaviors
+
+In order to connect the firefox extension with the python implementation, we've set the project up such that starting up the Firfox extension will start up the python code. Unfortunately, this strongly couples firefox with the rest of SpeechV. One side effect of this is that if Firefox is closed, all of SpeechV will shut down. The one benefit, however, is expediency in implementation. Future work on this project should refactor the connection between web browsing and general computer navigation.
